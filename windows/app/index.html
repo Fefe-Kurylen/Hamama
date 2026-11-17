@@ -20,7 +20,7 @@
 [data-radius=carre]{--rb:3px;--rc:5px}
 [data-radius=rond]{--rb:999px;--rc:22px}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;background:var(--bg);color:var(--text);font:14px/1.4 Inter,system-ui,"Segoe UI",sans-serif;overflow:hidden}
+html,body{height:100%;background:var(--bg);color:var(--text);font:14px/1.4 var(--uif,Inter),system-ui,"Segoe UI",sans-serif;overflow:hidden}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 input,textarea,select{font:inherit;color:inherit}
 svg{width:var(--is);height:var(--is);flex:none}
@@ -460,6 +460,19 @@ header{background:var(--bg);border-bottom-color:var(--line)}
 .themes button,.sw{transition:.12s}
 #composer{box-shadow:0 14px 44px rgba(0,0,0,.3);background:var(--bg)}
 .toast{box-shadow:0 8px 24px rgba(0,0,0,.25)}
+
+[dir=rtl] [data-notr]{unicode-bidi:plaintext}
+/* ================= Police de l'interface et graisse ================= */
+.fonts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.fonts button{height:58px;border:2px solid var(--line2);border-radius:calc(var(--rb) + 2px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transition:.12s}
+.fonts button b{font-size:19px;font-weight:600;line-height:1}
+.fonts button small{font-size:11.5px;color:var(--muted)}
+.fonts button:hover{background:var(--panel)}
+.fonts button.on{border-color:var(--accent)}
+[data-weight=leger] :is(.logo,.btn,.lhead h2,.vin h1,.who .wn,.card h2,.it.unread .fr,.it.unread .sb .s,.fold.unread .t,.fold .n,.it.unread .dt,.acct>.ah,.att .an b,.prov,.drop h1,.chead b,.bulk,.alist .ai .t b,.fonts button b,.tabs button,.seg button){font-weight:500!important}
+[data-weight=leger] :is(.vin h1,.lhead h2,.drop h1,.card h2,.it.unread .fr,.logo){font-weight:600!important}
+[data-weight=fin] body *:not(#ed):not(#ed *){font-weight:400!important}
+html[data-unreadb=off] .it.unread .fr,html[data-unreadb=off] .it.unread .sb .s,html[data-unreadb=off] .fold.unread .t,html[data-unreadb=off] .it.unread .dt{font-weight:400!important}
 </style>
 </head>
 <body>

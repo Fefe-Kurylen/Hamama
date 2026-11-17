@@ -5,7 +5,7 @@ const ok = (c, m) => { console.log((c ? '✅ ' : '❌ ') + m); if (!c) process.e
 const exe = require(path.join(__dirname, '..', 'windows', 'node_modules', 'electron'));
 (async () => {
   const data = fs.mkdtempSync(path.join(os.tmpdir(), 'hamama-re-'));
-  const launch = () => _electron.launch({ executablePath: exe, args: ['--no-sandbox', path.join(__dirname, '..', 'windows')], env: { ...process.env, HAMAMA_DATA: data } });
+  const launch = () => _electron.launch({ executablePath: exe, args: ['--no-sandbox', '--lang=fr-FR', path.join(__dirname, '..', 'windows')], env: { ...process.env, HAMAMA_DATA: data } });
   let app = await launch(), win = await app.firstWindow();
   await win.waitForSelector('#welcome:not(.hidden)');
   await win.click('#welcomeProvs [data-p=autre]');

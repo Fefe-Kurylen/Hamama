@@ -6,7 +6,7 @@ const SHOTS = path.join(__dirname, 'shots');
 const ok = (c, m) => { console.log((c ? '✅ ' : '❌ ') + m); if (!c) process.exitCode = 1; };
 (async () => {
   const data = fs.mkdtempSync(path.join(os.tmpdir(), 'hamama-e2e-'));
-  const app = await _electron.launch({ executablePath: require(path.join(__dirname, '..', 'windows', 'node_modules', 'electron')), args: ['--no-sandbox', path.join(__dirname, '..', 'windows')], env: { ...process.env, HAMAMA_DATA: data, HAMAMA_DEBUG: '1' } });
+  const app = await _electron.launch({ executablePath: require(path.join(__dirname, '..', 'windows', 'node_modules', 'electron')), args: ['--no-sandbox', '--lang=fr-FR', path.join(__dirname, '..', 'windows')], env: { ...process.env, HAMAMA_DATA: data, HAMAMA_DEBUG: '1' } });
   const win = await app.firstWindow();
   const errs = []; win.on('pageerror', e => errs.push(e.message)); win.on('console', m => { if (m.type() === 'error' && !/Content Security Policy/.test(m.text())) errs.push(m.text()); });
   await win.setViewportSize({ width: 1440, height: 900 }).catch(() => {});

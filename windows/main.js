@@ -24,6 +24,17 @@ let PREF = { notify: true, sound: true, tray: false, startMin: false };
 const pending = [];
 const prefFile = () => path.join(app.getPath('userData'), 'prefs.json');
 try { Object.assign(PREF, JSON.parse(fs.readFileSync(prefFile(), 'utf8'))); } catch {}
+// Textes du processus principal (menus, fenêtres) dans la langue de l’appli
+const MT = {
+  fr: { cut:'Couper', copy:'Copier', paste:'Coller', all:'Tout sélectionner', dict:'Ajouter au dictionnaire', link:'Copier le lien', open:'Ouvrir Hamama', compose:'Nouveau message', quit:'Quitter', saveAtt:'Enregistrer la pièce jointe', saveIn:'Enregistrer les pièces jointes dans…', attach:'Joindre des fichiers', risky:'Ce type de fichier peut être dangereux.', riskyD:'« {0} » est un programme ou un script. Hamama ne l’ouvre pas directement.', saveInstead:'Enregistrer plutôt', cancel:'Annuler', big:'« {0} » dépasse 35 Mo' },
+  en: { cut:'Cut', copy:'Copy', paste:'Paste', all:'Select all', dict:'Add to dictionary', link:'Copy link', open:'Open Hamama', compose:'New message', quit:'Quit', saveAtt:'Save attachment', saveIn:'Save attachments to…', attach:'Attach files', risky:'This type of file can be dangerous.', riskyD:'“{0}” is a program or script. Hamama won’t open it directly.', saveInstead:'Save instead', cancel:'Cancel', big:'“{0}” exceeds 35 MB' },
+  es: { cut:'Cortar', copy:'Copiar', paste:'Pegar', all:'Seleccionar todo', dict:'Añadir al diccionario', link:'Copiar enlace', open:'Abrir Hamama', compose:'Nuevo mensaje', quit:'Salir', saveAtt:'Guardar adjunto', saveIn:'Guardar adjuntos en…', attach:'Adjuntar archivos', risky:'Este tipo de archivo puede ser peligroso.', riskyD:'«{0}» es un programa o script. Hamama no lo abre directamente.', saveInstead:'Guardar en su lugar', cancel:'Cancelar', big:'«{0}» supera los 35 MB' },
+  de: { cut:'Ausschneiden', copy:'Kopieren', paste:'Einfügen', all:'Alles auswählen', dict:'Zum Wörterbuch hinzufügen', link:'Link kopieren', open:'Hamama öffnen', compose:'Neue Nachricht', quit:'Beenden', saveAtt:'Anhang speichern', saveIn:'Anhänge speichern in…', attach:'Dateien anhängen', risky:'Dieser Dateityp kann gefährlich sein.', riskyD:'„{0}“ ist ein Programm oder Skript. Hamama öffnet es nicht direkt.', saveInstead:'Stattdessen speichern', cancel:'Abbrechen', big:'„{0}“ überschreitet 35 MB' },
+  it: { cut:'Taglia', copy:'Copia', paste:'Incolla', all:'Seleziona tutto', dict:'Aggiungi al dizionario', link:'Copia link', open:'Apri Hamama', compose:'Nuovo messaggio', quit:'Esci', saveAtt:'Salva allegato', saveIn:'Salva allegati in…', attach:'Allega file', risky:'Questo tipo di file può essere pericoloso.', riskyD:'«{0}» è un programma o uno script. Hamama non lo apre direttamente.', saveInstead:'Salva invece', cancel:'Annulla', big:'«{0}» supera i 35 MB' },
+  pt: { cut:'Cortar', copy:'Copiar', paste:'Colar', all:'Selecionar tudo', dict:'Adicionar ao dicionário', link:'Copiar ligação', open:'Abrir o Hamama', compose:'Nova mensagem', quit:'Sair', saveAtt:'Guardar anexo', saveIn:'Guardar anexos em…', attach:'Anexar ficheiros', risky:'Este tipo de ficheiro pode ser perigoso.', riskyD:'«{0}» é um programa ou script. O Hamama não o abre diretamente.', saveInstead:'Guardar em vez disso', cancel:'Cancelar', big:'«{0}» excede 35 MB' },
+  ar: { cut:'قص', copy:'نسخ', paste:'لصق', all:'تحديد الكل', dict:'إضافة إلى القاموس', link:'نسخ الرابط', open:'فتح حمامة', compose:'رسالة جديدة', quit:'خروج', saveAtt:'حفظ المرفق', saveIn:'حفظ المرفقات في…', attach:'إرفاق ملفات', risky:'قد يكون هذا النوع من الملفات خطيرًا.', riskyD:'«{0}» برنامج أو نص برمجي. لا يفتحه حمامة مباشرة.', saveInstead:'الحفظ بدلًا من ذلك', cancel:'إلغاء', big:'«{0}» يتجاوز 35 ميغابايت' }
+};
+const L = (k, a) => { const d = MT[PREF.lang] || MT[(app.getLocale() || 'fr').slice(0, 2)] || MT.en; return String(d[k] || MT.fr[k]).replace('{0}', a == null ? '' : a); };
 const mailtoArgs = argv => argv.filter(a => /^mailto:/i.test(a));
 
 function send(ch, data) { if (win && ready) win.webContents.send(ch, data); else pending.push([ch, data]); }
@@ -58,10 +69,10 @@ function createWindow() {
   win.webContents.on('context-menu', (e, p) => {
     const t = [];
     for (const s of (p.dictionarySuggestions || []).slice(0, 5)) t.push({ label: s, click: () => win.webContents.replaceMisspelling(s) });
-    if (p.misspelledWord) t.push({ label: 'Ajouter au dictionnaire', click: () => win.webContents.session.addWordToSpellCheckerDictionary(p.misspelledWord) }, { type: 'separator' });
-    if (p.linkURL && /^https?:/i.test(p.linkURL)) t.push({ label: 'Copier le lien', click: () => require('electron').clipboard.writeText(p.linkURL) }, { type: 'separator' });
-    if (p.isEditable) t.push({ role: 'cut', label: 'Couper' }, { role: 'copy', label: 'Copier' }, { role: 'paste', label: 'Coller' }, { role: 'selectAll', label: 'Tout sélectionner' });
-    else if (p.selectionText) t.push({ role: 'copy', label: 'Copier' });
+    if (p.misspelledWord) t.push({ label: L('dict'), click: () => win.webContents.session.addWordToSpellCheckerDictionary(p.misspelledWord) }, { type: 'separator' });
+    if (p.linkURL && /^https?:/i.test(p.linkURL)) t.push({ label: L('link'), click: () => require('electron').clipboard.writeText(p.linkURL) }, { type: 'separator' });
+    if (p.isEditable) t.push({ role: 'cut', label: L('cut') }, { role: 'copy', label: L('copy') }, { role: 'paste', label: L('paste') }, { role: 'selectAll', label: L('all') });
+    else if (p.selectionText) t.push({ role: 'copy', label: L('copy') });
     if (t.length) Menu.buildFromTemplate(t).popup({ window: win });
   });
   win.on('close', e => { if (PREF.tray && !quitting) { e.preventDefault(); win.hide(); } });
@@ -75,10 +86,10 @@ function setupTray() {
   tray = new Tray(nativeImage.createFromPath(path.join(__dirname, 'app', 'icon.png')).resize({ width: 16, height: 16 }));
   tray.setToolTip('Hamama');
   tray.setContextMenu(Menu.buildFromTemplate([
-    { label: 'Ouvrir Hamama', click: () => { if (!win) createWindow(); win.show(); win.focus(); } },
-    { label: 'Nouveau message', click: () => { if (!win) createWindow(); win.show(); win.focus(); send('mailto', 'mailto:'); } },
+    { label: L('open'), click: () => { if (!win) createWindow(); win.show(); win.focus(); } },
+    { label: L('compose'), click: () => { if (!win) createWindow(); win.show(); win.focus(); send('mailto', 'mailto:'); } },
     { type: 'separator' },
-    { label: 'Quitter', click: () => { quitting = true; app.quit(); } }
+    { label: L('quit'), click: () => { quitting = true; app.quit(); } }
   ]));
   tray.on('click', () => { if (!win) createWindow(); win.show(); win.focus(); });
 }
@@ -125,11 +136,11 @@ H('att:save', async keys => {
   if (!list.length) throw new Error('Pièce jointe expirée : rouvre le message.');
   if (list.length === 1) {
     const a = list[0];
-    const r = await dialog.showSaveDialog(win, { title: 'Enregistrer la pièce jointe', defaultPath: path.join(app.getPath('downloads'), a.filename.replace(/[\\/:*?"<>|]/g, '_')) });
+    const r = await dialog.showSaveDialog(win, { title: L('saveAtt'), defaultPath: path.join(app.getPath('downloads'), a.filename.replace(/[\\/:*?"<>|]/g, '_')) });
     if (r.canceled || !r.filePath) return null;
     await fs.promises.writeFile(r.filePath, a.content); return r.filePath;
   }
-  const r = await dialog.showOpenDialog(win, { title: 'Enregistrer les pièces jointes dans…', defaultPath: app.getPath('downloads'), properties: ['openDirectory', 'createDirectory'] });
+  const r = await dialog.showOpenDialog(win, { title: L('saveIn'), defaultPath: app.getPath('downloads'), properties: ['openDirectory', 'createDirectory'] });
   if (r.canceled || !r.filePaths[0]) return null;
   for (const a of list) {
     let f = path.join(r.filePaths[0], a.filename.replace(/[\\/:*?"<>|]/g, '_')), n = 1;
@@ -142,7 +153,7 @@ const RISKY = /\.(exe|bat|cmd|com|scr|pif|vbs|vbe|js|jse|wsf|wsh|ps1|msi|msp|hta
 H('att:open', async key => {
   const a = mail.attachment(key); if (!a) throw new Error('Pièce jointe expirée : rouvre le message.');
   if (RISKY.test(a.filename)) {
-    const c = dialog.showMessageBoxSync(win, { type: 'warning', title: 'Hamama', buttons: ['Enregistrer plutôt', 'Annuler'], defaultId: 1, cancelId: 1, message: 'Ce type de fichier peut être dangereux.', detail: `« ${a.filename} » est un programme ou un script. Hamama ne l’ouvre pas directement.` });
+    const c = dialog.showMessageBoxSync(win, { type: 'warning', title: 'Hamama', buttons: [L('saveInstead'), L('cancel')], defaultId: 1, cancelId: 1, message: L('risky'), detail: L('riskyD', a.filename) });
     return c === 0 ? { save: true } : null; // le renderer propose alors l’enregistrement
   }
   const dir = path.join(os.tmpdir(), 'hamama-pj'); fs.mkdirSync(dir, { recursive: true });
@@ -152,13 +163,13 @@ H('att:open', async key => {
   return f;
 });
 H('file:pick', async () => {
-  const r = await dialog.showOpenDialog(win, { title: 'Joindre des fichiers', properties: ['openFile', 'multiSelections'] });
+  const r = await dialog.showOpenDialog(win, { title: L('attach'), properties: ['openFile', 'multiSelections'] });
   if (r.canceled) return [];
   const out = [];
-  for (const f of r.filePaths) { const st = fs.statSync(f); if (st.size > 35 * 1024 * 1024) throw new Error(`« ${path.basename(f)} » dépasse 35 Mo`); out.push({ name: path.basename(f), size: st.size, data: new Uint8Array(fs.readFileSync(f)) }); }
+  for (const f of r.filePaths) { const st = fs.statSync(f); if (st.size > 35 * 1024 * 1024) throw new Error(L('big', path.basename(f))); out.push({ name: path.basename(f), size: st.size, data: new Uint8Array(fs.readFileSync(f)) }); }
   return out;
 });
-H('prefs', p => { if (p && typeof p === 'object') { Object.assign(PREF, p); fs.writeFileSync(prefFile(), JSON.stringify(PREF)); setupTray(); app.setLoginItemSettings({ openAtLogin: !!PREF.startup, args: ['--hidden'] }); } return PREF; });
+H('prefs', p => { if (p && typeof p === 'object') { const oldLang = PREF.lang; Object.assign(PREF, p); fs.writeFileSync(prefFile(), JSON.stringify(PREF)); if (PREF.lang !== oldLang && tray) { tray.destroy(); tray = null; } setupTray(); app.setLoginItemSettings({ openAtLogin: !!PREF.startup, args: ['--hidden'] }); } return PREF; });
 H('notify', ({ title, body, key, silent }) => {
   if (!PREF.notify || !Notification.isSupported()) return false;
   const n = new Notification({ title: String(title || 'Hamama').slice(0, 120), body: String(body || '').slice(0, 240), silent: !PREF.sound || !!silent, icon: path.join(__dirname, 'app', 'icon.png') });
