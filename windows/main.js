@@ -66,7 +66,7 @@ function createWindow() {
   });
   win.on('close', e => { if (PREF.tray && !quitting) { e.preventDefault(); win.hide(); } });
   win.on('closed', () => { win = null; ready = false; });
-  win.on('focus', () => { if (win) win.flashFrame(false); });
+  win.on('focus', () => { if (win) win.flashFrame(false); updater.onFocus(); });
 }
 
 function setupTray() {

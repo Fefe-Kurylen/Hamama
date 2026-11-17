@@ -9,7 +9,7 @@
    ============================================================ */
 const { app, shell } = require('electron');
 
-let send = () => {}, au = null, state = { state: 'idle' }, timer = null;
+let send = () => {}, au = null, state = { state: 'idle' }, timer = null, last = 0;
 const RELEASES = 'https://github.com/Fefe-Kurylen/Hamama/releases/latest';
 const portable = () => !!process.env.PORTABLE_EXECUTABLE_DIR;
 const mode = () => process.windowsStore ? 'store' : process.mas ? 'store' : !app.isPackaged ? 'dev' : portable() ? 'portable' : 'auto';
@@ -30,11 +30,12 @@ function init(emit) {
   au.on('update-downloaded', i => set({ state: 'ready', next: i.version }));
   au.on('error', e => set({ state: 'error', err: String(e && e.message || e).split('\n')[0].slice(0, 200) }));
   setTimeout(check, 15000);                        // au démarrage (sans ralentir l’ouverture)
-  timer = setInterval(check, 4 * 3600e3);          // puis toutes les 4 heures
+  timer = setInterval(check, 30 * 60e3);           // puis toutes les 30 minutes
 }
 async function check() {
   if (!au) return state;
   if (state.state === 'downloading' || state.state === 'ready') return state;
+  last = Date.now();
   try { await au.checkForUpdates(); } catch (e) { set({ state: 'error', err: String(e && e.message || e).split('\n')[0].slice(0, 200) }); }
   return state;
 }
@@ -44,4 +45,6 @@ function install() {
   setImmediate(() => au.quitAndInstall(true, true));   // installation silencieuse puis relance
   return true;
 }
-module.exports = { init, check, install, get: () => state };
+/** Quand on revient sur la fenêtre : nouvelle vérification si la dernière date de plus de 10 min */
+function onFocus() { if (au && Date.now() - last > 10 * 60e3) check(); }
+module.exports = { init, check, install, onFocus, get: () => state };

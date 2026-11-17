@@ -1997,14 +1997,14 @@ function updHTML(){
     case 'ready': return row(`Version ${esc(n)} prête`, 'Un simple redémarrage de Hamama suffit.', '<button class="btn primary" data-uact="install">Redémarrer</button>');
     case 'available': return row(`Version ${esc(n)} disponible`, 'Version portable : télécharge le nouveau fichier.', '<button class="btn primary" data-uact="install">Télécharger</button>');
     case 'error': return row('Impossible de vérifier les mises à jour', esc(s.err || 'Pas de connexion ?'), chk);
-    default: return row('Mises à jour automatiques', 'Vérification au démarrage puis toutes les 4 heures.', chk);
+    default: return row('Mises à jour automatiques', 'Vérification au démarrage puis toutes les 30 minutes.', chk);
   }
 }
 function renderUpd(){
   const b = $('#updBtn'), st = UPD.state, show = st === 'ready' || st === 'available';
   b.classList.toggle('hidden', !show);
-  b.querySelector('span').textContent = st === 'ready' ? 'Redémarrer pour mettre à jour' : 'Nouvelle version';
-  b.dataset.tip = st === 'ready' ? `Hamama ${UPD.next} est prête : un redémarrage suffit` : `Hamama ${UPD.next || ''} est disponible`;
+  b.querySelector('span').textContent = st === 'ready' ? 'Mettre à jour' : 'Nouvelle version';
+  b.dataset.tip = st === 'ready' ? `Version ${UPD.next} prête : Hamama redémarre en quelques secondes` : `Hamama ${UPD.next || ''} est disponible`;
   if (updPaint) updPaint();
 }
 async function installUpdate(){
@@ -2013,7 +2013,7 @@ async function installUpdate(){
 }
 $('#updBtn').onclick = installUpdate;
 if (N && N.update){
-  N.on('update', s => { const was = UPD.state; UPD = s; renderUpd(); if (s.state === 'ready' && was !== 'ready') toast(`Mise à jour ${s.next} prête`, { label: 'Redémarrer', fn: installUpdate }, 10000); });
+  N.on('update', s => { const was = UPD.state; UPD = s; renderUpd(); if (s.state === 'ready' && was !== 'ready') toast(`Nouvelle version ${s.next} prête`, { label: 'Mettre à jour', fn: installUpdate }, 10000); });
   N.update.state().then(s => { if (s && s.state){ UPD = s; renderUpd(); } }).catch(() => {});
 }
 

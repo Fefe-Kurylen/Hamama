@@ -146,8 +146,8 @@ const ok = (c, m) => { console.log((c ? '✅ ' : '❌ ') + m); if (!c) process.e
   await sendUpd({ state: 'downloading', next: '1.0.1', percent: 40, mode: 'auto' }); await win.waitForTimeout(200);
   ok(await win.isHidden('#updBtn'), 'pendant le téléchargement : pas de bouton (discret)');
   await sendUpd({ state: 'ready', next: '1.0.1', mode: 'auto' });
-  await win.waitForSelector('#updBtn:not(.hidden)'); await win.waitForSelector('.toast:has-text("Mise à jour 1.0.1 prête")');
-  ok(/Redémarrer pour mettre à jour/.test(await win.textContent('#updBtn')), 'bouton « Redémarrer pour mettre à jour » + notification');
+  await win.waitForSelector('#updBtn:not(.hidden)'); await win.waitForSelector('.toast:has-text("Nouvelle version 1.0.1 prête")');
+  ok(/Mettre à jour/.test(await win.textContent('#updBtn')), 'bouton « Mettre à jour » + notification');
   await win.click('#setBtn'); await win.click('[data-tab=about]'); await win.waitForTimeout(200);
   ok(/Version 1\.0\.1 prête/.test(await win.textContent('[data-upd]')), 'Réglages → À propos : état de la mise à jour');
   await win.screenshot({ path: path.join(SHOTS, '16-mise-a-jour.png') }); await win.keyboard.press('Escape');

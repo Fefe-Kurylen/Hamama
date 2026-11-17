@@ -12,14 +12,14 @@ Dossier du projet sur le PC : `C:\Users\felix\Desktop\Claude\Hamama` · GitHub :
 - `windows/`
   - `main.js` — processus principal : fenêtre (titleBarOverlay), IPC, notifications, zone de notification, liens `mailto:`, impression, pièces jointes
   - `mail.js` — **moteur mail** : comptes chiffrés (safeStorage = DPAPI Windows), détection auto des serveurs (fournisseurs connus → base Mozilla ISPDB → MX → devinette), dossiers (rôles spéciaux traduits), liste paginée + aperçu du texte, lecture (mailparser), drapeaux, déplacer / archiver / corbeille (avec `uidMap` pour Annuler), recherche (dossier ou partout), envoi SMTP + copie dans Envoyés, brouillons, cache disque, **surveillance IDLE** (nouveaux messages en temps réel)
-  - `updater.js` — **mises à jour sans réinstaller** (electron-updater + GitHub Releases de Fefe-Kurylen/Hamama) : vérification 15 s après l'ouverture puis toutes les 4 h, téléchargement différentiel en arrière-plan, bouton « Redémarrer pour mettre à jour » dans la barre du haut + notification ; version portable → lien « Nouvelle version » ; version Store / développement → désactivé (le Store met à jour lui-même)
+  - `updater.js` — **mises à jour sans réinstaller** (electron-updater + GitHub Releases de Fefe-Kurylen/Hamama) : vérification 15 s après l'ouverture, toutes les 30 min et au retour sur la fenêtre (si > 10 min), téléchargement différentiel en arrière-plan, bouton **« Mettre à jour »** dans la barre du haut + notification ; version portable → lien « Nouvelle version » ; version Store / développement → désactivé (le Store met à jour lui-même)
   - `oauth.js` — connexion OAuth2 Microsoft / Google (PKCE + redirection http://localhost). **Inactive tant que les identifiants client sont vides** (`HAMAMA_MS_CLIENT_ID`, `HAMAMA_GOOGLE_CLIENT_ID` / `_SECRET`, ou constantes dans le fichier)
   - `preload.js` — expose `window.native` (acc, mail, att, pickFiles, prefs, notify, badge, defaultMail, print, version, on, setTitleBar, ready)
   - `make-app.py` — `web/index.html` → `windows/app/` (polices Inter locales, script sorti dans `app.js`, CSP stricte sans script en ligne)
   - `afterPack.js` — icône + infos de version dans l'exe (resedit)
   - `build/icon.svg|png|ico`, `build/appx/` (logos Store)
 - `tests/` — `server.js` (serveur IMAP + SMTP de test hoodiecrow avec 9 mails d’exemple), `e2e.js` (26 vérifications en pilotant la vraie appli Electron), `relaunch.js` (redémarrage + cache)
-- `.github/workflows/release.yml` — **publie une mise à jour** : tag `vX.Y.Z` → installateur + portable + `latest.yml` dans les Releases GitHub (les applis installées se mettent à jour toutes seules)
+- `.github/workflows/release.yml` — **publie automatiquement une mise à jour à chaque push sur `main`** qui touche `web/` ou `windows/` : version `MAJEUR.MINEUR.(patch + n° de publication)`, installateur + portable + `latest.yml` dans les Releases GitHub → bouton « Mettre à jour » dans les applis installées
 - `.github/workflows/windows-store.yml` — fabrique et teste le paquet Microsoft Store sur un Windows de GitHub (comme Pyramid)
 - `PRIVACY.md` — politique de confidentialité (URL pour le Store)
 
@@ -33,9 +33,10 @@ npm run dist              # → dist/Hamama-Installation-X.Y.Z.exe + Hamama-Port
 ```
 Depuis Linux, `npm run dist` demande wine (wine64 + wine32). electron-builder **25.1.8** (la 26 exige wine aussi pour NSIS).
 ## 🔄 Mises à jour (sans réinstaller)
-1. Augmenter `version` dans `windows/package.json` (ex. 1.0.1)
-2. Pousser sur GitHub, puis créer le tag `v1.0.1` (ou Actions → « publication d'une mise à jour » → Run workflow)
-3. Le workflow `release.yml` publie la Release → chaque Hamama installé la télécharge et propose « Redémarrer pour mettre à jour »
+1. Modifier le code ici (dossier du PC / cette session) et **pousser sur GitHub (`main`)** — c'est tout
+2. Le workflow `release.yml` fabrique la nouvelle version (≈ 5-8 min) et la publie dans les Releases (numéro automatique : 1.0.1, 1.0.2…)
+3. Chaque Hamama installé la détecte, la télécharge en arrière-plan et affiche **« Mettre à jour »** → redémarrage de quelques secondes
+- `version` de `windows/package.json` = base MAJEUR.MINEUR (ne la changer que pour passer à 1.1, 2.0…). Les modifications de documentation seule (`*.md`, `tests/`) ne publient pas de version.
 - ⚠️ Le dépôt **Fefe-Kurylen/Hamama doit être public** (sinon les applis ne peuvent pas lire les Releases).
 - Store : workflow `windows-store.yml` → `.appx` dans les artifacts → Partner Center ; le Store met ensuite à jour tout seul.
 
@@ -62,7 +63,7 @@ xvfb-run -a node e2e.js                # Linux ; sous Windows : node e2e.js
 Tous les tests passent : 26/26 de bout en bout (ajout de compte, liste, lecture HTML, pièce jointe, pixel espion bloqué,
 désabonnement, suivi, envoi SMTP réel, réception IDLE, réponse avec citation, brouillon, archiver + annuler, supprimer,
 recherche, Envoyés, glisser-déposer, sélection multiple, boîte unifiée 2 comptes, bouton de mise à jour) + redémarrage (liste en < 1 s depuis le cache).
-Installateur et version portable Windows générés. Code sur GitHub (branche `main`) depuis le 17/11/2026 ; aucune Release publiée pour l'instant (la première se crée avec le tag `v1.0.0`).
+Installateur et version portable Windows générés. Code sur GitHub (branche `main`) depuis le 17/11/2026 ; publication automatique des mises à jour à chaque push (workflow `release.yml`).
 
 ## 📝 À faire
 - [ ] Tester sur le PC de Félix avec ses vrais comptes (Gmail → mot de passe d'application)
