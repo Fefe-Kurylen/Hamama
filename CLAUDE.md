@@ -6,7 +6,7 @@ Félix parle français : répondre en français, avec beaucoup d'emojis, répons
 (titres avec emoji, listes à cocher, tableaux seulement si utiles), sans conseils non demandés.
 
 ## 📁 Structure
-Dossier du projet sur le PC : `C:\Users\felix\Desktop\Claude\Hamama` · GitHub : **Fefe-Kurylen/Hamama** (même contenu, stockage uniquement).
+Dossier du projet sur le PC : `C:\Users\felix\Desktop\Claude\Hamama` · GitHub : **Fefe-Kurylen/Hamama** (public ; même contenu que le dossier du PC + Releases pour les mises à jour automatiques).
 
 - `web/index.html` — **source principale de l'interface** (un seul fichier : CSS + HTML + une IIFE JS), comme Pyramid.
 - `windows/`
@@ -18,7 +18,7 @@ Dossier du projet sur le PC : `C:\Users\felix\Desktop\Claude\Hamama` · GitHub :
   - `make-app.py` — `web/index.html` → `windows/app/` (polices Inter locales, script sorti dans `app.js`, CSP stricte sans script en ligne)
   - `afterPack.js` — icône + infos de version dans l'exe (resedit)
   - `build/icon.svg|png|ico`, `build/appx/` (logos Store)
-- `tests/` — `server.js` (serveur IMAP + SMTP de test hoodiecrow avec 9 mails d’exemple), `e2e.js` (23 vérifications en pilotant la vraie appli Electron), `relaunch.js` (redémarrage + cache)
+- `tests/` — `server.js` (serveur IMAP + SMTP de test hoodiecrow avec 9 mails d’exemple), `e2e.js` (26 vérifications en pilotant la vraie appli Electron), `relaunch.js` (redémarrage + cache)
 - `.github/workflows/release.yml` — **publie une mise à jour** : tag `vX.Y.Z` → installateur + portable + `latest.yml` dans les Releases GitHub (les applis installées se mettent à jour toutes seules)
 - `.github/workflows/windows-store.yml` — fabrique et teste le paquet Microsoft Store sur un Windows de GitHub (comme Pyramid)
 - `PRIVACY.md` — politique de confidentialité (URL pour le Store)
@@ -59,10 +59,10 @@ xvfb-run -a node e2e.js                # Linux ; sous Windows : node e2e.js
 - Dossier de données : `%APPDATA%\Hamama` (`accounts.json`, `prefs.json`, `cache/`).
 
 ## ✅ État actuel (17/11/2026) — version 1.0.0
-Tous les tests passent : 23/23 de bout en bout (ajout de compte, liste, lecture HTML, pièce jointe, pixel espion bloqué,
+Tous les tests passent : 26/26 de bout en bout (ajout de compte, liste, lecture HTML, pièce jointe, pixel espion bloqué,
 désabonnement, suivi, envoi SMTP réel, réception IDLE, réponse avec citation, brouillon, archiver + annuler, supprimer,
-recherche, Envoyés, glisser-déposer, sélection multiple, boîte unifiée 2 comptes) + redémarrage (liste en < 1 s depuis le cache).
-Installateur et version portable Windows générés.
+recherche, Envoyés, glisser-déposer, sélection multiple, boîte unifiée 2 comptes, bouton de mise à jour) + redémarrage (liste en < 1 s depuis le cache).
+Installateur et version portable Windows générés. Code sur GitHub (branche `main`) depuis le 17/11/2026 ; aucune Release publiée pour l'instant (la première se crée avec le tag `v1.0.0`).
 
 ## 📝 À faire
 - [ ] Tester sur le PC de Félix avec ses vrais comptes (Gmail → mot de passe d'application)
