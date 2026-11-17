@@ -1,0 +1,1519 @@
+(() => {
+'use strict';
+/* ================= Icônes (trait fin, style Pyramid) ================= */
+const ICON = {
+  plane:'<path d="M16 7h.01"/><path d="M3.4 18H12a8 8 0 0 0 8-8V7a4 4 0 0 0-7.28-2.3L2 20"/><path d="m20 7 2 .5-2 .5"/><path d="M10 18v3"/><path d="M14 17.75V21"/><path d="M7 18a6 6 0 0 0 3.84-10.61"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+  refresh:'<path d="M21 12a9 9 0 1 1-2.6-6.4L21 8"/><path d="M21 3v5h-5"/>',
+  settings:'<path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/>',
+  heart:'<path d="M12 20s-7.5-4.6-9.3-9.2C1.5 7.6 3.6 4.5 7 4.5c2 0 3.4 1.1 5 3 1.6-1.9 3-3 5-3 3.4 0 5.5 3.1 4.3 6.3C19.5 15.4 12 20 12 20z"/>',
+  pen:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+  sidebar:'<rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M9 4v16"/>',
+  inbox:'<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.8 4H7.2a2 2 0 0 0-1.7 1.1z"/>',
+  layers:'<path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/>',
+  send:'<path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/>',
+  draft:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>',
+  archive:'<rect x="3" y="4" width="18" height="5" rx="1.5"/><path d="M5 9v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9M10 13h4"/>',
+  trash:'<path d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6"/>',
+  junk:'<path d="M7.9 2h8.2L22 7.9v8.2L16.1 22H7.9L2 16.1V7.9z"/><path d="M12 8v4M12 16h0"/>',
+  star:'<path d="m12 3 2.8 5.6 6.2.9-4.5 4.4 1 6.1L12 17l-5.5 3 1-6.1L3 9.5l6.2-.9z"/>',
+  folder:'<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+  'folder-in':'<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M12 10v6M9 13l3 3 3-3"/>',
+  'folder-plus':'<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M12 10v6M9 13h6"/>',
+  all:'<path d="M4 6h16M4 12h16M4 18h10"/>',
+  mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
+  'mail-open':'<path d="M3 10v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-9l-9-7z"/><path d="m3 10 9 6 9-6"/>',
+  reply:'<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>',
+  'reply-all':'<path d="M7 14 2 9l5-5"/><path d="M12 14 7 9l5-5"/><path d="M7 9h8.5a5.5 5.5 0 0 1 0 11H13"/>',
+  forward:'<path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/>',
+  clip:'<path d="m21 11-8.6 8.6a5.5 5.5 0 0 1-7.8-7.8l8.6-8.6a3.7 3.7 0 0 1 5.2 5.2l-8.6 8.6a1.8 1.8 0 0 1-2.6-2.6l8-8"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  x:'<path d="M18 6 6 18M6 6l12 12"/>',
+  check:'<path d="m5 12 5 5L20 7"/>',
+  checks:'<path d="m2 12 5 5L17 7"/><path d="m12 15 2 2 9-10"/>',
+  'square-check':'<rect x="3" y="3" width="18" height="18" rx="4"/><path d="m8 12 3 3 5-6"/>',
+  chev:'<path d="m6 9 6 6 6-6"/>',
+  left:'<path d="m15 18-6-6 6-6"/>',
+  dots:'<circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/>',
+  image:'<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/>',
+  shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="m9 12 2 2 4-4"/>',
+  download:'<path d="M12 3v12M7 10l5 5 5-5M4 19h16"/>',
+  print:'<path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/>',
+  code:'<path d="m8 7-5 5 5 5M16 7l5 5-5 5"/>',
+  link:'<path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/>',
+  bold:'<path d="M7 5h6a3.5 3.5 0 0 1 0 7H7zM7 12h7a3.5 3.5 0 0 1 0 7H7z"/>',
+  italic:'<path d="M19 4h-9M14 20H5M15 4 9 20"/>',
+  underline:'<path d="M6 4v6a6 6 0 0 0 12 0V4M4 20h16"/>',
+  strike:'<path d="M16 6a4 4 0 0 0-4-2c-2.5 0-4 1.3-4 3.2 0 4 8 2.6 8 6.8 0 2-1.8 4-4.5 4A5 5 0 0 1 7 16M4 12h16"/>',
+  ul:'<path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r=".8"/><circle cx="4.5" cy="12" r=".8"/><circle cx="4.5" cy="18" r=".8"/>',
+  ol:'<path d="M10 6h10M10 12h10M10 18h10M4 4h1v4M4 8h2M4 14.5c0-.8 2-1.3 2 0 0 .8-2 1.8-2 3.5h2"/>',
+  quote:'<path d="M7 7H4v6h4v-2c0 3-1 4-3 5M17 7h-3v6h4v-2c0 3-1 4-3 5"/>',
+  eraser:'<path d="m7 21-4.3-4.3a1 1 0 0 1 0-1.4l10-10a1 1 0 0 1 1.4 0l5.6 5.6a1 1 0 0 1 0 1.4L13 19M7 21h14M9.5 9.5l5 5"/>',
+  palette:'<circle cx="12" cy="12" r="9"/><circle cx="7.5" cy="10.5" r="1"/><circle cx="12" cy="7.5" r="1"/><circle cx="16.5" cy="10.5" r="1"/><path d="M12 21a2.5 2.5 0 0 1 0-5h1.5a2 2 0 0 0 0-4"/>',
+  min:'<path d="M5 12h14"/>',
+  max:'<path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>',
+  user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.9 1.9 0 0 0 3.4 0"/>',
+  keyboard:'<rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h0M10 10h0M14 10h0M18 10h0M7 14h10"/>',
+  wallet:'<rect x="3" y="6" width="18" height="14" rx="2.5"/><path d="M16 13h2M3 10h18M6 6V5a2 2 0 0 1 2-2h8"/>',
+  undo:'<path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/>',
+  eye:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  copy:'<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/>',
+  edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/>',
+  ban:'<circle cx="12" cy="12" r="9"/><path d="m5.6 5.6 12.8 12.8"/>',
+  sig:'<path d="M3 17c3-1 4.5-9 6.5-9S9 16 11 16s3-4 4.5-4 1 3 2.5 3H21M3 21h18"/>',
+  info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h0"/>',
+  key:'<circle cx="8" cy="15" r="4"/><path d="m10.8 12.2 9.2-9.2M17 6l3 3M15 8l2 2"/>',
+  ext:'<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
+  open:'<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
+};
+const ic = n => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${ICON[n] || ''}</svg>`;
+document.querySelectorAll('[data-ic]').forEach(el => el.insertAdjacentHTML('afterbegin', ic(el.dataset.ic)));
+
+/* ================= Outils ================= */
+const $ = s => document.querySelector(s);
+const N = window.native || null;
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+const store = { get(k){ try{ return localStorage.getItem(k); }catch{ return null; } }, set(k,v){ try{ localStorage.setItem(k,v); }catch{} }, del(k){ try{ localStorage.removeItem(k); }catch{} } };
+const J = (k, d) => { try { const v = JSON.parse(store.get(k)); return v == null ? d : v; } catch { return d; } };
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const isTyping = e => { const t = e.target; return t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)); };
+const fmtSize = n => n < 1024 ? n + ' o' : n < 1048576 ? Math.round(n/1024) + ' Ko' : (n/1048576).toFixed(1).replace('.', ',') + ' Mo';
+const plural = (n, w) => `${n} ${w}${n > 1 ? 's' : ''}`;
+const D0 = d => { const x = new Date(d); x.setHours(0,0,0,0); return x; };
+function fmtDate(iso){
+  const d = new Date(iso), now = new Date(), t0 = D0(now), dd = D0(d), diff = (t0 - dd) / 864e5;
+  if (diff <= 0) return d.toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' });
+  if (diff === 1) return 'Hier';
+  if (diff < 7) return d.toLocaleDateString('fr-FR', { weekday:'short' }).replace('.', '');
+  if (d.getFullYear() === now.getFullYear()) return d.toLocaleDateString('fr-FR', { day:'numeric', month:'short' });
+  return d.toLocaleDateString('fr-FR');
+}
+const fmtLong = iso => new Date(iso).toLocaleString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit' });
+function grpOf(iso){
+  const diff = (D0(new Date()) - D0(new Date(iso))) / 864e5;
+  if (diff <= 0) return 'Aujourd’hui'; if (diff === 1) return 'Hier'; if (diff < 7) return 'Cette semaine';
+  if (diff < 31) return 'Ce mois-ci';
+  return new Date(iso).toLocaleDateString('fr-FR', { month:'long', year:'numeric' });
+}
+const AVC = ['#c8703f','#c2524a','#bf5a82','#8a6cc4','#5d6bc9','#4a84c4','#3a98a8','#3d9579','#5c9a4b','#c0962e','#7c8592'];
+const hash = s => { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) | 0; return Math.abs(h); };
+const nameOf = a => a ? (a.name || a.address || '').replace(/^"|"$/g, '') : '';
+const initials = a => { const n = nameOf(a).replace(/[^\p{L}\p{N} ]/gu, ' ').trim(); if (!n) return '?'; const p = n.split(/\s+/); return (p[0][0] + (p.length > 1 ? p[p.length-1][0] : (p[0][1] || ''))).toUpperCase(); };
+const avatar = (a, cls = '') => `<div class="av ${cls}">${esc(initials(a))}</div>`;
+const fmtAddr = a => a.name ? `${a.name} <${a.address}>` : a.address;
+
+/* ================= Bulles d’aide, toasts, fenêtres, menus ================= */
+const tipEl = $('#tip'); let tipT = null;
+document.addEventListener('mouseover', e => {
+  const el = e.target.closest('[title],[data-tip]');
+  if (el && el.title){ el.dataset.tip = el.title; el.removeAttribute('title'); }
+  clearTimeout(tipT); tipEl.classList.remove('show');
+  if (!el || !el.dataset.tip) return;
+  tipT = setTimeout(() => {
+    const t = el.dataset.tip, m = t.match(/^(.*) \((.+)\)$/);
+    tipEl.innerHTML = m ? `${esc(m[1])}<kbd>${esc(m[2])}</kbd>` : esc(t);
+    const r = el.getBoundingClientRect(), w = tipEl.offsetWidth, h = tipEl.offsetHeight;
+    let x = r.left + r.width/2 - w/2, y = r.bottom + 8;
+    if (y + h > innerHeight - 4) y = r.top - h - 8;
+    tipEl.style.left = Math.max(6, Math.min(innerWidth - w - 6, x)) + 'px'; tipEl.style.top = y + 'px';
+    tipEl.classList.add('show');
+  }, 450);
+});
+document.addEventListener('mousedown', () => { clearTimeout(tipT); tipEl.classList.remove('show'); }, true);
+
+function toast(msg, action, ms = 3200){
+  const t = document.createElement('div'); t.className = 'toast';
+  t.innerHTML = `<span>${esc(msg)}</span>`;
+  let done = false;
+  const close = () => { if (done) return; done = true; t.style.transition = '.2s'; t.style.opacity = '0'; setTimeout(() => t.remove(), 200); };
+  if (action){ const b = document.createElement('button'); b.textContent = action.label; b.onclick = () => { close(); action.fn(); }; t.appendChild(b); }
+  $('#toasts').appendChild(t);
+  while ($('#toasts').children.length > 3) $('#toasts').firstChild.remove();
+  setTimeout(close, action ? Math.max(ms, 6000) : ms);
+  return { close, el: t };
+}
+const errToast = e => toast('' + String(e && e.message || e).replace(/^Error invoking remote method '[^']+': (Error: )?/, ''));
+const cleanErr = e => String(e && e.message || e).replace(/^Error invoking remote method '[^']+': (Error: )?/, '');
+
+let modalOpen = 0;
+function modal(html, onMount, opts = {}){
+  const m = document.createElement('div'); m.className = 'modal';
+  m.innerHTML = `<div class="card ${opts.cls || ''}">${html}</div>`;
+  document.body.appendChild(m); modalOpen++;
+  const card = m.firstChild;
+  card.querySelectorAll('[data-ic]').forEach(el => el.insertAdjacentHTML('afterbegin', ic(el.dataset.ic)));
+  let closed = false;
+  const close = v => { if (closed) return; closed = true; modalOpen--; m.remove(); document.removeEventListener('keydown', onKey, true); opts.onClose && opts.onClose(v); };
+  const onKey = e => { if (e.key === 'Escape' && m === [...document.querySelectorAll('.modal')].pop()){ e.stopPropagation(); e.preventDefault(); close(); } };
+  document.addEventListener('keydown', onKey, true);
+  m.addEventListener('mousedown', e => { if (e.target === m && !opts.sticky) close(); });
+  onMount && onMount(card, close);
+  const f = card.querySelector('[autofocus]'); f && f.focus();
+  return close;
+}
+function confirmBox(title, text, okLabel = 'Confirmer', danger = false){
+  return new Promise(res => modal(`<h2>${esc(title)}</h2><div class="sub">${esc(text)}</div><div class="row"><button class="btn ghost" data-no>Annuler</button><button class="btn ${danger ? 'danger' : 'primary'}" data-ok autofocus>${esc(okLabel)}</button></div>`,
+    (c, close) => { c.querySelector('[data-no]').onclick = () => close(false); c.querySelector('[data-ok]').onclick = () => close(true); }, { onClose: v => res(!!v) }));
+}
+function promptBox(title, label, value = '', okLabel = 'OK'){
+  return new Promise(res => modal(`<h2>${esc(title)}</h2><label class="lbl">${esc(label)}</label><input class="field" data-v autofocus value="${esc(value)}"><div class="row"><button class="btn ghost" data-no>Annuler</button><button class="btn primary" data-ok>${esc(okLabel)}</button></div>`,
+    (c, close) => { const i = c.querySelector('[data-v]'); i.select(); i.onkeydown = e => { if (e.key === 'Enter') close(i.value.trim()); }; c.querySelector('[data-no]').onclick = () => close(null); c.querySelector('[data-ok]').onclick = () => close(i.value.trim()); }, { onClose: v => res(v || null) }));
+}
+
+let menuEl = null;
+function closeMenu(){ if (menuEl){ menuEl.remove(); menuEl = null; document.removeEventListener('mousedown', menuOut, true); } }
+const menuOut = e => { if (menuEl && !menuEl.contains(e.target)) closeMenu(); };
+function popAt(el, x, y){
+  document.body.appendChild(el);
+  const w = el.offsetWidth, h = el.offsetHeight;
+  el.style.left = Math.max(6, Math.min(innerWidth - w - 6, x)) + 'px';
+  el.style.top = Math.max(6, (y + h > innerHeight - 6 ? y - h : y)) + 'px';
+}
+/** items : [{ ic, label, kbd, fn, red, disabled }] ou '-' */
+function menu(items, x, y){
+  closeMenu();
+  const el = document.createElement('div'); el.className = 'menu';
+  for (const it of items){
+    if (!it) continue;
+    if (it === '-'){ el.insertAdjacentHTML('beforeend', '<div class="msep"></div>'); continue; }
+    const b = document.createElement('button');
+    if (it.red) b.className = 'red'; b.disabled = !!it.disabled;
+    b.innerHTML = `${it.ic ? ic(it.ic) : ''}<span>${esc(it.label)}</span>${it.kbd ? `<kbd>${esc(it.kbd)}</kbd>` : ''}`;
+    b.onclick = () => { closeMenu(); it.fn && it.fn(); };
+    el.appendChild(b);
+  }
+  menuEl = el; popAt(el, x, y);
+  setTimeout(() => document.addEventListener('mousedown', menuOut, true), 0);
+}
+const menuBelow = (btn, items) => { const r = btn.getBoundingClientRect(); menu(items, r.left, r.bottom + 4); };
+
+/* ================= Personnalisation ================= */
+const ACCENTS = ['#c8703f','#c2524a','#bf5a82','#8a6cc4','#5d6bc9','#4a84c4','#3a98a8','#3d9579','#5c9a4b','#c0962e'];
+const DEF_SET = {
+  theme:'graphite', accent:'#c8703f', layout:'trois', density:'confort', zoom:'m', radius:'doux', side:'shown',
+  preview:'1', avatars:'on', groups:'on', unified:'on', qa:['archive','trash','read','star'], after:'next',
+  markRead:'delay', images:'ask', mailbg:'blanc', mailZoom:'100', labels:'off', readw:'normal',
+  font:'Inter', fsize:'14', undoSend:'5', compWin:'float', noSubjWarn:'on', keys:'on', counts:'unread'
+};
+let SET = { ...DEF_SET, ...J('hamama-settings', {}) };
+const ZOOMS = { s:.9, m:1, l:1.1, xl:1.25 };
+function setAccent(hex){
+  const n = parseInt(hex.slice(1), 16), r = document.documentElement;
+  r.style.setProperty('--accent', hex); r.style.setProperty('--accent-rgb', `${n>>16&255},${n>>8&255},${n&255}`);
+}
+function applySettings(save = true){
+  const r = document.documentElement, d = r.dataset;
+  d.theme = SET.theme; d.layout = SET.layout; d.density = SET.density; d.radius = SET.radius; d.side = SET.side;
+  d.preview = SET.preview; d.avatars = SET.avatars; d.labels = SET.labels; d.mailbg = SET.mailbg;
+  r.style.setProperty('--readw', { normal:'980px', large:'1240px', plein:'100%' }[SET.readw] || '980px');
+  document.body.style.zoom = ZOOMS[SET.zoom] || 1;
+  setAccent(SET.accent);
+  if (save) store.set('hamama-settings', JSON.stringify(SET));
+  if (N && N.setTitleBar){
+    const cs = getComputedStyle(r);
+    try { N.setTitleBar({ color: cs.getPropertyValue('--bg').trim(), symbolColor: cs.getPropertyValue('--text').trim(), height: Math.round((parseInt(cs.getPropertyValue('--hh')) || 52) * (ZOOMS[SET.zoom] || 1)) }); } catch {}
+  }
+}
+applySettings(false);
+if (N){ document.documentElement.classList.add('desk', 'plat-' + N.platform); }
+
+/* ================= État ================= */
+const ST = {
+  accounts: [], providers: {}, oauth: {}, folders: {}, accErr: {},
+  view: null,            // { uni:true } ou { acc, box }
+  items: [], more: false, ulimit: 40, total: 0,
+  filter: 'all', search: null, scope: 'box',
+  sel: new Set(), anchor: null, open: null, msg: null, selMode: false
+};
+const ROLE_IC = { inbox:'inbox', drafts:'draft', sent:'send', archive:'archive', junk:'junk', trash:'trash', flagged:'star', all:'all' };
+const accOf = id => ST.accounts.find(a => a.id === id);
+const accColor = a => a ? (a.color || AVC[hash(a.email) % AVC.length]) : '#888';
+const accLabel = a => a ? (a.label || a.email) : '';
+const folderOf = (acc, box) => (ST.folders[acc] || []).find(f => f.path === box);
+const itemOf = key => ST.items.find(i => i.key === key);
+const viewKey = () => ST.view ? (ST.view.uni ? 'uni' : ST.view.acc + '|' + ST.view.box) : '';
+const myAddrs = () => new Set(ST.accounts.map(a => a.email.toLowerCase()));
+const collapsed = new Set(J('hamama-collapsed', []));
+
+/* ================= Contacts (saisie automatique) ================= */
+const CONTACTS = new Map(J('hamama-contacts', []));
+let contactsDirty = false;
+function learn(a, w = 0.2){
+  if (!a || !a.address || !/@/.test(a.address)) return;
+  const k = a.address.toLowerCase(); if (/no-?reply|ne-pas-repondre|notification|mailer-daemon/.test(k)) return;
+  const c = CONTACTS.get(k) || [a.name || '', 0, 0];
+  if (a.name && !c[0]) c[0] = a.name;
+  c[1] = Math.min(999, c[1] + w); c[2] = Date.now(); CONTACTS.set(k, c); contactsDirty = true;
+}
+setInterval(() => { if (!contactsDirty) return; contactsDirty = false; const arr = [...CONTACTS].sort((a, b) => b[1][1] - a[1][1]).slice(0, 2500); store.set('hamama-contacts', JSON.stringify(arr)); }, 5000);
+
+/* ================= Barre latérale : dossiers ================= */
+function unseenTotal(){ let n = 0; for (const a of ST.accounts){ const f = (ST.folders[a.id] || []).find(x => x.role === 'inbox'); if (f) n += f.unseen; } return n; }
+function renderSide(){
+  const vk = viewKey(), el = $('#folders');
+  let h = '';
+  if (ST.accounts.length > 1 && SET.unified === 'on'){
+    const n = unseenTotal();
+    h += `<button class="fold uni${vk === 'uni' ? ' on' : ''}${n ? ' unread' : ''}" data-uni="1">${ic('layers')}<span class="t">Toutes les boîtes</span>${n ? `<span class="n">${n}</span>` : ''}</button>`;
+  }
+  for (const a of ST.accounts){
+    const fl = ST.folders[a.id] || [];
+    h += `<div class="acct${collapsed.has(a.id) ? ' closed' : ''}" data-acc="${a.id}"><div class="ah" data-ah="${a.id}"><span class="dot" style="background:${accColor(a)}"></span><span class="nm">${esc(accLabel(a))}</span>${ic('chev')}</div>`;
+    if (ST.accErr[a.id]) h += `<div class="err" data-fix="${a.id}">${esc(ST.accErr[a.id]).slice(0, 120)}</div>`;
+    h += '<div class="fs">';
+    if (!fl.length && !ST.accErr[a.id]) h += '<div class="skel" style="height:30px;margin:4px 6px"></div><div class="skel" style="height:30px;margin:4px 6px"></div>';
+    for (const f of fl){
+      const n = SET.counts === 'none' ? 0 : SET.counts === 'total' && !['inbox','junk'].includes(f.role) ? f.total : f.unseen;
+      const unread = f.unseen && f.role !== 'trash' && f.role !== 'sent';
+      h += `<button class="fold${vk === a.id + '|' + f.path ? ' on' : ''}${unread ? ' unread' : ''}" data-acc="${a.id}" data-box="${esc(f.path)}" style="padding-left:${10 + f.depth * 16}px">${ic(ROLE_IC[f.role] || 'folder')}<span class="t">${esc(f.name)}</span>${n && (f.role !== 'trash' && f.role !== 'sent' || SET.counts === 'total') ? `<span class="n">${n}</span>` : ''}</button>`;
+    }
+    h += '</div></div>';
+  }
+  el.innerHTML = h;
+  const n = unseenTotal();
+  document.title = n ? `Hamama (${n})` : 'Hamama';
+  if (N) N.badge(n).catch(() => {});
+}
+$('#folders').addEventListener('click', e => {
+  const u = e.target.closest('[data-uni]'); if (u) return openView({ uni: true });
+  const f = e.target.closest('.fold[data-box]'); if (f) return openView({ acc: f.dataset.acc, box: f.dataset.box });
+  const ah = e.target.closest('[data-ah]');
+  if (ah){ const id = ah.dataset.ah; collapsed.has(id) ? collapsed.delete(id) : collapsed.add(id); store.set('hamama-collapsed', JSON.stringify([...collapsed])); ah.parentNode.classList.toggle('closed'); return; }
+  const fx = e.target.closest('[data-fix]'); if (fx) return openAccount(fx.dataset.fix);
+});
+$('#folders').addEventListener('contextmenu', e => {
+  const f = e.target.closest('.fold[data-box]'), ah = e.target.closest('[data-ah]');
+  if (!f && !ah) return;
+  e.preventDefault();
+  if (ah){
+    const id = ah.dataset.ah;
+    return menu([
+      { ic:'refresh', label:'Actualiser', fn: () => loadFolders(id) },
+      { ic:'folder-plus', label:'Nouveau dossier…', fn: () => newFolder(id) },
+      '-', { ic:'settings', label:'Réglages du compte…', fn: () => openAccount(id) }
+    ], e.clientX, e.clientY);
+  }
+  const acc = f.dataset.acc, box = f.dataset.box, fo = folderOf(acc, box) || {};
+  menu([
+    { ic:'checks', label:'Tout marquer comme lu', disabled: !fo.unseen, fn: () => markAllRead(acc, box) },
+    { ic:'folder-plus', label:'Nouveau sous-dossier…', fn: () => newFolder(acc, box) },
+    { ic:'edit', label:'Renommer…', disabled: !!fo.role, fn: () => renameFolder(acc, box) },
+    (fo.role === 'trash' || fo.role === 'junk') ? { ic:'trash', label:'Vider ' + (fo.role === 'trash' ? 'la corbeille' : 'les indésirables'), red: true, disabled: !fo.total, fn: () => emptyFolder(acc, box) } : null,
+    !fo.role ? '-' : null,
+    !fo.role ? { ic:'trash', label:'Supprimer le dossier', red: true, fn: () => deleteFolder(acc, box) } : null
+  ], e.clientX, e.clientY);
+});
+// Glisser des messages sur un dossier
+$('#folders').addEventListener('dragover', e => {
+  const f = e.target.closest('.fold[data-box]'); if (!f || !DRAG) return;
+  if (DRAG.some(k => k.split('|')[0] === f.dataset.acc)){ e.preventDefault(); e.dataTransfer.dropEffect = 'move'; f.classList.add('drop'); }
+});
+$('#folders').addEventListener('dragleave', e => { const f = e.target.closest('.fold'); f && f.classList.remove('drop'); });
+$('#folders').addEventListener('drop', e => {
+  const f = e.target.closest('.fold[data-box]'); if (!f || !DRAG) return; e.preventDefault(); f.classList.remove('drop');
+  const keys = DRAG.filter(k => k.split('|')[0] === f.dataset.acc); DRAG = null;
+  act('move', keys, f.dataset.box);
+});
+
+async function loadFolders(id){
+  try { ST.folders[id] = await N.mail.folders(id); delete ST.accErr[id]; }
+  catch (e) { ST.accErr[id] = cleanErr(e); }
+  renderSide();
+}
+const loadAllFolders = () => Promise.all(ST.accounts.map(a => loadFolders(a.id)));
+let foldT = null;
+const refreshFoldersSoon = (id, ms = 1500) => { clearTimeout(foldT); foldT = setTimeout(() => id ? loadFolders(id) : loadAllFolders(), ms); };
+function bumpUnseen(acc, box, d){ const f = folderOf(acc, box); if (f){ f.unseen = Math.max(0, f.unseen + d); renderSide(); } }
+
+async function newFolder(acc, parent){
+  const n = await promptBox('Nouveau dossier', parent ? `Dans « ${(folderOf(acc, parent) || {}).name || parent} »` : 'Nom du dossier', '', 'Créer'); if (!n) return;
+  const f = folderOf(acc, parent); const path = parent ? parent + ((f && f.delimiter) || '/') + n : n;
+  try { ST.folders[acc] = await N.mail.mkdir(acc, path); renderSide(); toast('Dossier créé'); } catch (e) { errToast(e); }
+}
+async function renameFolder(acc, box){
+  const f = folderOf(acc, box); const n = await promptBox('Renommer le dossier', 'Nouveau nom', f.name, 'Renommer'); if (!n || n === f.name) return;
+  const parts = box.split(f.delimiter || '/'); parts[parts.length - 1] = n;
+  try { ST.folders[acc] = await N.mail.rename(acc, box, parts.join(f.delimiter || '/')); renderSide(); } catch (e) { errToast(e); }
+}
+async function deleteFolder(acc, box){
+  const f = folderOf(acc, box);
+  if (!await confirmBox('Supprimer le dossier ?', `« ${f.name} » et les messages qu’il contient seront supprimés définitivement.`, 'Supprimer', true)) return;
+  try { ST.folders[acc] = await N.mail.rmdir(acc, box); if (viewKey() === acc + '|' + box) openDefault(); renderSide(); } catch (e) { errToast(e); }
+}
+async function emptyFolder(acc, box){
+  const f = folderOf(acc, box);
+  if (!await confirmBox(`Vider « ${f.name} » ?`, `${plural(f.total, 'message')} ser${f.total > 1 ? 'ont' : 'a'} supprimé${f.total > 1 ? 's' : ''} définitivement.`, 'Vider', true)) return;
+  try { await N.mail.empty(acc, box); f.total = 0; f.unseen = 0; renderSide(); if (viewKey() === acc + '|' + box){ ST.items = []; renderList(); showEmptyView(); } toast('Dossier vidé'); } catch (e) { errToast(e); }
+}
+async function markAllRead(acc, box){
+  try {
+    if (ST.view && ST.view.uni) await Promise.all(ST.accounts.map(a => N.mail.allRead(a.id, 'INBOX')));
+    else await N.mail.allRead(acc, box);
+    ST.items.forEach(i => { if (ST.view.uni || (i.acc === acc && i.box === box)) i.seen = true; });
+    (ST.view.uni ? ST.accounts.map(a => folderOf(a.id, 'INBOX')) : [folderOf(acc, box)]).forEach(f => f && (f.unseen = 0));
+    renderSide(); renderList();
+  } catch (e) { errToast(e); }
+}
+
+/* ================= Liste des messages ================= */
+let loadTok = 0;
+const setBusy = b => $('#lbar').classList.toggle('on', !!b);
+function viewTitle(){
+  if (ST.search) return `Résultats « ${ST.search} »`;
+  if (!ST.view) return '';
+  if (ST.view.uni) return 'Toutes les boîtes';
+  const f = folderOf(ST.view.acc, ST.view.box);
+  return f ? f.name : ST.view.box;
+}
+async function openView(v, { keepOpen = false } = {}){
+  ST.view = v; ST.search = null; $('#q').value = ''; ST.sel.clear(); ST.more = false; ST.ulimit = 40;
+  if (!keepOpen){ ST.open = null; ST.msg = null; showEmptyView(); document.documentElement.classList.remove('reading'); }
+  store.set('hamama-view', JSON.stringify(v));
+  renderSide(); $('#ltitle').textContent = viewTitle();
+  ST.items = [];
+  if (!v.uni){ try { const c = await N.mail.cached(v.acc, v.box); if (c.items && viewKey() === v.acc + '|' + v.box) ST.items = c.items; } catch {} }
+  renderList(!ST.items.length);
+  return refreshList();
+}
+function openDefault(){
+  const saved = J('hamama-view', null);
+  if (saved && (saved.uni ? ST.accounts.length > 1 && SET.unified === 'on' : accOf(saved.acc))) return openView(saved);
+  if (ST.accounts.length > 1 && SET.unified === 'on') return openView({ uni: true });
+  if (ST.accounts[0]) return openView({ acc: ST.accounts[0].id, box: 'INBOX' });
+}
+async function refreshList(){
+  const v = ST.view; if (!v || ST.search) return;
+  const tok = ++loadTok; setBusy(true);
+  try {
+    let r;
+    if (v.uni){ r = await N.mail.unified({ limit: ST.ulimit }); r.errors && r.errors.forEach(x => ST.accErr[x.acc] = x.err); }
+    else r = await N.mail.list(v.acc, v.box, { offset: 0, limit: Math.max(50, Math.min(200, ST.items.length || 50)) });
+    if (tok !== loadTok) return;
+    ST.items = r.items; ST.more = r.more; ST.total = r.total || r.items.length;
+    if (!v.uni) delete ST.accErr[v.acc];
+    r.items.forEach(i => i.from && i.from[0] && learn(i.from[0], 0.05));
+    renderList();
+  } catch (e) {
+    if (tok !== loadTok) return;
+    if (!v.uni){ ST.accErr[v.acc] = cleanErr(e); renderSide(); }
+    renderList(); errToast(e);
+  } finally { if (tok === loadTok) setBusy(false); }
+}
+async function loadMore(){
+  const v = ST.view; if (!v || !ST.more) return;
+  if (v.uni){ ST.ulimit += 40; return refreshList(); }
+  setBusy(true);
+  try {
+    const r = await N.mail.list(v.acc, v.box, { offset: ST.items.length, limit: 50 });
+    const have = new Set(ST.items.map(i => i.key));
+    ST.items.push(...r.items.filter(i => !have.has(i.key))); ST.more = r.more; renderList();
+  } catch (e) { errToast(e); } finally { setBusy(false); }
+}
+const visible = () => ST.items.filter(i => ST.filter === 'all' || (ST.filter === 'unread' && !i.seen) || (ST.filter === 'flagged' && i.flagged) || (ST.filter === 'att' && i.att));
+function itemHTML(i){
+  const role = (folderOf(i.acc, i.box) || {}).role;
+  const who = (role === 'sent' || role === 'drafts' || i.draft) ? (i.to || []).map(nameOf).join(', ') || '(sans destinataire)' : nameOf(i.from && i.from[0]) || '(inconnu)';
+  const whoA = (role === 'sent' || role === 'drafts') ? (i.to || [])[0] : (i.from || [])[0];
+  const cls = ['it', i.seen ? '' : 'unread', ST.open === i.key ? 'on' : '', ST.sel.has(i.key) && ST.sel.size > 0 && (ST.sel.size > 1 || ST.selMode) ? 'sel' : ''].join(' ');
+  const a = accOf(i.acc);
+  const qa = SET.qa.map(q => ({
+    archive: `<button class="ibtn" data-q="archive" title="Archiver (E)">${ic('archive')}</button>`,
+    trash: `<button class="ibtn del" data-q="trash" title="Supprimer (Suppr)">${ic('trash')}</button>`,
+    read: `<button class="ibtn" data-q="${i.seen ? 'unread' : 'read'}" title="${i.seen ? 'Marquer comme non lu (U)' : 'Marquer comme lu (U)'}">${ic(i.seen ? 'mail' : 'mail-open')}</button>`,
+    star: `<button class="ibtn" data-q="${i.flagged ? 'unstar' : 'star'}" title="${i.flagged ? 'Ne plus suivre (S)' : 'Suivre (S)'}">${ic('star')}</button>`
+  }[q] || '')).join('');
+  return `<div class="${cls}" data-k="${esc(i.key)}" draggable="true">
+    ${avatar(whoA || { name: who }).replace('</div>', `<span class="ck">${ic('check')}</span></div>`)}
+    <div class="bd"><div class="r1"><span class="fr">${i.draft || role === 'drafts' ? '<span style="color:#f87171">Brouillon</span> · ' : ''}${esc(who)}</span><span class="dt">${ST.view && ST.view.uni || ST.search ? `<span class="adot" style="background:${accColor(a)}" title="${esc(accLabel(a))}"></span>` : ''}${fmtDate(i.date)}</span></div>
+    <div class="sb"><span class="s">${esc(i.subject || '(sans objet)')}</span>${i.att ? ic('clip') : ''}${i.answered ? `<span title="Répondu" style="display:flex">${ic('reply')}</span>` : ''}${i.flagged ? `<span class="star" style="display:flex">${ic('star')}</span>` : ''}</div>
+    <div class="pv">${esc(i.preview || '')}</div></div>
+    ${qa ? `<div class="qa">${qa}</div>` : ''}</div>`;
+}
+function renderList(skeleton){
+  const el = $('#list'), items = visible();
+  $('#ltitle').innerHTML = esc(viewTitle()) + (ST.search ? ` <small>${items.length}</small>` : '');
+  document.querySelectorAll('#chips button').forEach(b => b.classList.toggle('on', b.dataset.f === ST.filter));
+  $('#allReadBtn').classList.toggle('hidden', !!ST.search);
+  if (skeleton){ el.innerHTML = '<div class="skel"></div>'.repeat(8); return; }
+  if (!items.length){
+    const msg = ST.search ? ['', 'Aucun résultat', 'Essaie un autre mot, ou cherche « Partout ».'] : ST.filter !== 'all' ? ['', 'Rien ici', 'Aucun message ne correspond à ce filtre.'] : ['', 'Aucun message', 'Ce dossier est vide.'];
+    el.innerHTML = `<div class="lempty"><b>${msg[1]}</b><br>${msg[2]}</div>`;
+  } else {
+    let h = '', g = null;
+    for (const i of items){
+      if (SET.groups === 'on' && !ST.search){ const gg = grpOf(i.date); if (gg !== g){ g = gg; h += `<div class="grp">${esc(g)}</div>`; } }
+      h += itemHTML(i);
+    }
+    if (ST.more && !ST.search && ST.filter === 'all') h += '<button class="btn ghost more" id="moreBtn">Charger plus de messages</button>';
+    el.innerHTML = h;
+  }
+  renderBulk();
+}
+function renderBulk(){
+  const n = ST.sel.size, show = n > 1 || (ST.selMode && n > 0);
+  $('#bulk').classList.toggle('hidden', !show);
+  $('#list').classList.toggle('selmode', ST.selMode);
+  $('#selModeBtn').classList.toggle('on', ST.selMode);
+  if (show){ $('#bulkN').textContent = n + (n > 1 ? ' sélectionnés' : ' sélectionné'); if (n > 1) showMultiView(n); }
+}
+function updateItemEl(i){ const el = $(`#list .it[data-k="${CSS.escape(i.key)}"]`); if (el) el.outerHTML = itemHTML(i); }
+
+$('#chips').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; ST.filter = b.dataset.f; renderList(); });
+$('#list').addEventListener('click', e => {
+  if (e.target.closest('#moreBtn')) return loadMore();
+  const it = e.target.closest('.it'); if (!it) return;
+  const key = it.dataset.k;
+  const q = e.target.closest('[data-q]');
+  if (q){ e.stopPropagation(); return act(q.dataset.q, [key]); }
+  if (e.target.closest('.av') && SET.avatars === 'on' || ST.selMode){ toggleSel(key); return; }
+  if (e.shiftKey && ST.anchor){
+    const vis = visible().map(i => i.key), a = vis.indexOf(ST.anchor), b = vis.indexOf(key);
+    if (a >= 0 && b >= 0){ ST.sel = new Set(vis.slice(Math.min(a, b), Math.max(a, b) + 1)); renderList(); return; }
+  }
+  if (e.ctrlKey || e.metaKey){ if (!ST.sel.size && ST.open) ST.sel.add(ST.open); toggleSel(key); return; }
+  ST.sel = new Set([key]); ST.anchor = key; openMsg(key);
+});
+$('#list').addEventListener('dblclick', e => { const it = e.target.closest('.it'); if (!it) return; const i = itemOf(it.dataset.k); if (i && (i.draft || (folderOf(i.acc, i.box) || {}).role === 'drafts')) openDraft(i); });
+function toggleSel(key){
+  ST.sel.has(key) ? ST.sel.delete(key) : ST.sel.add(key); ST.anchor = key;
+  if (!ST.sel.size && ST.selMode && false) ST.selMode = false;
+  renderList(); if (ST.sel.size <= 1 && !ST.selMode && ST.open) openMsg(ST.open, { keepSel: true });
+  if (!ST.sel.size && ST.open == null) showEmptyView();
+}
+$('#selModeBtn').onclick = () => { ST.selMode = !ST.selMode; if (!ST.selMode) ST.sel.clear(); renderList(); };
+$('#allReadBtn').onclick = () => ST.view && markAllRead(ST.view.acc, ST.view.box);
+$('#bulk').addEventListener('click', e => {
+  const b = e.target.closest('[data-b]'); if (!b) return;
+  const keys = [...ST.sel];
+  if (b.dataset.b === 'clear'){ ST.sel.clear(); ST.selMode = false; renderList(); if (ST.open) openMsg(ST.open); else showEmptyView(); return; }
+  if (b.dataset.b === 'move') return pickFolder(keys, b);
+  act(b.dataset.b, keys);
+});
+$('#list').addEventListener('contextmenu', e => {
+  const it = e.target.closest('.it'); if (!it) return; e.preventDefault();
+  const key = it.dataset.k; if (!ST.sel.has(key)){ ST.sel = new Set([key]); renderList(); }
+  const keys = [...ST.sel], i = itemOf(key), multi = keys.length > 1;
+  menu([
+    !multi ? { ic:'eye', label:'Ouvrir', fn: () => openMsg(key) } : null,
+    !multi ? { ic:'reply', label:'Répondre', kbd:'R', fn: () => replyTo(key, 'reply') } : null,
+    !multi ? { ic:'reply-all', label:'Répondre à tous', kbd:'A', fn: () => replyTo(key, 'all') } : null,
+    !multi ? { ic:'forward', label:'Transférer', kbd:'F', fn: () => replyTo(key, 'fwd') } : null,
+    !multi ? '-' : null,
+    { ic: i.seen ? 'mail' : 'mail-open', label: i.seen ? 'Marquer comme non lu' : 'Marquer comme lu', kbd:'U', fn: () => act(i.seen ? 'unread' : 'read', keys) },
+    { ic:'star', label: i.flagged ? 'Ne plus suivre' : 'Suivre', kbd:'S', fn: () => act(i.flagged ? 'unstar' : 'star', keys) },
+    '-',
+    { ic:'archive', label:'Archiver', kbd:'E', fn: () => act('archive', keys) },
+    { ic:'folder-in', label:'Déplacer vers…', kbd:'V', fn: () => pickFolder(keys, null, e.clientX, e.clientY) },
+    { ic:'junk', label:'Indésirable', fn: () => act('junk', keys) },
+    { ic:'trash', label:'Supprimer', kbd:'Suppr', red: true, fn: () => act('trash', keys) }
+  ], e.clientX, e.clientY);
+});
+let DRAG = null;
+$('#list').addEventListener('dragstart', e => {
+  const it = e.target.closest('.it'); if (!it) return;
+  if (!ST.sel.has(it.dataset.k)){ ST.sel = new Set([it.dataset.k]); }
+  DRAG = [...ST.sel];
+  e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', DRAG.length + ' message(s)');
+  const g = document.createElement('div'); g.className = 'toast'; g.style.cssText = 'position:fixed;top:-100px;left:0'; g.textContent = `${plural(DRAG.length, 'message')}`; document.body.appendChild(g);
+  e.dataTransfer.setDragImage(g, 20, 20); setTimeout(() => g.remove(), 0);
+});
+$('#list').addEventListener('dragend', () => { DRAG = null; document.querySelectorAll('.fold.drop').forEach(f => f.classList.remove('drop')); });
+
+/** Sélecteur de dossier (Déplacer vers…) */
+function pickFolder(keys, btn, x, y){
+  const accs = [...new Set(keys.map(k => k.split('|')[0]))];
+  if (accs.length > 1) return toast('Déplacer : choisis des messages d’un seul compte');
+  const acc = accs[0], cur = keys[0].split('|')[1];
+  closeMenu();
+  const el = document.createElement('div'); el.className = 'fpick';
+  const fl = (ST.folders[acc] || []).filter(f => f.path !== cur);
+  el.innerHTML = `<input class="field" placeholder="Déplacer vers…" spellcheck="false"><div class="fpl">${fl.map(f => `<button class="fold" data-p="${esc(f.path)}" style="padding-left:${10 + f.depth * 14}px">${ic(ROLE_IC[f.role] || 'folder')}<span class="t">${esc(f.name)}</span></button>`).join('')}</div>`;
+  if (btn){ const r = btn.getBoundingClientRect(); x = r.left; y = r.bottom + 4; }
+  menuEl = el; popAt(el, x || innerWidth / 2 - 140, y || 120);
+  const inp = el.querySelector('input');
+  inp.oninput = () => { const q = inp.value.toLowerCase(); el.querySelectorAll('[data-p]').forEach(b => b.style.display = b.textContent.toLowerCase().includes(q) ? '' : 'none'); };
+  inp.onkeydown = e => { e.stopPropagation(); if (e.key === 'Escape') closeMenu(); if (e.key === 'Enter'){ const b = [...el.querySelectorAll('[data-p]')].find(b => b.style.display !== 'none'); b && b.click(); } };
+  el.querySelectorAll('[data-p]').forEach(b => b.onclick = () => { closeMenu(); act('move', keys, b.dataset.p); });
+  setTimeout(() => { document.addEventListener('mousedown', menuOut, true); inp.focus(); }, 0);
+}
+
+/* ================= Actions (optimistes, avec Annuler) ================= */
+function groupKeys(keys){
+  const g = new Map();
+  for (const k of keys){ const [acc, box, uid] = [k.split('|')[0], k.split('|').slice(1, -1).join('|'), +k.split('|').pop()]; const gk = acc + '\u0000' + box; if (!g.has(gk)) g.set(gk, { acc, box, uids: [] }); g.get(gk).uids.push(uid); }
+  return [...g.values()];
+}
+function nextAfter(keys){
+  const vis = visible().map(i => i.key); if (!ST.open || !keys.includes(ST.open)) return ST.open;
+  const idx = vis.indexOf(ST.open), rest = vis.filter(k => !keys.includes(k));
+  if (SET.after === 'list') return null;
+  if (SET.after === 'prev'){ for (let j = idx - 1; j >= 0; j--) if (!keys.includes(vis[j])) return vis[j]; }
+  for (let j = idx + 1; j < vis.length; j++) if (!keys.includes(vis[j])) return vis[j];
+  for (let j = idx - 1; j >= 0; j--) if (!keys.includes(vis[j])) return vis[j];
+  return rest[0] || null;
+}
+async function act(kind, keys, dest){
+  keys = keys.filter(Boolean); if (!keys.length) return;
+  const items = keys.map(itemOf).filter(Boolean);
+  if (['read','unread','star','unstar'].includes(kind)){
+    const f = { read:{ seen:true }, unread:{ seen:false }, star:{ flagged:true }, unstar:{ flagged:false } }[kind];
+    items.forEach(i => { if ('seen' in f && i.seen !== f.seen) bumpUnseen(i.acc, i.box, f.seen ? -1 : 1); Object.assign(i, f); updateItemEl(i); });
+    if (ST.msg && keys.includes(ST.msg.key)){ Object.assign(ST.msg, f); renderViewBar(); }
+    try { await Promise.all(groupKeys(keys).map(g => N.mail.flags(g.acc, g.box, g.uids, f))); }
+    catch (e) { errToast(e); refreshList(); }
+    return;
+  }
+  // déplacements : archiver, supprimer, indésirable, déplacer
+  const role = { archive:'archive', trash:'trash', junk:'junk' }[kind];
+  const groups = groupKeys(keys);
+  if (kind === 'trash' && groups.every(g => (folderOf(g.acc, g.box) || {}).role === 'trash')){
+    if (!await confirmBox('Supprimer définitivement ?', `${plural(keys.length, 'message')} ser${keys.length > 1 ? 'ont' : 'a'} effacé${keys.length > 1 ? 's' : ''} pour de bon.`, 'Supprimer', true)) return;
+  }
+  const nxt = nextAfter(keys);
+  const removed = items.slice();
+  ST.items = ST.items.filter(i => !keys.includes(i.key)); keys.forEach(k => ST.sel.delete(k));
+  items.forEach(i => { if (!i.seen) bumpUnseen(i.acc, i.box, -1); });
+  if (ST.open && keys.includes(ST.open)){ ST.open = null; if (nxt) openMsg(nxt); else { showEmptyView(); document.documentElement.classList.remove('reading'); } }
+  renderList();
+  try {
+    const res = await Promise.all(groups.map(g => role ? N.mail.role(g.acc, g.box, g.uids, role) : N.mail.move(g.acc, g.box, g.uids, dest)));
+    const label = { archive:'archivé', trash:'supprimé', junk:'marqué indésirable', move:'déplacé' }[kind];
+    const n = keys.length, txt = `${n > 1 ? n + ' messages ' + label + 's' : 'Message ' + label}`;
+    const undoable = res.every(r => r && r.uidMap && Object.keys(r.uidMap).length);
+    toast(kind === 'move' ? `${txt} vers « ${(folderOf(groups[0].acc, dest) || {}).name || dest} »` : txt, undoable ? { label:'Annuler', fn: async () => {
+      try {
+        await Promise.all(groups.map((g, j) => N.mail.move(g.acc, res[j].dest, Object.values(res[j].uidMap), g.box)));
+        toast('Restauré'); refreshList(); groups.forEach(g => refreshFoldersSoon(g.acc, 300));
+      } catch (e) { errToast(e); }
+    } } : null);
+    groups.forEach(g => refreshFoldersSoon(g.acc));
+  } catch (e) {
+    errToast(e); ST.items.push(...removed); ST.items.sort((a, b) => new Date(b.date) - new Date(a.date)); renderList(); refreshList();
+  }
+}
+
+/* ================= Lecture d’un message ================= */
+const IMG_OK = new Set(J('hamama-img-ok', []));
+let openTok = 0, readT = null;
+function showEmptyView(){
+  ST.msg = null;
+  $('#view').innerHTML = `<div class="vempty" style="height:100%"><div><div class="big">${ic('mail-open')}</div><h3>Aucun message sélectionné</h3><div>Choisis un message dans la liste pour le lire ici.</div>
+    ${SET.keys === 'on' ? `<div class="keys"><span><kbd class="k">N</kbd> nouveau</span><span><kbd class="k">J</kbd> <kbd class="k">K</kbd> naviguer</span><span><kbd class="k">R</kbd> répondre</span><span><kbd class="k">E</kbd> archiver</span><span><kbd class="k">?</kbd> tous les raccourcis</span></div>` : ''}</div></div>`;
+}
+function showMultiView(n){
+  $('#view').innerHTML = `<div class="vempty" style="height:100%"><div><div class="big">${ic('square-check')}</div><h3>${n} messages sélectionnés</h3><div>Utilise la barre au-dessus de la liste, ou :</div>
+    <div class="row" style="justify-content:center;margin-top:18px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost" data-m="read">${ic('mail-open')}Lu</button><button class="btn ghost" data-m="archive">${ic('archive')}Archiver</button><button class="btn ghost" data-m="trash">${ic('trash')}Supprimer</button></div></div></div>`;
+  $('#view').querySelectorAll('[data-m]').forEach(b => b.onclick = () => act(b.dataset.m, [...ST.sel]));
+}
+const mailIsDark = () => SET.mailbg === 'theme' && SET.theme !== 'clair';
+function sanitizeMailHtml(html){
+  const d = new DOMParser().parseFromString(html, 'text/html');
+  d.querySelectorAll('script,meta,base,iframe,frame,frameset,object,embed,applet,form button[type=submit],link[rel=import],noscript').forEach(n => n.remove());
+  d.querySelectorAll('*').forEach(n => { for (const a of [...n.attributes]){ if (/^on/i.test(a.name) || (/^(href|src|action|formaction|xlink:href)$/i.test(a.name) && /^\s*(javascript|vbscript|file):/i.test(a.value))) n.removeAttribute(a.name); } });
+  d.querySelectorAll('form').forEach(f => { f.removeAttribute('action'); f.setAttribute('onsubmit', ''); f.removeAttribute('onsubmit'); });
+  const styles = [...d.querySelectorAll('style')].map(s => s.outerHTML).join('');
+  d.querySelectorAll('style').forEach(s => s.remove());
+  return { styles, body: d.body ? d.body.innerHTML : '' };
+}
+const linkify = s => esc(s).replace(/(https?:\/\/[^\s<>"']+[^\s<>"'.,;:!?)\]])/g, '<a href="$1">$1</a>').replace(/(^|\n)(&gt;[^\n]*)/g, '$1<span style="color:#777">$2</span>');
+function mailDoc(m, allowImg){
+  const csp = allowImg ? "default-src 'none'; img-src data: blob: https: http:; style-src 'unsafe-inline' https:; font-src data: https:; media-src data: https:"
+                       : "default-src 'none'; img-src data: blob:; style-src 'unsafe-inline'; font-src data:";
+  const dark = mailIsDark();
+  let styles = '', body = '';
+  if (m.html){ const s = sanitizeMailHtml(m.html); styles = s.styles; body = s.body; }
+  else body = `<div style="white-space:pre-wrap;font-family:inherit">${linkify(m.text || '')}</div>`;
+  const z = (+SET.mailZoom || 100) / 100;
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="${csp}"><base target="_blank">${styles}
+<style>html{zoom:${z}}body{margin:0;padding:22px 26px;font:14px/1.6 Inter,"Segoe UI",Arial,sans-serif;color:#1d1d1f;background:${dark ? '#fff' : 'transparent'};word-wrap:break-word;overflow-wrap:anywhere;overflow-x:auto}
+img{max-width:100%;height:auto}pre{white-space:pre-wrap}a{color:#1a73e8}blockquote{margin:8px 0;padding-left:12px;border-left:3px solid #d0d4dc;color:#555}table{max-width:100%}
+${dark ? 'html{filter:invert(.9) hue-rotate(180deg)}img,video,picture,[style*="background-image"]{filter:invert(1) hue-rotate(180deg)}' : ''}</style></head><body>${body}</body></html>`;
+}
+function hasRemote(m){ return !!m.html && /<img[^>]+src\s*=\s*["']?\s*https?:|url\(\s*["']?https?:|<link[^>]+href\s*=\s*["']?https?:/i.test(m.html); }
+async function openMsg(key, { keepSel = false } = {}){
+  const i = itemOf(key); if (!i) return;
+  if (i.draft || (folderOf(i.acc, i.box) || {}).role === 'drafts') { ST.open = key; renderList(); return openDraft(i); }
+  ST.open = key; if (!keepSel){ ST.sel = new Set([key]); }
+  document.documentElement.classList.add('reading');
+  $('#list').querySelectorAll('.it.on').forEach(e => e.classList.remove('on'));
+  const el = $(`#list .it[data-k="${CSS.escape(key)}"]`); if (el){ el.classList.add('on'); el.scrollIntoView({ block:'nearest' }); }
+  renderBulk();
+  const tok = ++openTok; clearTimeout(readT);
+  // affichage immédiat de l’en-tête, le corps arrive ensuite
+  renderView({ ...i, loading: true });
+  const markNow = SET.markRead === 'now';
+  try {
+    const m = await N.mail.get(i.acc, i.box, i.uid, { markSeen: markNow });
+    if (tok !== openTok) return;
+    m.key = key; ST.msg = m;
+    if (!i.seen && markNow){ i.seen = true; bumpUnseen(i.acc, i.box, -1); updateItemEl(i); markOn(key); }
+    else if (!i.seen && SET.markRead === 'delay') readT = setTimeout(() => { if (ST.open === key && !i.seen) act('read', [key]); }, 2000);
+    (m.from || []).forEach(a => learn(a, 0.3));
+    renderView(m);
+  } catch (e) {
+    if (tok !== openTok) return;
+    $('#view').innerHTML = `<div class="vempty" style="height:100%"><div><div class="big">${ic('junk')}</div><h3>Impossible d’ouvrir ce message</h3><div>${esc(cleanErr(e))}</div><div class="row" style="justify-content:center;margin-top:16px;display:flex"><button class="btn ghost" id="retryOpen">${ic('refresh')}Réessayer</button></div></div></div>`;
+    $('#retryOpen').onclick = () => openMsg(key);
+  }
+}
+const markOn = key => { const el = $(`#list .it[data-k="${CSS.escape(key)}"]`); if (el) el.classList.add('on'); };
+function renderViewBar(){
+  const m = ST.msg; const b = $('.vbar [data-v=star]'); if (!m || !b) return;
+  b.classList.toggle('starred', !!m.flagged); b.dataset.tip = m.flagged ? 'Ne plus suivre (S)' : 'Suivre (S)';
+}
+function renderView(m){
+  const a = accOf(m.acc), from = (m.from || [])[0] || {}, role = (folderOf(m.acc, m.box) || {}).role;
+  const to = (m.to || []).map(x => `<span class="addr" data-addr="${esc(x.address)}" title="${esc(x.address)}">${esc(nameOf(x))}</span>`).join(', ');
+  const cc = (m.cc || []).map(x => `<span class="addr" data-addr="${esc(x.address)}" title="${esc(x.address)}">${esc(nameOf(x))}</span>`).join(', ');
+  const allowImg = SET.images === 'always' || IMG_OK.has((from.address || '').toLowerCase()) || m._imgs;
+  const blocked = !m.loading && !allowImg && hasRemote(m);
+  const atts = (m.attachments || []);
+  $('#view').innerHTML = `
+  <div class="vbar">
+    <button class="ibtn backBtn" data-v="back" title="Retour à la liste (Échap)">${ic('left')}</button>
+    <button class="btn" data-v="reply" title="Répondre (R)">${ic('reply')}<span class="lbl-t">Répondre</span></button>
+    <button class="btn" data-v="all" title="Répondre à tous (A)">${ic('reply-all')}<span class="lbl-t">Rép. à tous</span></button>
+    <button class="btn" data-v="fwd" title="Transférer (F)">${ic('forward')}<span class="lbl-t">Transférer</span></button>
+    <div class="sep"></div>
+    <button class="ibtn" data-v="archive" title="Archiver (E)">${ic('archive')}</button>
+    <button class="ibtn" data-v="trash" title="Supprimer (Suppr)">${ic('trash')}</button>
+    <button class="ibtn" data-v="move" title="Déplacer vers… (V)">${ic('folder-in')}</button>
+    <div class="spacer"></div>
+    <button class="ibtn${m.flagged ? ' starred' : ''}" data-v="star" title="${m.flagged ? 'Ne plus suivre' : 'Suivre'} (S)">${ic('star')}</button>
+    <button class="ibtn" data-v="unread" title="Marquer comme non lu (U)">${ic('mail')}</button>
+    <button class="ibtn" data-v="more" title="Plus d’actions">${ic('dots')}</button>
+  </div>
+  <div id="vscroll" style="flex:1;overflow:auto">
+  <div class="vin">
+    <h1>${esc(m.subject || '(sans objet)')}${ST.view && ST.view.uni && a ? `<span class="tag" style="border-color:${accColor(a)};color:${accColor(a)}">${esc(accLabel(a))}</span>` : ''}</h1>
+    <div class="who">${avatar(from)}<div class="wi"><div class="wn">${esc(nameOf(from) || '(inconnu)')}<span class="addr" data-addr="${esc(from.address || '')}">&lt;${esc(from.address || '')}&gt;</span></div>
+      <div class="wt">À : <b>${to || '—'}</b>${cc ? ` · Cc : <b>${cc}</b>` : ''}</div></div><div class="wd" title="${esc(fmtLong(m.date))}">${esc(new Date(m.date).toLocaleString('fr-FR', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' }))}</div></div>
+    ${blocked ? `<div class="banner">${ic('shield')}<span>Images distantes bloquées pour protéger ta vie privée (pixels espions).</span><button data-img="once">Afficher</button><button data-img="always">Toujours pour cet expéditeur</button></div>` : ''}
+    ${m.unsubscribe && /^https?:/i.test(m.unsubscribe) ? `<div class="banner">${ic('ban')}<span>Lettre d’information</span><button data-unsub>Se désabonner</button></div>` : ''}
+    ${atts.length ? `<div class="atts">${atts.map(x => `<div class="att" data-att="${esc(x.key)}" title="Ouvrir"><div class="ai">${esc((x.filename.split('.').pop() || '').slice(0, 4))}</div><div class="an"><b>${esc(x.filename)}</b><small>${fmtSize(x.size)}</small></div><button class="ibtn" data-save="${esc(x.key)}" title="Enregistrer">${ic('download')}</button></div>`).join('')}${atts.length > 1 ? `<button class="btn ghost" data-saveall style="height:48px">${ic('download')}Tout enregistrer</button>` : ''}</div>` : ''}
+    <div class="mbody">${m.loading ? `<div style="padding:22px">${'<div class="skel" style="height:14px;margin-bottom:10px"></div>'.repeat(5)}</div>` : '<iframe id="mframe" sandbox="allow-same-origin allow-popups allow-popups-to-escape-sandbox" aria-label="Contenu du message"></iframe>'}</div>
+    ${!m.loading && role !== 'sent' ? `<div class="qreply"><button data-v="reply">${ic('reply')}Répondre à ${esc(nameOf(from).split(' ')[0] || 'l’expéditeur')}…</button><button class="sm" data-v="fwd">${ic('forward')}Transférer</button></div>` : ''}
+  </div></div>`;
+  $('#view').style.display = 'flex'; $('#view').style.flexDirection = 'column';
+  if (!m.loading){
+    const f = $('#mframe');
+    f.srcdoc = mailDoc(m, allowImg);
+    f.onload = () => {
+      const d = f.contentDocument; if (!d) return;
+      const fit = () => { f.style.height = Math.max(120, d.documentElement.scrollHeight) + 'px'; };
+      fit(); try { new ResizeObserver(fit).observe(d.body); } catch {}
+      d.querySelectorAll('img').forEach(im => im.addEventListener('load', fit));
+      d.addEventListener('keydown', e => onKey(e));
+      d.addEventListener('mouseover', e => { const l = e.target.closest && e.target.closest('a[href]'); showLink(l ? l.href : ''); });
+      d.addEventListener('mouseout', () => showLink(''));
+      d.addEventListener('click', e => { const l = e.target.closest && e.target.closest('a[href]'); if (l && /^mailto:/i.test(l.href)){ e.preventDefault(); composeMailto(l.href); } });
+      d.addEventListener('contextmenu', e => { const l = e.target.closest && e.target.closest('a[href]'); if (l){ e.preventDefault(); const r = f.getBoundingClientRect(), z = document.body.style.zoom || 1; menu([{ ic:'ext', label:'Ouvrir le lien', fn: () => window.open(l.href) }, { ic:'copy', label:'Copier le lien', fn: () => navigator.clipboard.writeText(l.href).then(() => toast('Lien copié')) }], r.left + e.clientX * (+SET.mailZoom/100), r.top + e.clientY * (+SET.mailZoom/100)); } });
+    };
+  }
+  const V = $('#view');
+  V.querySelectorAll('[data-v]').forEach(b => b.onclick = ev => viewAction(b.dataset.v, b, ev));
+  V.querySelectorAll('[data-img]').forEach(b => b.onclick = () => {
+    if (b.dataset.img === 'always'){ IMG_OK.add((from.address || '').toLowerCase()); store.set('hamama-img-ok', JSON.stringify([...IMG_OK])); }
+    m._imgs = true; renderView(m);
+  });
+  const un = V.querySelector('[data-unsub]'); if (un) un.onclick = () => { window.open(m.unsubscribe); };
+  V.querySelectorAll('[data-att]').forEach(d => d.onclick = async e => {
+    if (e.target.closest('[data-save]')) return;
+    try { const r = await N.att.open(d.dataset.att); if (r && r.save) N.att.save([d.dataset.att]).catch(errToast); } catch (err) { errToast(err); }
+  });
+  V.querySelectorAll('[data-save]').forEach(b => b.onclick = async () => { try { const p = await N.att.save([b.dataset.save]); if (p) toast('Enregistré'); } catch (e) { errToast(e); } });
+  const sa = V.querySelector('[data-saveall]'); if (sa) sa.onclick = async () => { try { const p = await N.att.save(atts.map(x => x.key)); if (p) toast('Pièces jointes enregistrées'); } catch (e) { errToast(e); } };
+  V.querySelectorAll('.addr[data-addr]').forEach(s => s.onclick = e => {
+    const ad = s.dataset.addr;
+    menu([{ ic:'pen', label:'Écrire à ' + ad, fn: () => openComposer({ to: [{ address: ad, name: '' }] }) }, { ic:'copy', label:'Copier l’adresse', fn: () => navigator.clipboard.writeText(ad).then(() => toast('Adresse copiée')) }], e.clientX, e.clientY + 8);
+  });
+}
+let linkEl = null;
+function showLink(url){
+  if (!linkEl){ linkEl = document.createElement('div'); linkEl.style.cssText = 'position:fixed;left:8px;bottom:8px;z-index:70;max-width:60vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:var(--panel);border:1px solid var(--line2);color:var(--muted);font-size:12px;padding:4px 9px;border-radius:7px;pointer-events:none;box-shadow:0 4px 14px var(--shade)'; document.body.appendChild(linkEl); }
+  linkEl.textContent = url; linkEl.style.display = url && /^https?:/i.test(url) ? 'block' : 'none';
+}
+async function viewAction(v, btn, ev){
+  const m = ST.msg; const key = ST.open;
+  if (v === 'back'){ document.documentElement.classList.remove('reading'); ST.open = null; showEmptyView(); renderList(); return; }
+  if (!key) return;
+  if (v === 'reply' || v === 'all' || v === 'fwd') return replyTo(key, v === 'all' ? 'all' : v);
+  if (v === 'archive' || v === 'trash') return act(v, [key]);
+  if (v === 'move') return pickFolder([key], btn);
+  if (v === 'star') return act(m && m.flagged ? 'unstar' : 'star', [key]);
+  if (v === 'unread'){ await act('unread', [key]); clearTimeout(readT); return; }
+  if (v === 'more') return menuBelow(btn, [
+    { ic:'junk', label:'Signaler comme indésirable', fn: () => act('junk', [key]) },
+    { ic:'print', label:'Imprimer', kbd:'Ctrl P', fn: printMsg },
+    { ic:'code', label:'Afficher la source', fn: showSource },
+    '-',
+    { ic:'image', label: SET.images === 'always' ? 'Images : toujours affichées' : 'Afficher les images', disabled: !m || SET.images === 'always', fn: () => { m._imgs = true; renderView(m); } },
+    { ic:'copy', label:'Copier l’adresse de l’expéditeur', fn: () => navigator.clipboard.writeText(((m.from || [])[0] || {}).address || '').then(() => toast('Adresse copiée')) },
+  ]);
+}
+function printMsg(){
+  const m = ST.msg; if (!m) return;
+  const head = `<div style="font:13px Arial;border-bottom:1px solid #ccc;padding-bottom:10px;margin-bottom:14px"><h2 style="margin:0 0 6px">${esc(m.subject)}</h2><b>De :</b> ${esc((m.from || []).map(fmtAddr).join(', '))}<br><b>À :</b> ${esc((m.to || []).map(fmtAddr).join(', '))}<br><b>Date :</b> ${esc(fmtLong(m.date))}</div>`;
+  const s = m.html ? sanitizeMailHtml(m.html) : { styles: '', body: `<pre style="white-space:pre-wrap;font:14px Arial">${esc(m.text)}</pre>` };
+  N.print(`<!DOCTYPE html><html><head><meta charset="utf-8">${s.styles}</head><body style="font-family:Arial">${head}${s.body}</body></html>`).catch(errToast);
+}
+async function showSource(){
+  const i = itemOf(ST.open); if (!i) return;
+  try { const src = await N.mail.source(i.acc, i.box, i.uid);
+    modal(`<h2>${ic('code')} Source du message</h2><textarea class="field" readonly style="height:60vh;font:12px/1.5 Consolas,monospace;white-space:pre">${esc(src)}</textarea><div class="row"><button class="btn ghost" data-c>Copier</button><button class="btn primary" data-x>Fermer</button></div>`,
+      (c, close) => { c.querySelector('[data-x]').onclick = () => close(); c.querySelector('[data-c]').onclick = () => navigator.clipboard.writeText(src).then(() => toast('Copié')); }, { cls: 'wide' });
+  } catch (e) { errToast(e); }
+}
+
+/* ================= Rédaction ================= */
+let CMP = null;           // état du message en cours
+let saveLocalT = null;
+const FONTS = { 'Inter':'Inter, Segoe UI, Arial, sans-serif', 'Arial':'Arial, Helvetica, sans-serif', 'Segoe UI':'"Segoe UI", Arial, sans-serif', 'Verdana':'Verdana, Geneva, sans-serif', 'Georgia':'Georgia, serif', 'Times New Roman':'"Times New Roman", serif', 'Courier New':'"Courier New", monospace' };
+const parseAddrs = s => String(s || '').split(/[,;]+/).map(x => x.trim()).filter(Boolean).map(x => { const m = x.match(/^"?([^"<]*?)"?\s*<([^>]+)>$/); return m ? { name: m[1].trim(), address: m[2].trim() } : { name: '', address: x }; });
+const validAddr = a => /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(a.address);
+const sigHTML = acc => { const a = accOf(acc); return a && a.signature ? `<div class="sig" data-sig="1"><br>${a.signature}</div>` : ''; };
+const reSubj = (p, s) => (new RegExp('^(' + (p === 'Re' ? 're|rép|réf' : 'tr|fwd?|tr ') + ')\\s*:', 'i').test(s || '') ? s : `${p} : ${s || ''}`).replace(/^Re : /, 'Re : ');
+
+/** Nettoie du HTML étranger avant de l’insérer dans l’éditeur (liste blanche) */
+const OK_TAGS = new Set('A ABBR B BLOCKQUOTE BR CAPTION CENTER CODE COL COLGROUP DD DIV DL DT EM FONT H1 H2 H3 H4 H5 H6 HR I IMG LI OL P PRE S SMALL SPAN STRIKE STRONG SUB SUP TABLE TBODY TD TFOOT TH THEAD TR U UL'.split(' '));
+const OK_ATTR = new Set(['href','src','alt','title','width','height','style','align','valign','colspan','rowspan','cellpadding','cellspacing','border','color','face','size','bgcolor','dir']);
+function cleanForEditor(html, allowRemote){
+  const d = new DOMParser().parseFromString(html, 'text/html');
+  const walk = n => {
+    for (const c of [...n.childNodes]){
+      if (c.nodeType === 8){ c.remove(); continue; }
+      if (c.nodeType !== 1) continue;
+      if (!OK_TAGS.has(c.tagName)){
+        if (/^(SCRIPT|STYLE|HEAD|TITLE|META|LINK|IFRAME|OBJECT|EMBED|SVG|MATH|TEMPLATE|NOSCRIPT|FORM|INPUT|BUTTON|SELECT|TEXTAREA)$/.test(c.tagName)){ c.remove(); continue; }
+        walk(c); c.replaceWith(...c.childNodes); continue;
+      }
+      for (const a of [...c.attributes]){
+        const nm = a.name.toLowerCase();
+        if (!OK_ATTR.has(nm)){ c.removeAttribute(a.name); continue; }
+        if ((nm === 'href') && !/^(https?:|mailto:|#)/i.test(a.value.trim())) c.removeAttribute(a.name);
+        if (nm === 'src' && !(/^data:image\//i.test(a.value.trim()) || (allowRemote && /^https?:/i.test(a.value.trim())))) c.removeAttribute(a.name);
+        if (nm === 'style') c.setAttribute('style', a.value.replace(/url\s*\([^)]*\)|expression\s*\(|behavior\s*:|-moz-binding|position\s*:\s*(fixed|absolute)/gi, ''));
+      }
+      if (c.tagName === 'A') c.setAttribute('target', '_blank');
+      walk(c);
+    }
+  };
+  walk(d.body);
+  return d.body.innerHTML;
+}
+
+function quoteBlock(m){
+  const from = (m.from || [])[0] || {};
+  const head = `Le ${esc(fmtLong(m.date))}, ${esc(nameOf(from))} &lt;${esc(from.address || '')}&gt; a écrit :`;
+  const body = m.html ? cleanForEditor(m.html, false) : esc(m.text || '').replace(/\n/g, '<br>');
+  return `<br><div>${head}</div><blockquote type="cite">${body}</blockquote>`;
+}
+function fwdBlock(m){
+  const f = x => esc((x || []).map(fmtAddr).join(', '));
+  const body = m.html ? cleanForEditor(m.html, false) : esc(m.text || '').replace(/\n/g, '<br>');
+  return `<br><div>---------- Message transféré ----------<br>De : ${f(m.from)}<br>Date : ${esc(fmtLong(m.date))}<br>Objet : ${esc(m.subject)}<br>À : ${f(m.to)}${m.cc && m.cc.length ? '<br>Cc : ' + f(m.cc) : ''}</div><br>${body}`;
+}
+async function replyTo(key, mode){
+  const i = itemOf(key); if (!i) return;
+  let m = ST.msg && ST.msg.key === key ? ST.msg : null;
+  if (!m){ try { m = await N.mail.get(i.acc, i.box, i.uid, { markSeen: false }); m.key = key; } catch (e) { return errToast(e); } }
+  const me = myAddrs(), acc = i.acc, a = accOf(acc);
+  const fromL = (m.replyTo && m.replyTo.length ? m.replyTo : m.from) || [];
+  const role = (folderOf(i.acc, i.box) || {}).role;
+  let to = [], cc = [];
+  if (mode === 'reply') to = role === 'sent' ? m.to : fromL;
+  if (mode === 'all'){
+    to = role === 'sent' ? m.to : [...fromL, ...(m.to || []).filter(x => !me.has(x.address.toLowerCase()))];
+    cc = (m.cc || []).filter(x => !me.has(x.address.toLowerCase()));
+  }
+  const dedupe = l => { const s = new Set(); return l.filter(x => x && x.address && !s.has(x.address.toLowerCase()) && s.add(x.address.toLowerCase())); };
+  to = dedupe(to); cc = dedupe(cc).filter(x => !to.some(t => t.address.toLowerCase() === x.address.toLowerCase()));
+  const fwd = mode === 'fwd';
+  openComposer({
+    acc: acc && a ? acc : undefined, to, cc,
+    subject: fwd ? reSubj('Tr', m.subject) : reSubj('Re', m.subject),
+    html: `<p><br></p>${sigHTML(acc)}${fwd ? fwdBlock(m) : quoteBlock(m)}`,
+    inReplyTo: fwd ? '' : m.messageId, references: fwd ? [] : [...(m.references || []), m.messageId].filter(Boolean),
+    replyRef: fwd ? null : { box: i.box, uid: i.uid },
+    atts: fwd ? (m.attachments || []).map(x => ({ name: x.filename, size: x.size, key: x.key })) : [],
+    caretTop: true
+  });
+}
+async function openDraft(i){
+  try {
+    const m = await N.mail.get(i.acc, i.box, i.uid, { markSeen: false });
+    openComposer({ acc: i.acc, to: m.to, cc: m.cc, bcc: m.bcc, subject: m.subject, html: m.html ? cleanForEditor(m.html, true) : esc(m.text || '').replace(/\n/g, '<br>'),
+      atts: (m.attachments || []).map(x => ({ name: x.filename, size: x.size, key: x.key })), draftUid: i.uid, draftBox: i.box, inReplyTo: m.inReplyTo, references: m.references });
+  } catch (e) { errToast(e); }
+}
+function composeMailto(url){
+  try {
+    const u = new URL(url), p = u.searchParams;
+    const to = parseAddrs(decodeURIComponent(u.pathname || ''));
+    openComposer({ to, cc: parseAddrs(p.get('cc')), bcc: parseAddrs(p.get('bcc')), subject: p.get('subject') || '', html: p.get('body') ? esc(p.get('body')).replace(/\n/g, '<br>') : undefined });
+  } catch { openComposer({}); }
+}
+
+async function openComposer(o = {}){
+  if (!ST.accounts.length) return openAddAccount();
+  if (CMP && CMP.dirty){
+    const el = $('#composer'); el.classList.remove('min');
+    if (!await confirmBox('Un message est déjà en cours', 'Enregistrer le brouillon actuel et en commencer un nouveau ?', 'Enregistrer et continuer')) return;
+    await closeComposer('save');
+  } else if (CMP) closeComposer('discard', true);
+  const acc = o.acc || (ST.view && ST.view.acc) || (ST.open && ST.open.split('|')[0]) || ST.accounts[0].id;
+  CMP = { acc, to: o.to || [], cc: o.cc || [], bcc: o.bcc || [], atts: o.atts || [], inReplyTo: o.inReplyTo || '', references: o.references || [], replyRef: o.replyRef || null, draftUid: o.draftUid || null, draftBox: o.draftBox || null, dirty: false };
+  const showCc = CMP.cc.length || CMP.bcc.length;
+  const el = document.createElement('div'); el.id = 'composer';
+  if (SET.compWin === 'max') el.classList.add('max');
+  el.innerHTML = `
+    <div class="chead"><b id="cTitle">${esc(o.subject || 'Nouveau message')}</b>
+      <button class="ibtn" data-c="min" title="Réduire">${ic('min')}</button><button class="ibtn" data-c="max" title="Agrandir">${ic('max')}</button><button class="ibtn" data-c="close" title="Fermer (le brouillon est enregistré)">${ic('x')}</button></div>
+    <div class="cbody">
+      ${ST.accounts.length > 1 ? `<div class="cf"><label>De</label><select id="cFrom">${ST.accounts.map(a => `<option value="${a.id}"${a.id === acc ? ' selected' : ''}>${esc(a.name ? `${a.name} <${a.email}>` : a.email)}</option>`).join('')}</select></div>` : ''}
+      <div class="cf"><label>À</label><div class="toks" data-f="to"><input autocomplete="off" spellcheck="false"></div>${showCc ? '' : '<button class="ccb" data-cc>Cc / Cci</button>'}</div>
+      <div class="cf${showCc ? '' : ' hidden'}" data-ccrow><label>Cc</label><div class="toks" data-f="cc"><input autocomplete="off" spellcheck="false"></div></div>
+      <div class="cf${showCc ? '' : ' hidden'}" data-ccrow><label>Cci</label><div class="toks" data-f="bcc"><input autocomplete="off" spellcheck="false"></div></div>
+      <div class="cf"><label>Objet</label><input class="plain" id="cSubj" value="${esc(o.subject || '')}" placeholder="Objet du message"></div>
+      <div class="etools">
+        <select id="eFont" title="Police">${Object.keys(FONTS).map(f => `<option${f === SET.font ? ' selected' : ''}>${f}</option>`).join('')}</select>
+        <select id="eSize" title="Taille"><option value="2">Petit</option><option value="3" selected>Normal</option><option value="4">Grand</option><option value="5">Très grand</option></select>
+        <div class="sep"></div>
+        <button class="ibtn" data-e="bold" title="Gras (Ctrl B)">${ic('bold')}</button><button class="ibtn" data-e="italic" title="Italique (Ctrl I)">${ic('italic')}</button><button class="ibtn" data-e="underline" title="Souligné (Ctrl U)">${ic('underline')}</button><button class="ibtn" data-e="strikeThrough" title="Barré">${ic('strike')}</button>
+        <label class="ibtn" title="Couleur du texte" style="cursor:pointer">${ic('palette')}<input type="color" id="eColor" style="position:absolute;opacity:0;width:0;height:0"></label>
+        <div class="sep"></div>
+        <button class="ibtn" data-e="insertUnorderedList" title="Liste à puces">${ic('ul')}</button><button class="ibtn" data-e="insertOrderedList" title="Liste numérotée">${ic('ol')}</button><button class="ibtn" data-e="quote" title="Citation">${ic('quote')}</button>
+        <button class="ibtn" data-e="link" title="Insérer un lien (Ctrl K)">${ic('link')}</button><button class="ibtn" data-e="image" title="Insérer une image">${ic('image')}</button>
+        <button class="ibtn" data-e="removeFormat" title="Effacer la mise en forme">${ic('eraser')}</button>
+        <div class="sep"></div><button class="ibtn" data-e="sig" title="Insérer la signature">${ic('sig')}</button>
+      </div>
+      <div id="ed" contenteditable="true" spellcheck="true" data-ph="Écris ton message…" style="font-family:${FONTS[SET.font] || FONTS.Inter};font-size:${SET.fsize}px"></div>
+      <div class="catts" id="cAtts"></div>
+    </div>
+    <div class="cfoot"><button class="btn primary" id="cSend" title="Envoyer (Ctrl Entrée)">${ic('send')}Envoyer</button>
+      <button class="ibtn" id="cAttach" title="Joindre des fichiers">${ic('clip')}</button>
+      <span class="st" id="cSt"></span>
+      <button class="ibtn del" id="cDel" title="Supprimer le brouillon">${ic('trash')}</button></div>`;
+  document.body.appendChild(el);
+  const ed = $('#ed');
+  ed.innerHTML = o.html != null ? o.html : `<p><br></p>${sigHTML(acc)}`;
+  ['to', 'cc', 'bcc'].forEach(f => renderToks(f));
+  renderAtts();
+  // champs
+  const from = $('#cFrom'); if (from) from.onchange = () => {
+    const old = ed.querySelector('[data-sig]'); CMP.acc = from.value; const s = sigHTML(CMP.acc);
+    if (old) old.outerHTML = s || ''; else if (s && !CMP.inReplyTo) ed.insertAdjacentHTML('beforeend', s);
+    dirty();
+  };
+  $('#cSubj').oninput = () => { $('#cTitle').textContent = $('#cSubj').value || 'Nouveau message'; dirty(); };
+  ed.addEventListener('input', dirty);
+  el.querySelector('[data-cc]') && (el.querySelector('[data-cc]').onclick = e => { el.querySelectorAll('[data-ccrow]').forEach(r => r.classList.remove('hidden')); e.target.remove(); el.querySelector('[data-f=cc] input').focus(); });
+  el.querySelectorAll('.toks').forEach(t => wireToks(t));
+  el.querySelector('[data-c=min]').onclick = () => el.classList.toggle('min');
+  el.querySelector('[data-c=max]').onclick = () => { el.classList.toggle('max'); el.classList.remove('min'); };
+  el.querySelector('[data-c=close]').onclick = () => closeComposer(CMP.dirty ? 'save' : 'discard');
+  el.querySelector('.chead').ondblclick = e => { if (!e.target.closest('button')) el.classList.toggle('min'); };
+  $('#cDel').onclick = async () => { if (!CMP.dirty || await confirmBox('Supprimer ce brouillon ?', 'Le message en cours sera perdu.', 'Supprimer', true)) closeComposer('discard'); };
+  $('#cAttach').onclick = async () => { try { const fs = await N.pickFiles(); fs.forEach(f => CMP.atts.push({ name: f.name, size: f.size, data: f.data })); renderAtts(); dirty(); } catch (e) { errToast(e); } };
+  $('#cSend').onclick = () => sendNow();
+  // barre d’outils
+  el.querySelectorAll('[data-e]').forEach(b => b.onmousedown = e => e.preventDefault());
+  el.querySelectorAll('[data-e]').forEach(b => b.onclick = () => edCmd(b.dataset.e));
+  $('#eFont').onchange = () => { ed.focus(); document.execCommand('fontName', false, FONTS[$('#eFont').value]); };
+  $('#eSize').onchange = () => { ed.focus(); document.execCommand('fontSize', false, $('#eSize').value); };
+  $('#eColor').oninput = e => { ed.focus(); document.execCommand('foreColor', false, e.target.value); };
+  // coller : images en ligne, texte HTML nettoyé
+  ed.addEventListener('paste', e => {
+    const cd = e.clipboardData; if (!cd) return;
+    const img = [...cd.items].find(x => x.type.startsWith('image/'));
+    if (img){ e.preventDefault(); const f = img.getAsFile(); const r = new FileReader(); r.onload = () => document.execCommand('insertHTML', false, `<img src="${r.result}" style="max-width:100%">`); r.readAsDataURL(f); return; }
+    const h = cd.getData('text/html');
+    if (h){ e.preventDefault(); document.execCommand('insertHTML', false, cleanForEditor(h, true)); }
+  });
+  // glisser-déposer de fichiers
+  el.addEventListener('dragover', e => { if ([...e.dataTransfer.types].includes('Files')){ e.preventDefault(); el.classList.add('dragover'); } });
+  el.addEventListener('dragleave', e => { if (!el.contains(e.relatedTarget)) el.classList.remove('dragover'); });
+  el.addEventListener('drop', e => {
+    el.classList.remove('dragover'); if (!e.dataTransfer.files.length) return; e.preventDefault();
+    for (const f of e.dataTransfer.files){
+      if (f.size > 35 * 1048576){ toast(`« ${f.name} » dépasse 35 Mo`); continue; }
+      f.arrayBuffer().then(b => { CMP.atts.push({ name: f.name, size: f.size, data: new Uint8Array(b), type: f.type }); renderAtts(); dirty(); });
+    }
+  });
+  el.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter'){ e.preventDefault(); sendNow(); }
+    else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k' && e.target === ed){ e.preventDefault(); edCmd('link'); }
+    else if (e.key === 'Escape' && !e.defaultPrevented && !document.querySelector('.ac')){ e.preventDefault(); closeComposer(CMP.dirty ? 'save' : 'discard'); }
+  });
+  // focus
+  if (!CMP.to.length) el.querySelector('[data-f=to] input').focus();
+  else if (!$('#cSubj').value) $('#cSubj').focus();
+  else { ed.focus(); const r = document.createRange(); r.setStart(ed, 0); r.collapse(true); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+}
+function dirty(){
+  if (!CMP) return; CMP.dirty = true; $('#cSt').textContent = '';
+  clearTimeout(saveLocalT); saveLocalT = setTimeout(saveLocal, 1500);
+}
+function snapshot(){
+  return { acc: CMP.acc, to: CMP.to, cc: CMP.cc, bcc: CMP.bcc, subject: $('#cSubj').value, html: $('#ed').innerHTML, inReplyTo: CMP.inReplyTo, references: CMP.references, replyRef: CMP.replyRef, draftUid: CMP.draftUid, draftBox: CMP.draftBox,
+    atts: CMP.atts.filter(a => a.key || (a.data && a.size < 4 * 1048576)).map(a => a.key ? { name: a.name, size: a.size, key: a.key } : { name: a.name, size: a.size, type: a.type, b64: btoa(Array.from(a.data, c => String.fromCharCode(c)).join('')) }) };
+}
+function saveLocal(){ if (!CMP || !$('#composer')) return; try { store.set('hamama-compose', JSON.stringify(snapshot())); $('#cSt').textContent = 'Enregistré sur cet ordinateur'; } catch {} }
+function renderToks(f){
+  const box = document.querySelector(`#composer .toks[data-f=${f}]`); if (!box) return;
+  box.querySelectorAll('.tok').forEach(t => t.remove());
+  const inp = box.querySelector('input');
+  CMP[f].forEach((a, j) => {
+    const t = document.createElement('span'); t.className = 'tok' + (validAddr(a) ? '' : ' bad'); t.title = a.address;
+    t.innerHTML = `<span>${esc(a.name || a.address)}</span><button tabindex="-1">${ic('x')}</button>`;
+    t.querySelector('button').onclick = () => { CMP[f].splice(j, 1); renderToks(f); dirty(); };
+    t.ondblclick = () => { CMP[f].splice(j, 1); renderToks(f); inp.value = fmtAddr(a); inp.focus(); };
+    box.insertBefore(t, inp);
+  });
+}
+let acEl = null, acIdx = 0;
+const closeAc = () => { if (acEl){ acEl.remove(); acEl = null; } };
+function wireToks(box){
+  const f = box.dataset.f, inp = box.querySelector('input');
+  box.onclick = e => { if (e.target === box) inp.focus(); };
+  const commit = () => { const v = inp.value.trim(); if (!v) return false; parseAddrs(v).forEach(a => { CMP[f].push(a); learn(a, 0); }); inp.value = ''; renderToks(f); dirty(); closeAc(); return true; };
+  inp.addEventListener('keydown', e => {
+    if (acEl && (e.key === 'ArrowDown' || e.key === 'ArrowUp')){ e.preventDefault(); const bs = acEl.querySelectorAll('button'); acIdx = (acIdx + (e.key === 'ArrowDown' ? 1 : -1) + bs.length) % bs.length; bs.forEach((b, j) => b.classList.toggle('on', j === acIdx)); return; }
+    if (acEl && (e.key === 'Enter' || e.key === 'Tab') && inp.value.trim()){ e.preventDefault(); acEl.querySelectorAll('button')[acIdx].click(); return; }
+    if (e.key === 'Escape' && acEl){ e.preventDefault(); e.stopPropagation(); closeAc(); return; }
+    if ((e.key === 'Enter' || e.key === ',' || e.key === ';' || (e.key === 'Tab' && inp.value.trim())) && inp.value.trim()){ e.preventDefault(); commit(); }
+    if (e.key === 'Backspace' && !inp.value && CMP[f].length){ CMP[f].pop(); renderToks(f); dirty(); }
+  });
+  inp.addEventListener('blur', () => setTimeout(() => { if (document.activeElement !== inp){ commit(); closeAc(); } }, 150));
+  inp.addEventListener('paste', () => setTimeout(() => { if (/[,;]/.test(inp.value)) commit(); }, 0));
+  inp.addEventListener('input', () => {
+    const q = inp.value.trim().toLowerCase(); closeAc(); if (q.length < 1) return;
+    const used = new Set([...CMP.to, ...CMP.cc, ...CMP.bcc].map(a => a.address.toLowerCase()));
+    const res = [...CONTACTS].filter(([k, c]) => !used.has(k) && (k.includes(q) || (c[0] || '').toLowerCase().includes(q))).sort((a, b) => b[1][1] - a[1][1]).slice(0, 6);
+    if (!res.length) return;
+    acEl = document.createElement('div'); acEl.className = 'ac'; acIdx = 0;
+    acEl.innerHTML = res.map(([k, c], j) => `<button class="${j ? '' : 'on'}" data-a="${esc(k)}" data-n="${esc(c[0] || '')}">${avatar({ name: c[0], address: k })}<div><b>${esc(c[0] || k)}</b>${c[0] ? `<small>${esc(k)}</small>` : ''}</div></button>`).join('');
+    acEl.querySelectorAll('button').forEach(b => b.onmousedown = e => { e.preventDefault(); CMP[f].push({ name: b.dataset.n, address: b.dataset.a }); inp.value = ''; renderToks(f); dirty(); closeAc(); inp.focus(); });
+    const r = inp.getBoundingClientRect(), z = +document.body.style.zoom || 1;
+    document.body.appendChild(acEl); acEl.style.left = (r.left) + 'px'; acEl.style.top = (r.bottom + 4) + 'px';
+  });
+}
+function renderAtts(){
+  const el = $('#cAtts'); if (!el) return;
+  el.innerHTML = CMP.atts.map((a, j) => `<span class="catt" title="${esc(a.name)}">${ic('clip')}<span>${esc(a.name)}</span><small>${fmtSize(a.size || 0)}</small><button data-j="${j}" title="Retirer">${ic('x')}</button></span>`).join('');
+  el.querySelectorAll('[data-j]').forEach(b => b.onclick = () => { CMP.atts.splice(+b.dataset.j, 1); renderAtts(); dirty(); });
+  const tot = CMP.atts.reduce((s, a) => s + (a.size || 0), 0);
+  if (tot > 25 * 1048576) toast('Pièces jointes > 25 Mo : certains serveurs refuseront le message');
+}
+async function edCmd(c){
+  const ed = $('#ed'); ed.focus();
+  if (c === 'quote') return document.execCommand('formatBlock', false, 'blockquote');
+  if (c === 'sig'){ const s = sigHTML(CMP.acc); if (!s) return toast('Aucune signature : ajoute-la dans Réglages → Comptes'); if (!ed.querySelector('[data-sig]')) document.execCommand('insertHTML', false, s); return; }
+  if (c === 'image'){ try { const fs = await N.pickFiles(); for (const f of fs){ if (!/\.(png|jpe?g|gif|webp|bmp)$/i.test(f.name)) continue; const b64 = btoa(Array.from(f.data, x => String.fromCharCode(x)).join('')); ed.focus(); document.execCommand('insertHTML', false, `<img src="data:image/${f.name.split('.').pop().replace('jpg', 'jpeg').toLowerCase()};base64,${b64}" style="max-width:100%">`); } dirty(); } catch (e) { errToast(e); } return; }
+  if (c === 'link'){
+    const sel = getSelection(), range = sel.rangeCount ? sel.getRangeAt(0).cloneRange() : null, txt = sel.toString();
+    const url = await promptBox('Insérer un lien', 'Adresse du lien (https://…)', /^https?:/.test(txt) ? txt : 'https://', 'Insérer');
+    if (!url || !/^(https?:|mailto:)/i.test(url)) return;
+    ed.focus(); if (range){ sel.removeAllRanges(); sel.addRange(range); }
+    if (txt) document.execCommand('createLink', false, url); else document.execCommand('insertHTML', false, `<a href="${esc(url)}">${esc(url)}</a>`);
+    dirty(); return;
+  }
+  document.execCommand(c, false, null); dirty();
+}
+/** Prépare le message : images collées → pièces jointes « cid », texte brut */
+function buildMessage(){
+  const ed = $('#ed').cloneNode(true), inline = [];
+  ed.querySelectorAll('img[src^="data:"]').forEach((im, j) => {
+    const m = im.src.match(/^data:([^;]+);base64,(.*)$/); if (!m) return;
+    const cid = `img${j}.${Date.now()}@hamama`, bin = atob(m[2]), u = new Uint8Array(bin.length);
+    for (let k = 0; k < bin.length; k++) u[k] = bin.charCodeAt(k);
+    inline.push({ name: `image${j + 1}.${m[1].split('/')[1] || 'png'}`, type: m[1], data: u, cid }); im.src = 'cid:' + cid;
+  });
+  ed.querySelectorAll('[data-sig]').forEach(s => s.removeAttribute('data-sig'));
+  const font = FONTS[SET.font] || FONTS.Inter;
+  const html = `<div style="font-family:${font.replace(/"/g, "'")};font-size:${SET.fsize}px">${ed.innerHTML}</div>`;
+  const text = $('#ed').innerText.replace(/\n{3,}/g, '\n\n');
+  return {
+    to: CMP.to.filter(validAddr), cc: CMP.cc.filter(validAddr), bcc: CMP.bcc.filter(validAddr), subject: $('#cSubj').value.trim(), html, text, inline,
+    attachments: CMP.atts.map(a => a.key ? { key: a.key } : { name: a.name, data: a.data, type: a.type }),
+    inReplyTo: CMP.inReplyTo, references: CMP.references, replyTo: CMP.replyRef, draftUid: CMP.draftUid, draftBox: CMP.draftBox
+  };
+}
+async function sendNow(){
+  if (!CMP) return;
+  ['to','cc','bcc'].forEach(f => { const i = document.querySelector(`#composer .toks[data-f=${f}] input`); if (i && i.value.trim()){ parseAddrs(i.value).forEach(a => CMP[f].push(a)); i.value = ''; renderToks(f); } });
+  const bad = [...CMP.to, ...CMP.cc, ...CMP.bcc].filter(a => !validAddr(a));
+  if (bad.length) return toast(`Adresse invalide : ${bad[0].address}`);
+  if (!CMP.to.length && !CMP.cc.length && !CMP.bcc.length){ toast('Ajoute au moins un destinataire'); document.querySelector('#composer [data-f=to] input').focus(); return; }
+  if (!$('#cSubj').value.trim() && SET.noSubjWarn === 'on' && !await confirmBox('Envoyer sans objet ?', 'Ton message n’a pas d’objet.', 'Envoyer quand même')) return;
+  const txt = ($('#ed').innerText || '') + ' ' + $('#cSubj').value;
+  if (/pi[èe]ce[s]? jointe|ci-joint|en pj\b|attached|attachment/i.test(txt.replace(/a écrit :[\s\S]*/i, '')) && !CMP.atts.length && !await confirmBox('Pièce jointe oubliée ?', 'Ton message parle d’une pièce jointe, mais aucune n’est jointe.', 'Envoyer quand même')) return;
+  const acc = CMP.acc, msg = buildMessage(), snap = snapshot();
+  [...msg.to, ...msg.cc, ...msg.bcc].forEach(a => learn(a, 3));
+  closeComposer('sent');
+  const delay = (+SET.undoSend || 0) * 1000;
+  let cancelled = false;
+  const go = async () => {
+    if (cancelled) return;
+    const t = toast('Envoi en cours…', null, 60000);
+    try {
+      await N.mail.send(acc, msg); t.close(); toast('Message envoyé');
+      if (msg.replyTo && ST.items){ const it = ST.items.find(i => i.acc === acc && i.box === msg.replyTo.box && i.uid === msg.replyTo.uid); if (it){ it.answered = true; updateItemEl(it); } }
+      refreshFoldersSoon(acc, 1200);
+      const v = ST.view; if (v && !v.uni && (folderOf(v.acc, v.box) || {}).role === 'sent') setTimeout(refreshList, 1500);
+    } catch (e) {
+      t.close(); toast('Échec de l’envoi : ' + cleanErr(e), { label: 'Rouvrir', fn: () => openComposer({ ...snap, atts: restoreAtts(snap.atts) }) }, 10000);
+    }
+  };
+  if (delay){
+    toast(`Envoi dans ${delay / 1000} s`, { label: 'Annuler', fn: () => { cancelled = true; openComposer({ ...snap, atts: restoreAtts(snap.atts) }); toast('Envoi annulé'); } }, delay);
+    setTimeout(go, delay);
+  } else go();
+}
+const restoreAtts = l => (l || []).map(a => a.b64 ? { name: a.name, size: a.size, type: a.type, data: Uint8Array.from(atob(a.b64), c => c.charCodeAt(0)) } : a);
+async function closeComposer(mode, silent){
+  const el = $('#composer'); if (!el || !CMP) return;
+  clearTimeout(saveLocalT); closeAc();
+  if (mode === 'save' && CMP.dirty){
+    const acc = CMP.acc, msg = buildMessage();
+    try { await N.mail.draft(acc, msg); if (!silent) toast('Brouillon enregistré'); refreshFoldersSoon(acc, 800); }
+    catch (e) { saveLocal(); toast('Brouillon gardé sur cet ordinateur (' + cleanErr(e) + ')'); el.remove(); CMP = null; return; }
+  }
+  if (mode === 'discard' && CMP.draftUid && CMP.draftBox){ const a = CMP.acc; N.mail.destroy(a, CMP.draftBox, [CMP.draftUid]).then(() => refreshFoldersSoon(a, 300)).catch(() => {}); }
+  store.del('hamama-compose');
+  el.remove(); CMP = null;
+}
+
+/* ================= Comptes ================= */
+const PROV_UI = [
+  ['gmail','Gmail','G','#ea4335'], ['outlook','Outlook','O','#0a64d8'], ['icloud','iCloud','i','#3e8ef7'], ['yahoo','Yahoo','Y','#6001d2'],
+  ['orange','Orange','O','#ff7900'], ['free','Free','F','#cd1e25'], ['sfr','SFR','S','#e2001a'], ['laposte','La Poste','L','#f4c400'],
+  ['gmx','GMX','G','#1c449b'], ['ovh','OVH','O','#000e9c'], ['autre','Autre…','@','#7c8592']
+];
+const provTiles = () => PROV_UI.map(([k, n, l, c]) => `<button class="prov" data-p="${k}"><span class="pl" style="background:${c}">${l}</span>${n}</button>`).join('');
+const HELP = {
+  gmail: 'Gmail exige un <b>mot de passe d’application</b> (16 lettres) : active la validation en deux étapes, puis crée-le ici :',
+  icloud: 'iCloud exige un <b>mot de passe pour app</b> : compte Apple → Connexion et sécurité → Mots de passe pour app.',
+  yahoo: 'Yahoo exige un <b>mot de passe d’application</b> : Sécurité du compte → Générer un mot de passe d’application.',
+  outlook: 'Microsoft impose la connexion sécurisée « OAuth » pour Outlook / Hotmail.',
+  orange: 'Utilise le mot de passe de ta messagerie Orange.', free: 'Utilise le mot de passe de ta boîte Free (zimbra).',
+  sfr: 'Utilise le mot de passe de ta messagerie SFR.', laposte: 'Utilise le mot de passe de ta boîte La Poste.', gmx: 'Active d’abord l’accès IMAP dans les réglages GMX.', ovh: 'Utilise le mot de passe de ton adresse OVH.'
+};
+function openAddAccount(pre){
+  const close = modal(`<h2>${ic('plus')} Ajouter un compte</h2><div class="sub">Choisis ton fournisseur de messagerie.</div><div class="provs">${provTiles()}</div>
+    <div class="row"><button class="btn ghost" data-x>Annuler</button></div>`,
+  (c, close) => { c.querySelector('[data-x]').onclick = () => close(); c.querySelectorAll('[data-p]').forEach(b => b.onclick = () => { close(); accountForm(b.dataset.p); }); });
+  if (pre){ close(); accountForm(pre); }
+}
+function accountForm(prov){
+  const P = ST.providers[prov] || null, label = (PROV_UI.find(p => p[0] === prov) || [])[1] || 'Autre';
+  const oauthOk = P && P.oauth && ST.oauth[P.oauth];
+  modal(`<h2>${prov === 'autre' ? 'Autre messagerie' : esc(label)}</h2>
+    <div class="sub">${HELP[prov] || 'Saisis ton adresse : Hamama trouve tout seul les réglages des serveurs.'}${P && P.appPassword ? ` <a class="lnk" data-open="${esc(P.appPassword)}">Ouvrir la page ↗</a>` : ''}</div>
+    ${oauthOk ? `<button class="btn primary paybtn" data-oauth style="margin:0 0 6px">${ic('key')} Se connecter avec ${prov === 'outlook' ? 'Microsoft' : 'Google'}</button><div class="note" style="text-align:center;margin-bottom:6px">ou avec un mot de passe d’application :</div>` : ''}
+    ${prov === 'outlook' && !oauthOk ? `<div class="err-box" style="margin:0 0 6px">La connexion Microsoft n’est pas encore activée dans cette version de Hamama. Les comptes Outlook.com / Hotmail ne peuvent pas encore être ajoutés (les comptes Microsoft 365 d’entreprise avec IMAP autorisé peuvent fonctionner).</div>` : ''}
+    <label class="lbl">Ton nom (affiché aux destinataires)</label><input class="field" data-k="name" placeholder="Félix" autofocus>
+    <label class="lbl">Adresse e-mail</label><input class="field" data-k="email" type="email" placeholder="prenom@exemple.fr" spellcheck="false">
+    <label class="lbl">${P && P.appPassword ? 'Mot de passe d’application' : 'Mot de passe'}</label><input class="field" data-k="pass" type="password">
+    <details class="adv"${prov === 'autre' ? '' : ''}><summary>Réglages avancés (serveurs)</summary>
+      <label class="lbl">Identifiant (si différent de l’adresse)</label><input class="field" data-k="user" spellcheck="false">
+      <div class="g2"><div><label class="lbl">Serveur de réception IMAP</label><input class="field" data-k="ih"></div><div><label class="lbl">Port</label><input class="field" data-k="ip" type="number"></div><div><label class="lbl">Sécurité</label><select class="field" data-k="is"><option value="1">SSL/TLS</option><option value="0">STARTTLS</option></select></div></div>
+      <div class="g2"><div><label class="lbl">Serveur d’envoi SMTP</label><input class="field" data-k="sh"></div><div><label class="lbl">Port</label><input class="field" data-k="sp" type="number"></div><div><label class="lbl">Sécurité</label><select class="field" data-k="ss"><option value="1">SSL/TLS</option><option value="0">STARTTLS</option></select></div></div>
+      <label class="chk"><input type="checkbox" data-k="insecure"> Accepter un certificat non vérifié (serveur local uniquement)</label>
+      <div class="note" data-src></div>
+    </details>
+    <div data-msg></div>
+    <div class="row"><button class="btn ghost" data-back>${ic('left')}Retour</button><span class="spacer"></span><button class="btn primary" data-ok>${ic('check')}Se connecter</button></div>`,
+  (c, close) => {
+    const F = k => c.querySelector(`[data-k=${k}]`), msg = c.querySelector('[data-msg]');
+    let touched = false;
+    ['ih','ip','is','sh','sp','ss'].forEach(k => F(k).addEventListener('input', () => touched = true));
+    const fill = (cfg, auto) => { if (!cfg || (auto && touched)) return; F('ih').value = cfg.imap.host; F('ip').value = cfg.imap.port; F('is').value = cfg.imap.secure ? '1' : '0'; F('sh').value = cfg.smtp.host; F('sp').value = cfg.smtp.port; F('ss').value = cfg.smtp.secure ? '1' : '0'; if (cfg.userName && !F('user').value) F('user').value = cfg.userName; };
+    fill(P);
+    let detected = P ? { ...P, provider: prov } : null;
+    const det = async () => {
+      const em = F('email').value.trim(); if (!/@.+\./.test(em) || P) return;
+      c.querySelector('[data-src]').textContent = 'Recherche des réglages…';
+      try { const d = await N.acc.detect(em); if (F('email').value.trim() !== em) return; if (touched){ c.querySelector('[data-src]').textContent = ''; return; } detected = d; fill(detected, true); c.querySelector('[data-src]').textContent = { connu:'Fournisseur reconnu', Mozilla:'Réglages trouvés (base Mozilla)', MX:'Réglages trouvés via le domaine', devinette:'Réglages supposés : vérifie-les si la connexion échoue' }[detected.source] || ''; if (detected.source === 'devinette') c.querySelector('details').open = true; }
+      catch { c.querySelector('[data-src]').textContent = ''; }
+    };
+    F('email').addEventListener('blur', det);
+    c.querySelectorAll('[data-open]').forEach(a => a.onclick = () => window.open(a.dataset.open));
+    c.querySelector('[data-back]').onclick = () => { close(); openAddAccount(); };
+    const cfgOf = () => ({
+      name: F('name').value.trim(), email: F('email').value.trim(), pass: F('pass').value, user: F('user').value.trim() || F('email').value.trim(),
+      imap: { host: F('ih').value.trim(), port: +F('ip').value || 993, secure: F('is').value === '1' },
+      smtp: { host: F('sh').value.trim(), port: +F('sp').value || 465, secure: F('ss').value === '1' },
+      provider: (detected && detected.provider) || prov, saveSent: !(detected && detected.saveSent === false), insecure: F('insecure').checked,
+      color: ['#4a84c4','#3d9579','#bf5a82','#c0962e','#8a6cc4','#c8703f','#3a98a8','#c2524a'][ST.accounts.length % 8]
+    });
+    const finish = async cfg => {
+      const a = await N.acc.add(cfg);
+      close(); toast('Compte ajouté : ' + a.email);
+      await reloadAccounts(); openView({ acc: a.id, box: 'INBOX' });
+    };
+    const ob = c.querySelector('[data-oauth]');
+    if (ob) ob.onclick = async () => {
+      msg.innerHTML = '<div class="note">Une page de connexion s’ouvre dans ton navigateur…</div>';
+      try {
+        const r = await N.acc.oauth(P.oauth, F('email').value.trim());
+        const cfg = { ...cfgOf(), email: r.email || F('email').value.trim(), user: r.email || F('email').value.trim(), pass: '', oauth: { provider: r.provider, refresh: r.refresh, pendingAccess: r.access, pendingExp: r.exp } };
+        msg.innerHTML = '<div class="note">Vérification…</div>';
+        const t = await N.acc.test(cfg); if (!t.ok) throw new Error(t.err);
+        await finish(cfg);
+      } catch (e) { msg.innerHTML = `<div class="err-box">${esc(cleanErr(e))}</div>`; }
+    };
+    const ok = c.querySelector('[data-ok]');
+    const go = async () => {
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(F('email').value.trim())) return msg.innerHTML = '<div class="err-box">Adresse e-mail invalide.</div>';
+      if (!F('pass').value) return msg.innerHTML = '<div class="err-box">Saisis le mot de passe.</div>';
+      if (!F('ih').value) await det();
+      if (ST.accounts.some(a => a.email.toLowerCase() === F('email').value.trim().toLowerCase())) return msg.innerHTML = '<div class="err-box">Ce compte est déjà dans Hamama.</div>';
+      ok.disabled = true; ok.innerHTML = `${ic('refresh')}Connexion…`; msg.innerHTML = '';
+      try {
+        const cfg = cfgOf();
+        const t = await N.acc.test(cfg);
+        if (!t.ok){ msg.innerHTML = `<div class="err-box"><b>${t.step === 'imap' ? 'Réception (IMAP)' : 'Envoi (SMTP)'} :</b> ${esc(t.err)}</div>`; if (!/mot de passe/.test(t.err)) c.querySelector('details').open = true; return; }
+        await finish(cfg);
+      } catch (e) { msg.innerHTML = `<div class="err-box">${esc(cleanErr(e))}</div>`; }
+      finally { ok.disabled = false; ok.innerHTML = `${ic('check')}Se connecter`; }
+    };
+    ok.onclick = go;
+    c.querySelectorAll('input').forEach(i => i.addEventListener('keydown', e => { if (e.key === 'Enter') go(); }));
+  }, { sticky: true });
+}
+function openAccount(id){
+  const a = accOf(id); if (!a) return;
+  modal(`<h2><span class="dot" style="width:12px;height:12px;border-radius:50%;background:${accColor(a)};display:inline-block"></span> ${esc(a.email)}</h2><div class="sub">Réglages de ce compte</div>
+    <label class="lbl">Nom affiché aux destinataires</label><input class="field" data-k="name" value="${esc(a.name)}">
+    <label class="lbl">Nom du compte dans Hamama</label><input class="field" data-k="label" value="${esc(a.label)}" placeholder="${esc(a.email)}">
+    <label class="lbl">Couleur</label><div class="swrow" data-col>${AVC.map(c => `<button class="sw${c === accColor(a) ? ' on' : ''}" data-c="${c}" style="background:${c}"></button>`).join('')}</div>
+    <label class="lbl">Signature</label><div class="field sigEd" contenteditable="true" data-sig>${a.signature ? cleanForEditor(a.signature, true) : ''}</div>
+    <label class="chk"><input type="checkbox" data-k="saveSent"${a.saveSent ? ' checked' : ''}> Copier les messages envoyés dans « Envoyés » (à décocher pour Gmail / Outlook)</label>
+    ${a.oauth ? '' : `<details class="adv"><summary>Mot de passe et serveurs</summary>
+      <label class="lbl">Nouveau mot de passe</label><input class="field" data-k="pass" type="password" placeholder="Laisser vide pour ne pas changer">
+      <div class="g2"><div><label class="lbl">IMAP</label><input class="field" data-k="ih" value="${esc(a.imap.host)}"></div><div><label class="lbl">Port</label><input class="field" data-k="ip" type="number" value="${a.imap.port}"></div><div><label class="lbl">Sécurité</label><select class="field" data-k="is"><option value="1"${a.imap.secure ? ' selected' : ''}>SSL/TLS</option><option value="0"${a.imap.secure ? '' : ' selected'}>STARTTLS</option></select></div></div>
+      <div class="g2"><div><label class="lbl">SMTP</label><input class="field" data-k="sh" value="${esc(a.smtp.host)}"></div><div><label class="lbl">Port</label><input class="field" data-k="sp" type="number" value="${a.smtp.port}"></div><div><label class="lbl">Sécurité</label><select class="field" data-k="ss"><option value="1"${a.smtp.secure ? ' selected' : ''}>SSL/TLS</option><option value="0"${a.smtp.secure ? '' : ' selected'}>STARTTLS</option></select></div></div>
+    </details>`}
+    <div data-msg></div>
+    <div class="row"><button class="btn ghost" data-del style="color:#f87171">${ic('trash')}Retirer le compte</button><span class="spacer"></span><button class="btn ghost" data-x>Annuler</button><button class="btn primary" data-ok>${ic('check')}Enregistrer</button></div>`,
+  (c, close) => {
+    const F = k => c.querySelector(`[data-k=${k}]`);
+    let color = accColor(a);
+    c.querySelectorAll('[data-c]').forEach(b => b.onclick = () => { color = b.dataset.c; c.querySelectorAll('[data-c]').forEach(x => x.classList.toggle('on', x === b)); });
+    c.querySelector('[data-x]').onclick = () => close();
+    c.querySelector('[data-del]').onclick = async () => {
+      if (!await confirmBox('Retirer ce compte de Hamama ?', `${a.email} sera retiré de Hamama. Tes messages restent sur le serveur.`, 'Retirer', true)) return;
+      await N.acc.remove(id); close(); toast('Compte retiré'); await reloadAccounts(); openDefault();
+    };
+    c.querySelector('[data-ok]').onclick = async () => {
+      const patch = { name: F('name').value.trim(), label: F('label').value.trim(), color, signature: cleanForEditor(c.querySelector('[data-sig]').innerHTML, true).replace(/^(<br>)+$/, ''), saveSent: F('saveSent').checked };
+      if (F('pass')){
+        if (F('pass').value) patch.pass = F('pass').value;
+        const imap = { host: F('ih').value.trim(), port: +F('ip').value, secure: F('is').value === '1' }, smtp = { host: F('sh').value.trim(), port: +F('sp').value, secure: F('ss').value === '1' };
+        if (JSON.stringify(imap) !== JSON.stringify(a.imap)) patch.imap = imap;
+        if (JSON.stringify(smtp) !== JSON.stringify(a.smtp)) patch.smtp = smtp;
+      }
+      try { await N.acc.update(id, patch); close(); toast('Compte enregistré'); await reloadAccounts(); if (patch.pass || patch.imap) loadFolders(id); }
+      catch (e) { c.querySelector('[data-msg]').innerHTML = `<div class="err-box">${esc(cleanErr(e))}</div>`; }
+    };
+  });
+}
+async function reloadAccounts(){
+  const r = await N.acc.list(); ST.accounts = r.accounts; ST.providers = r.providers; ST.oauth = r.oauth;
+  for (const id of Object.keys(ST.folders)) if (!accOf(id)) delete ST.folders[id];
+  const has = ST.accounts.length > 0;
+  $('#welcome').classList.toggle('hidden', has); $('#app').classList.toggle('hidden', !has); document.documentElement.classList.toggle('noacc', !has);
+  if (!has){ $('#welcomeProvs').innerHTML = provTiles(); $('#welcomeProvs').querySelectorAll('[data-p]').forEach(b => b.onclick = () => accountForm(b.dataset.p)); }
+  for (const a of ST.accounts) if (!ST.folders[a.id]){ try { const c = await N.mail.cached(a.id); if (c.folders) ST.folders[a.id] = c.folders; } catch {} }
+  renderSide(); loadAllFolders();
+}
+
+/* ================= Réglages ================= */
+const THEMES = [['graphite','Graphite'],['sombre','Sombre'],['noir','Noir OLED'],['clair','Clair']];
+const THEME_PREV = { graphite:['#1e2026','#262930','#2f333b'], sombre:['#0c0c0f','#141418','#1b1b21'], noir:['#000','#0a0a0a','#151515'], clair:['#eceef2','#ffffff','#f2f3f6'] };
+async function openSettings(tab = 'look'){
+  let prefs = { notify: true, sound: true, tray: false, startup: false };
+  try { prefs = await N.prefs(); } catch {}
+  const seg = (key, opts) => `<div class="seg" data-key="${key}">${opts.map(([v, l]) => `<button data-v="${v}" class="${String(SET[key]) === v ? 'on' : ''}">${l}</button>`).join('')}</div>`;
+  const pseg = (key, opts) => `<div class="seg" data-pkey="${key}">${opts.map(([v, l]) => `<button data-v="${v}" class="${String(!!prefs[key]) === v ? 'on' : ''}">${l}</button>`).join('')}</div>`;
+  const R = (lbl, inner, note) => `<div class="setrow"><span class="lbl">${lbl}</span>${inner}${note ? `<div class="note">${note}</div>` : ''}</div>`;
+  const yn = [['on','Oui'],['off','Non']], pyn = [['true','Oui'],['false','Non']];
+  const TABS = {
+    look: ['Apparence', () =>
+      R('Thème', `<div class="themes">${THEMES.map(([v, l]) => { const [bg, pn, p2] = THEME_PREV[v]; return `<button data-th="${v}" class="${SET.theme === v ? 'on' : ''}"><div class="mini" style="background:${bg}"><div style="width:24%;background:${pn}"></div><div style="width:34%;display:flex;flex-direction:column;gap:3px;padding:4px"><div style="height:6px;background:${p2};border-radius:2px"></div><div style="height:6px;background:${p2};border-radius:2px"></div><div style="height:6px;background:${p2};border-radius:2px"></div></div><div style="flex:1;display:flex;align-items:center;justify-content:center"><div style="width:70%;height:76%;background:#fff;border-radius:2px"></div></div></div><span>${l}</span></button>`; }).join('')}</div>`) +
+      R('Couleur d’accent', `<div class="swrow" data-acc>${ACCENTS.map(c => `<button class="sw${c === SET.accent.toLowerCase() ? ' on' : ''}" data-a="${c}" style="background:${c}"></button>`).join('')}<label class="cpick" title="Couleur personnalisée"><input type="color" value="${SET.accent}"></label></div>`) +
+      R('Disposition', seg('layout', [['trois','3 colonnes'],['large','Lecture en dessous'],['focus','Focus']]), '« Focus » : la liste prend toute la place, le message s’ouvre en grand.') +
+      R('Densité', seg('density', [['compact','Compacte'],['confort','Confortable']])) +
+      R('Taille de l’interface', seg('zoom', [['s','Petite'],['m','Moyenne'],['l','Grande'],['xl','Très grande']])) +
+      R('Coins', seg('radius', [['carre','Carrés'],['doux','Doux'],['rond','Ronds']])) +
+      R('Barre des dossiers', seg('side', [['shown','Visible'],['hidden','Masquée']]))],
+    list: ['Liste', () =>
+      R('Aperçu du texte', seg('preview', [['0','Aucun'],['1','1 ligne'],['2','2 lignes']])) +
+      R('Avatars', seg('avatars', yn)) +
+      R('Grouper par date', seg('groups', yn)) +
+      R('Boîte unifiée (tous les comptes)', seg('unified', yn)) +
+      R('Compteurs des dossiers', seg('counts', [['unread','Non lus'],['total','Total'],['none','Aucun']])) +
+      R('Actions au survol', `<div class="toggles">${[['archive','Archiver'],['trash','Supprimer'],['read','Lu / non lu'],['star','Suivre']].map(([v, l]) => `<label class="chk"><input type="checkbox" data-qa="${v}"${SET.qa.includes(v) ? ' checked' : ''}> ${l}</label>`).join('')}</div>`) +
+      R('Après archivage ou suppression', seg('after', [['next','Message suivant'],['prev','Précédent'],['list','Revenir à la liste']]))],
+    read: ['Lecture', () =>
+      R('Marquer comme lu', seg('markRead', [['now','Tout de suite'],['delay','Après 2 s'],['never','Manuellement']])) +
+      R('Images distantes', seg('images', [['ask','Bloquer (recommandé)'],['always','Toujours afficher']]), 'Les images distantes peuvent servir à savoir quand tu ouvres un mail.') +
+      R('Fond des messages', seg('mailbg', [['blanc','Blanc (fidèle)'],['theme','Suivre le thème (sombre)']])) +
+      R('Taille du texte des messages', seg('mailZoom', [['90','90 %'],['100','100 %'],['115','115 %'],['130','130 %']])) +
+      R('Largeur de lecture', seg('readw', [['normal','Normale'],['large','Large'],['plein','Pleine']])) +
+      R('Libellés des boutons', seg('labels', yn))],
+    write: ['Rédaction', () =>
+      R('Police par défaut', `<select class="field" data-sel="font">${Object.keys(FONTS).map(f => `<option${f === SET.font ? ' selected' : ''} style="font-family:${FONTS[f]}">${f}</option>`).join('')}</select>`) +
+      R('Taille du texte', seg('fsize', [['13','13'],['14','14'],['16','16'],['18','18']])) +
+      R('Délai pour annuler l’envoi', seg('undoSend', [['0','Aucun'],['5','5 s'],['10','10 s'],['20','20 s']])) +
+      R('Fenêtre de rédaction', seg('compWin', [['float','Flottante'],['max','Grande']])) +
+      R('Avertir si l’objet est vide', seg('noSubjWarn', yn))],
+    accounts: ['Comptes', () =>
+      `<div class="alist">${ST.accounts.map(a => `<div class="ai">${avatar({ name: a.name || a.email, address: a.email }).replace('class="av ', `style="background:${accColor(a)};color:#fff" class="av col `)}<div class="t"><b>${esc(accLabel(a))}</b><small>${esc(a.email)} · ${esc((ST.providers[a.provider] || {}).label || a.imap.host)}</small></div><button class="btn ghost" data-edit="${a.id}">${ic('edit')}Modifier</button></div>`).join('')}</div>
+       <button class="btn primary" data-addacc style="margin-top:6px">${ic('plus')}Ajouter un compte</button>
+       <div class="note">Les mots de passe sont chiffrés par Windows sur cet ordinateur et ne sont jamais envoyés ailleurs qu’à ton fournisseur.</div>`],
+    notif: ['Notifications', () =>
+      R('Notifications des nouveaux messages', pseg('notify', pyn)) +
+      R('Son', pseg('sound', pyn)) +
+      R('Garder Hamama dans la zone de notification à la fermeture', pseg('tray', pyn), 'Hamama continue de recevoir les messages quand la fenêtre est fermée.') +
+      R('Lancer Hamama au démarrage de Windows', pseg('startup', pyn)) +
+      R('Application mail par défaut', `<button class="btn ghost" data-defmail>${ic('mail')}Définir Hamama pour les liens « mailto: »</button>`, 'Windows ouvre ses Paramètres : choisis Hamama pour « MAILTO ».')],
+    keys: ['Raccourcis', () =>
+      R('Raccourcis clavier', seg('keys', [['on','Activés'],['off','Désactivés']])) + `<div class="keyl" style="margin-top:14px">${KEYS.map(([k, l]) => `<div><span>${l}</span><span>${k.split(' ').map(x => `<kbd class="k">${x}</kbd>`).join(' ')}</span></div>`).join('')}</div>`],
+    about: ['À propos', () =>
+      `<div style="text-align:center;padding:10px 0"><div class="drop" style="border:0;padding:10px;background:none"><div class="big">${ic('plane')}</div><h1 style="font-size:22px">Hamama</h1><p data-ver style="margin-bottom:10px">Application mail</p></div>
+       <div data-upd style="text-align:left;margin:4px 0 14px"></div>
+       <div class="note" style="text-align:center">Sans publicité · sans pistage · tes messages restent entre toi et ton fournisseur.</div>
+       <div class="row" style="justify-content:center"><button class="btn ghost heart" data-sup>${ic('heart')}Soutenir Hamama</button></div></div>`]
+  };
+  modal(`<h2>Personnaliser Hamama</h2><div class="sub">Les changements s’appliquent tout de suite et sont mémorisés.</div>
+    <div class="setwrap"><div class="tabs v">${Object.entries(TABS).map(([k, [l]]) => `<button data-tab="${k}">${l}</button>`).join('')}</div><div data-body></div></div>
+    <div class="row"><button class="btn ghost" data-reset>Réinitialiser l’apparence</button><span class="spacer"></span><button class="btn primary" data-x>${ic('check')}Terminé</button></div>`,
+  (card, close) => {
+    const body = card.querySelector('[data-body]');
+    const show = t => {
+      tab = t; card.querySelectorAll('[data-tab]').forEach(b => b.classList.toggle('on', b.dataset.tab === t));
+      body.innerHTML = TABS[t][1]();
+      body.querySelectorAll('[data-th]').forEach(b => b.onclick = () => { SET.theme = b.dataset.th; changed(); });
+      body.querySelectorAll('[data-a]').forEach(b => b.onclick = () => { SET.accent = b.dataset.a; changed(); });
+      const cp = body.querySelector('input[type=color]'); if (cp) cp.oninput = e => { SET.accent = e.target.value; applySettings(); };
+      body.querySelectorAll('.seg[data-key]').forEach(sg => sg.querySelectorAll('button').forEach(b => b.onclick = () => { SET[sg.dataset.key] = b.dataset.v; changed(); }));
+      body.querySelectorAll('.seg[data-pkey]').forEach(sg => sg.querySelectorAll('button').forEach(b => b.onclick = async () => { prefs[sg.dataset.pkey] = b.dataset.v === 'true'; try { prefs = await N.prefs(prefs); } catch (e) { errToast(e); } show(tab); }));
+      body.querySelectorAll('[data-qa]').forEach(i => i.onchange = () => { SET.qa = [...body.querySelectorAll('[data-qa]:checked')].map(x => x.dataset.qa); changed(); });
+      body.querySelectorAll('[data-sel]').forEach(s => s.onchange = () => { SET[s.dataset.sel] = s.value; changed(); });
+      body.querySelectorAll('[data-edit]').forEach(b => b.onclick = () => openAccount(b.dataset.edit));
+      const aa = body.querySelector('[data-addacc]'); if (aa) aa.onclick = () => { close(); openAddAccount(); };
+      const dm = body.querySelector('[data-defmail]'); if (dm) dm.onclick = () => N.defaultMail().catch(errToast);
+      const sp = body.querySelector('[data-sup]'); if (sp) sp.onclick = () => openSupport();
+      const vr = body.querySelector('[data-ver]'); if (vr) N.version().then(v => vr.textContent = 'Version ' + v).catch(() => {});
+      const ub = body.querySelector('[data-upd]'); if (ub){ const paint = () => { if (!ub.isConnected){ updPaint = null; return; } ub.innerHTML = updHTML(); const b = ub.querySelector('[data-uact]'); if (b) b.onclick = () => b.dataset.uact === 'check' ? N.update.check().catch(errToast) : installUpdate(); }; updPaint = paint; paint(); }
+    };
+    const changed = () => { applySettings(); show(tab); renderSide(); renderList(); if (ST.msg) renderView(ST.msg); };
+    card.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => show(b.dataset.tab));
+    card.querySelector('[data-reset]').onclick = () => { for (const k of ['theme','accent','layout','density','zoom','radius','side']) SET[k] = DEF_SET[k]; changed(); };
+    card.querySelector('[data-x]').onclick = () => close();
+    show(tab);
+  }, { cls: 'set' });
+}
+
+/* ================= Soutenir Hamama ================= */
+const SUPPORT_URL = '';
+function openSupport(){
+  modal(`<div class="sup-hero">${ic('heart')}</div><h2 style="justify-content:center">Soutenir Hamama</h2>
+    <div class="sub" style="text-align:center;line-height:1.6">Hamama est gratuit, sans publicité et ne lit jamais tes messages.<br>S’il te rend service, tu peux soutenir son développement </div>
+    ${SUPPORT_URL ? `<a class="btn primary paybtn" href="${SUPPORT_URL}" target="_blank" rel="noopener">${ic('wallet')} Payer avec Apple Pay ou carte</a>` : `<button class="btn ghost paybtn" disabled style="opacity:.6">Lien de paiement bientôt disponible</button>`}
+    <div class="note" style="text-align:center">Paiement sécurisé · Apple Pay, Apple Card et cartes bancaires</div>
+    <div class="row" style="justify-content:center"><button class="btn ghost" data-x>Fermer</button></div>`,
+  (card, close) => { card.querySelector('[data-x]').onclick = () => close(); const a = card.querySelector('a.paybtn'); if (a) a.onclick = () => setTimeout(close, 300); });
+}
+
+/* ================= Recherche ================= */
+let searchTok = 0, localT = null;
+$('#scopeBtn').onclick = e => { e.preventDefault(); ST.scope = ST.scope === 'box' ? 'all' : 'box'; $('#scopeBtn').textContent = ST.scope === 'box' ? 'Ce dossier' : 'Partout'; if (ST.search) runSearch(ST.search); $('#q').focus(); };
+$('#q').addEventListener('keydown', e => {
+  if (e.key === 'Enter'){ e.preventDefault(); runSearch($('#q').value.trim()); }
+  if (e.key === 'Escape'){ e.preventDefault(); clearSearch(); $('#q').blur(); }
+  if (e.key === 'ArrowDown'){ e.preventDefault(); $('#list').focus(); const f = visible()[0]; f && openMsg(f.key); }
+});
+$('#q').addEventListener('input', () => {
+  clearTimeout(localT);
+  const q = $('#q').value.trim();
+  if (!q){ if (ST.search) clearSearch(); return; }
+  localT = setTimeout(() => runSearch(q), 450);
+});
+async function runSearch(q){
+  if (!q) return clearSearch();
+  if (!ST.search) ST.prevItems = { items: ST.items, more: ST.more };
+  ST.search = q; ST.sel.clear(); const tok = ++searchTok; setBusy(true);
+  // résultat local instantané, puis recherche sur le serveur
+  const ql = q.toLowerCase();
+  ST.items = (ST.prevItems ? ST.prevItems.items : []).filter(i => (i.subject + ' ' + i.preview + ' ' + (i.from || []).map(fmtAddr).join(' ')).toLowerCase().includes(ql));
+  renderList();
+  try {
+    const v = ST.view;
+    const r = ST.scope === 'all' || v.uni ? await N.mail.searchAll(q) : await N.mail.search(v.acc, v.box, q);
+    if (tok !== searchTok || ST.search !== q) return;
+    ST.items = r.items; renderList();
+  } catch (e) { if (tok === searchTok) errToast(e); }
+  finally { if (tok === searchTok) setBusy(false); }
+}
+function clearSearch(){
+  if (!ST.search) return; ST.search = null; $('#q').value = ''; ++searchTok;
+  if (ST.prevItems){ ST.items = ST.prevItems.items; ST.more = ST.prevItems.more; ST.prevItems = null; }
+  renderList(); refreshList();
+}
+
+/* ================= Clavier ================= */
+const KEYS = [['N','Nouveau message'],['R','Répondre'],['A','Répondre à tous'],['F','Transférer'],['E','Archiver'],['Suppr','Supprimer'],['J ↓','Message suivant'],['K ↑','Message précédent'],['U','Lu / non lu'],['S','Suivre'],['V','Déplacer'],['Ctrl K','Rechercher'],['Ctrl A','Tout sélectionner'],['F5','Actualiser'],['Ctrl Entrée','Envoyer'],['Échap','Fermer / retour'],['?','Cette aide']];
+function moveSel(d){
+  const vis = visible(); if (!vis.length) return;
+  let idx = vis.findIndex(i => i.key === ST.open);
+  idx = idx < 0 ? 0 : Math.max(0, Math.min(vis.length - 1, idx + d));
+  ST.sel = new Set([vis[idx].key]); ST.anchor = vis[idx].key; openMsg(vis[idx].key);
+}
+function onKey(e){
+  if (e.defaultPrevented) return;
+  const k = e.key, ctrl = e.ctrlKey || e.metaKey;
+  if (ctrl && k.toLowerCase() === 'k' || (!isTyping(e) && k === '/' && SET.keys === 'on')){ if ($('#composer') && $('#composer').contains(document.activeElement)) return; e.preventDefault(); $('#q').focus(); $('#q').select(); return; }
+  if (k === 'F5' || (ctrl && k.toLowerCase() === 'r')){ e.preventDefault(); refreshAll(); return; }
+  if (isTyping(e) || modalOpen || menuEl) return;
+  if (ctrl && k.toLowerCase() === 'a'){ e.preventDefault(); ST.sel = new Set(visible().map(i => i.key)); renderList(); return; }
+  if (ctrl && k.toLowerCase() === 'p' && ST.msg){ e.preventDefault(); printMsg(); return; }
+  if (ctrl && k.toLowerCase() === 'n'){ e.preventDefault(); openComposer(); return; }
+  if (k === 'Escape'){
+    if (ST.sel.size > 1 || ST.selMode){ ST.sel.clear(); ST.selMode = false; renderList(); if (ST.open) openMsg(ST.open); else showEmptyView(); return; }
+    if (ST.search){ clearSearch(); return; }
+    if (document.documentElement.classList.contains('reading')){ viewAction('back'); return; }
+    return;
+  }
+  if (SET.keys !== 'on' || ctrl || e.altKey) return;
+  const keys = ST.sel.size ? [...ST.sel] : ST.open ? [ST.open] : [];
+  const one = ST.open || keys[0];
+  switch (k){
+    case 'j': case 'ArrowDown': e.preventDefault(); moveSel(1); break;
+    case 'k': case 'ArrowUp': e.preventDefault(); moveSel(-1); break;
+    case 'n': case 'c': e.preventDefault(); openComposer(); break;
+    case 'r': if (one){ e.preventDefault(); replyTo(one, 'reply'); } break;
+    case 'a': if (one){ e.preventDefault(); replyTo(one, 'all'); } break;
+    case 'f': if (one){ e.preventDefault(); replyTo(one, 'fwd'); } break;
+    case 'e': case 'y': if (keys.length) act('archive', keys); break;
+    case 'Delete': case '#': case 'Backspace': if (keys.length) act('trash', keys); break;
+    case 's': if (keys.length){ const i = itemOf(keys[0]); act(i && i.flagged ? 'unstar' : 'star', keys); } break;
+    case 'u': case 'i': if (keys.length){ const i = itemOf(keys[0]); act(i && i.seen ? 'unread' : 'read', keys); clearTimeout(readT); } break;
+    case 'v': if (keys.length) pickFolder(keys, null, innerWidth / 2 - 140, 140); break;
+    case 'Enter': if (one){ const i = itemOf(one); if (i && (i.draft || (folderOf(i.acc, i.box) || {}).role === 'drafts')) openDraft(i); else openMsg(one); } break;
+    case '?': openSettings('keys'); break;
+  }
+}
+document.addEventListener('keydown', onKey);
+
+/* ================= Redimensionnement des colonnes ================= */
+(() => {
+  const root = document.documentElement;
+  for (const [p, k, u] of [['--sidew','hamama-sidew','px'],['--listw','hamama-listw','px'],['--listh','hamama-listh','%']]){ const v = +store.get(k); if (v) root.style.setProperty(p, v + u); }
+  const modes = {
+    side: () => ({ prop:'--sidew', key:'hamama-sidew', min:170, max:420, vert:false, el:$('#side') }),
+    list: () => SET.layout === 'large' ? { prop:'--listh', key:'hamama-listh', vert:true, el:$('#listCol') } : { prop:'--listw', key:'hamama-listw', min:280, max:760, vert:false, el:$('#listCol') }
+  };
+  for (const [id, mk] of [['#gripSide', modes.side], ['#gripList', modes.list]]){
+    const g = $(id);
+    g.addEventListener('pointerdown', e => {
+      e.preventDefault(); g.setPointerCapture(e.pointerId); g.classList.add('on');
+      const m = mk(), z = +document.body.style.zoom || 1, start = m.vert ? e.clientY : e.clientX;
+      const r = m.el.getBoundingClientRect(), base = (m.vert ? r.height : r.width) / z, H = $('.cols').getBoundingClientRect().height / z;
+      const mv = ev => {
+        const d = ((m.vert ? ev.clientY : ev.clientX) - start) / z;
+        if (m.vert){ const pct = Math.max(20, Math.min(80, (base + d) / H * 100)); root.style.setProperty(m.prop, pct + '%'); store.set(m.key, pct.toFixed(1)); }
+        else { const w = Math.max(m.min, Math.min(m.max, base + d)); root.style.setProperty(m.prop, w + 'px'); store.set(m.key, Math.round(w)); }
+      };
+      const up = () => { g.classList.remove('on'); g.removeEventListener('pointermove', mv); g.removeEventListener('pointerup', up); };
+      g.addEventListener('pointermove', mv); g.addEventListener('pointerup', up);
+    });
+    g.addEventListener('dblclick', () => { const m = mk(); root.style.removeProperty(m.prop); store.del(m.key); });
+  }
+})();
+
+/* ================= Boutons de la barre du haut ================= */
+$('#compose').onclick = () => openComposer();
+$('#setBtn').onclick = () => openSettings();
+$('#heartBtn').onclick = () => openSupport();
+$('#addAccBtn').onclick = () => openAddAccount();
+$('#sideBtn').onclick = () => { SET.side = SET.side === 'hidden' ? 'shown' : 'hidden'; applySettings(); };
+$('#refreshBtn').onclick = () => refreshAll();
+async function refreshAll(){
+  const b = $('#refreshBtn'); b.animate([{ transform:'rotate(0)' }, { transform:'rotate(360deg)' }], { duration: 600 });
+  await Promise.all([loadAllFolders(), ST.search ? runSearch(ST.search) : refreshList()]);
+}
+
+/* ================= Événements de l’application ================= */
+if (N){
+  N.on('new-mail', ({ acc, items }) => {
+    refreshFoldersSoon(acc, 300);
+    const v = ST.view;
+    if (v && !ST.search && (v.uni || (v.acc === acc && v.box === 'INBOX'))) refreshList();
+    if (!document.hasFocus() && items && items.length){
+      if (items.length > 2) N.notify({ title: `${items.length} nouveaux messages`, body: items.slice(0, 3).map(i => nameOf(i.from && i.from[0])).join(', '), key: items[0].key });
+      else items.forEach(i => N.notify({ title: nameOf(i.from && i.from[0]) || 'Nouveau message', body: i.subject || '(sans objet)', key: i.key }));
+    }
+  });
+  N.on('mailto', url => { if (url === 'mailto:') openComposer(); else composeMailto(url); });
+  N.on('open-key', async key => {
+    const [acc] = key.split('|');
+    if (!ST.view || !(ST.view.uni || (ST.view.acc === acc && ST.view.box === 'INBOX'))) await openView({ acc, box: 'INBOX' });
+    else await refreshList();
+    if (itemOf(key)) openMsg(key);
+  });
+}
+setInterval(() => { if (ST.accounts.length) loadAllFolders(); }, 3 * 60000);
+setInterval(() => { if (ST.view && !ST.search && !document.hidden) refreshList(); }, 5 * 60000);
+window.addEventListener('focus', () => { if (ST.view && !ST.search && Date.now() - (window._lastF || 0) > 60000){ window._lastF = Date.now(); refreshList(); } });
+
+/* ================= Mises à jour (sans réinstaller) ================= */
+let UPD = { state: 'idle' }, updPaint = null;
+function updHTML(){
+  const s = UPD, n = s.next || '';
+  const row = (t, sub, btn) => `<div class="updbox">${ic(s.state === 'ready' || s.state === 'available' ? 'download' : s.state === 'error' ? 'info' : 'check')}<span>${t}${sub ? `<small>${sub}</small>` : ''}</span>${btn || ''}</div>`;
+  const chk = '<button class="btn ghost" data-uact="check">Rechercher</button>';
+  switch (s.state){
+    case 'store': case 'off': return row('Mises à jour automatiques', s.mode === 'dev' ? 'Désactivées en mode développement' : 'Assurées par le Microsoft Store');
+    case 'checking': return row('Recherche d’une mise à jour…');
+    case 'uptodate': return row('Hamama est à jour', 'Les nouvelles versions s’installent toutes seules, sans réinstaller.', chk);
+    case 'downloading': return row(`Téléchargement de la version ${esc(n)}… ${s.percent || 0} %`, 'Tu peux continuer à utiliser Hamama.');
+    case 'ready': return row(`Version ${esc(n)} prête`, 'Un simple redémarrage de Hamama suffit.', '<button class="btn primary" data-uact="install">Redémarrer</button>');
+    case 'available': return row(`Version ${esc(n)} disponible`, 'Version portable : télécharge le nouveau fichier.', '<button class="btn primary" data-uact="install">Télécharger</button>');
+    case 'error': return row('Impossible de vérifier les mises à jour', esc(s.err || 'Pas de connexion ?'), chk);
+    default: return row('Mises à jour automatiques', 'Vérification au démarrage puis toutes les 4 heures.', chk);
+  }
+}
+function renderUpd(){
+  const b = $('#updBtn'), st = UPD.state, show = st === 'ready' || st === 'available';
+  b.classList.toggle('hidden', !show);
+  b.querySelector('span').textContent = st === 'ready' ? 'Redémarrer pour mettre à jour' : 'Nouvelle version';
+  b.dataset.tip = st === 'ready' ? `Hamama ${UPD.next} est prête : un redémarrage suffit` : `Hamama ${UPD.next || ''} est disponible`;
+  if (updPaint) updPaint();
+}
+async function installUpdate(){
+  if (CMP && CMP.dirty) await closeComposer('save', true);
+  try { await N.update.install(); } catch (e) { errToast(e); }
+}
+$('#updBtn').onclick = installUpdate;
+if (N && N.update){
+  N.on('update', s => { const was = UPD.state; UPD = s; renderUpd(); if (s.state === 'ready' && was !== 'ready') toast(`Mise à jour ${s.next} prête`, { label: 'Redémarrer', fn: installUpdate }, 10000); });
+  N.update.state().then(s => { if (s && s.state){ UPD = s; renderUpd(); } }).catch(() => {});
+}
+
+/* ================= Démarrage ================= */
+async function start(){
+  if (!N){ document.body.innerHTML = '<div style="padding:40px;font:16px Inter,sans-serif;color:#e8eaf0">Hamama fonctionne dans son application Windows ou Mac.</div>'; return; }
+  showEmptyView();
+  await reloadAccounts();
+  if (ST.accounts.length) await openDefault();
+  N.ready();
+  const pend = J('hamama-compose', null);
+  if (pend && (pend.html || pend.subject)) toast('Un message non envoyé a été récupéré', { label: 'Ouvrir', fn: () => openComposer({ ...pend, atts: restoreAtts(pend.atts) }) }, 12000);
+  if (location.search.includes('debug')) window.__hamama = { ST, SET, openMsg, openView, act, openComposer, openSettings, refreshList };
+}
+start();
+})();

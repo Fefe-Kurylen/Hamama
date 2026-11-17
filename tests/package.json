@@ -1,0 +1,16 @@
+{
+  "name": "hamama-tests",
+  "private": true,
+  "description": "Tests de Hamama : serveur IMAP/SMTP local + pilotage d'Electron",
+  "scripts": {
+    "serveur": "node server.js",
+    "e2e": "node e2e.js",
+    "redemarrage": "node relaunch.js"
+  },
+  "dependencies": {
+    "hoodiecrow-imap": "^3.3.1",
+    "smtp-server": "^3.21.6",
+    "nodemailer": "^10.6.0",
+    "playwright": "^1.63.0"
+  }
+}

@@ -1,0 +1,36 @@
+# Publie une mise à jour de Hamama : fabrique l'installateur sur un vrai Windows et le met dans
+# les « Releases » GitHub. Les applis Hamama déjà installées la trouvent toutes seules
+# (téléchargement en arrière-plan, puis « Redémarrer pour mettre à jour »).
+# Déclenchement : pousser un tag vX.Y.Z identique à la version de windows/package.json
+#   (ou bouton « Run workflow » dans l'onglet Actions).
+name: Windows - publication d'une mise à jour
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: windows
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - name: Interface (web/index.html → windows/app)
+        run: python make-app.py
+      - name: Vérification de la version
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          $v = node -p "require('./package.json').version"
+          if ("v$v" -ne "${{ github.ref_name }}") { throw "Le tag ${{ github.ref_name }} ne correspond pas à la version $v de windows/package.json" }
+      - name: Fabrication + publication (installateur, portable, latest.yml)
+        run: npx electron-builder --win nsis portable --x64 --publish always
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

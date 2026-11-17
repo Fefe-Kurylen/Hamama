@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e86a26"/><stop offset=".55" stop-color="#c94a12"/><stop offset="1" stop-color="#a1320a"/>
+    </linearGradient>
+    <radialGradient id="hl" cx=".27" cy=".2" r=".6">
+      <stop offset="0" stop-color="#f08a4a" stop-opacity=".55"/><stop offset="1" stop-color="#f08a4a" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="w" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fffdfb"/><stop offset="1" stop-color="#fbeee6"/></linearGradient>
+    <linearGradient id="p" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f2a56d"/><stop offset="1" stop-color="#e5844a"/></linearGradient>
+    <filter id="sh" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="26"/></filter>
+  </defs>
+  <rect x="40" y="40" width="944" height="944" rx="230" fill="url(#bg)"/>
+  <rect x="40" y="40" width="944" height="944" rx="230" fill="url(#hl)"/>
+  <ellipse cx="500" cy="815" rx="250" ry="40" fill="#5a1a02" opacity=".5" filter="url(#sh)"/>
+  <g transform="translate(-22,36)">
+  <!-- colombe en origami (facettes) -->
+  <!-- aile arrière -->
+  <path d="M520 560 L640 300 L700 520 Z" fill="url(#p)"/>
+  <!-- queue -->
+  <path d="M210 520 L400 610 L300 700 Z" fill="#f0c9ad"/>
+  <path d="M210 520 L400 610 L380 560 Z" fill="#fbe7d9"/>
+  <!-- corps -->
+  <path d="M380 560 L760 470 L600 700 Z" fill="url(#w)"/>
+  <path d="M400 610 L600 700 L380 560 Z" fill="#f3d3bd"/>
+  <path d="M600 700 L760 470 L700 640 Z" fill="#eba57a"/>
+  <!-- tête + bec -->
+  <path d="M700 520 L800 380 L760 470 Z" fill="#fdf3ec"/>
+  <path d="M800 380 L760 470 L850 420 Z" fill="#e5844a"/>
+  <!-- aile avant -->
+  <path d="M440 580 L340 230 L640 520 Z" fill="url(#w)"/>
+  <path d="M440 580 L640 520 L560 600 Z" fill="#f6dccb"/>
+  </g>
+</svg>

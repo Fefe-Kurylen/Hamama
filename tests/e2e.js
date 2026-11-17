@@ -1,0 +1,156 @@
+// Test de bout en bout : Hamama (Electron) + serveur IMAP/SMTP local (tests/server.js)
+// Lancer : xvfb-run -a node tests/e2e.js
+const path = require('path'), fs = require('fs'), os = require('os');
+const { _electron } = require(process.env.PW || 'playwright');
+const SHOTS = path.join(__dirname, 'shots');
+const ok = (c, m) => { console.log((c ? '✅ ' : '❌ ') + m); if (!c) process.exitCode = 1; };
+(async () => {
+  const data = fs.mkdtempSync(path.join(os.tmpdir(), 'hamama-e2e-'));
+  const app = await _electron.launch({ executablePath: require(path.join(__dirname, '..', 'windows', 'node_modules', 'electron')), args: ['--no-sandbox', path.join(__dirname, '..', 'windows')], env: { ...process.env, HAMAMA_DATA: data, HAMAMA_DEBUG: '1' } });
+  const win = await app.firstWindow();
+  const errs = []; win.on('pageerror', e => errs.push(e.message)); win.on('console', m => { if (m.type() === 'error' && !/Content Security Policy/.test(m.text())) errs.push(m.text()); });
+  await win.setViewportSize({ width: 1440, height: 900 }).catch(() => {});
+  await win.waitForSelector('#welcome:not(.hidden)');
+  await win.waitForTimeout(400);
+  await win.screenshot({ path: path.join(SHOTS, '01-accueil.png') });
+  ok(true, 'écran d’accueil affiché');
+  // Ajout d'un compte « Autre »
+  await win.click('#welcomeProvs [data-p=autre]');
+  await win.fill('[data-k=name]', 'Félix');
+  await win.fill('[data-k=email]', 'felix@test.local');
+  await win.fill('[data-k=pass]', 'secret');
+  await win.click('details.adv summary');
+  await win.fill('[data-k=ih]', '127.0.0.1'); await win.fill('[data-k=ip]', '1143'); await win.selectOption('[data-k=is]', '0');
+  await win.fill('[data-k=sh]', '127.0.0.1'); await win.fill('[data-k=sp]', '1025'); await win.selectOption('[data-k=ss]', '0');
+  await win.check('[data-k=insecure]');
+  await win.screenshot({ path: path.join(SHOTS, '02-ajout-compte.png') });
+  await win.click('[data-ok]');
+  try { await win.waitForSelector('#app:not(.hidden) #list .it', { timeout: 30000 }); } catch (e) { await win.screenshot({ path: path.join(SHOTS, 'fail.png') }); console.log('ERRS', errs); throw e; }
+  await win.waitForTimeout(800);
+  const n = await win.$$eval('#list .it', l => l.length);
+  ok(n >= 9, `liste chargée (${n} messages)`);
+  const folders = await win.$$eval('#folders .fold', l => l.map(e => e.textContent.trim()));
+  ok(folders.some(f => f.startsWith('Boîte de réception')) && folders.some(f => f.startsWith('Envoyés')), 'dossiers : ' + folders.join(' · '));
+  // Ouvrir le mail HTML (Planning)
+  await win.click('#list .it:has-text("Planning des interventions")');
+  await win.waitForSelector('#mframe');
+  await win.waitForTimeout(900);
+  const fh = await win.$eval('#mframe', f => f.getBoundingClientRect().height);
+  ok(fh > 150, 'message HTML affiché (iframe ' + Math.round(fh) + ' px)');
+  ok(await win.$('.atts .att') !== null, 'pièce jointe affichée');
+  await win.screenshot({ path: path.join(SHOTS, '03-lecture-graphite.png') });
+  // Leboncoin : images bloquées
+  await win.click('#list .it:has-text("BMW X1")');
+  await win.waitForSelector('.banner');
+  ok(await win.$('.banner:has-text("Images distantes bloquées")') !== null, 'pixel espion bloqué + bandeau');
+  ok(await win.$('[data-unsub]') !== null, 'bouton « Se désabonner »');
+  await win.waitForTimeout(500);
+  await win.screenshot({ path: path.join(SHOTS, '04-images-bloquees.png') });
+  // Suivre (étoile) via le clavier
+  await win.focus('#list'); await win.keyboard.press('s'); await win.waitForTimeout(600);
+  ok(await win.$('#list .it.on .star') !== null, 'raccourci S : message suivi');
+  // Rédaction + envoi
+  await win.keyboard.press('n');
+  await win.waitForSelector('#composer');
+  await win.fill('#composer [data-f=to] input', 'felix@test.local'); await win.keyboard.press('Enter');
+  await win.fill('#cSubj', 'Bonjour depuis Hamama ✉️');
+  await win.click('#ed'); await win.keyboard.type('Ceci est un test d’envoi réel. ');
+  await win.keyboard.press('Control+b'); await win.keyboard.type('En gras !'); await win.keyboard.press('Control+b');
+  await win.screenshot({ path: path.join(SHOTS, '05-redaction.png') });
+  await win.evaluate(() => { window.__hamama.SET.undoSend = '0'; });
+  await win.keyboard.press('Control+Enter');
+  await win.waitForSelector('.toast:has-text("Message envoyé")', { timeout: 20000 });
+  ok(true, 'message envoyé (SMTP)');
+  // Arrivée en temps réel (IDLE)
+  await win.waitForSelector('#list .it:has-text("Bonjour depuis Hamama")', { timeout: 20000 });
+  ok(true, 'réception en temps réel du message envoyé');
+  // Répondre (R)
+  await win.click('#list .it:has-text("Bonjour depuis Hamama")'); await win.waitForSelector('#mframe'); await win.waitForTimeout(500);
+  const body = await win.$eval('#mframe', f => f.contentDocument.body.innerText);
+  ok(/En gras/.test(body), 'contenu du message reçu correct');
+  await win.focus('#list'); await win.keyboard.press('r'); await win.waitForSelector('#composer');
+  const subj = await win.$eval('#cSubj', i => i.value); ok(/^Re : Bonjour/.test(subj), 'réponse : objet « ' + subj + ' »');
+  const quoted = await win.$eval('#ed', e => e.innerHTML); ok(/a écrit/.test(quoted) && /blockquote/.test(quoted), 'citation du message d’origine');
+  await win.keyboard.type('Merci, bien reçu.');
+  await win.click('#composer [data-c=close]');   await win.waitForSelector('.toast:has-text("Brouillon enregistré")', { timeout: 15000 });
+  ok(true, 'brouillon enregistré à la fermeture');
+  // Archiver avec E puis annuler
+  const before = await win.$$eval('#list .it', l => l.length);
+  await win.focus('#list'); await win.keyboard.press('e');
+  await win.waitForSelector('.toast:has-text("archivé")', { timeout: 15000 });
+  const after = await win.$$eval('#list .it', l => l.length);
+  ok(after === before - 1, 'archivage (E)');
+  await win.click('.toast:has-text("archivé") button');
+  await win.waitForSelector('.toast:has-text("Restauré")', { timeout: 15000 });
+  await win.waitForTimeout(1500);
+  ok(await win.$$eval('#list .it', l => l.length) === before, 'annuler l’archivage');
+  // Supprimer via le survol
+  await win.hover('#list .it:has-text("Décathlon")'); await win.click('#list .it:has-text("Décathlon") [data-q=trash]');
+  await win.waitForSelector('.toast:has-text("supprimé")'); ok(true, 'suppression depuis les actions au survol');
+  // Recherche
+  await win.click('#q'); await win.keyboard.type('Sabrine'); await win.keyboard.press('Enter'); await win.waitForTimeout(1500);
+  const rs = await win.$$eval('#list .it', l => l.map(e => e.querySelector('.s').textContent));
+  ok(rs.some(s => /arabe/.test(s)), 'recherche : ' + rs.join(' | '));
+  await win.keyboard.press('Escape');
+  // Dossier Envoyés
+  await win.click('#folders .fold:has-text("Envoyés")'); await win.waitForTimeout(1200);
+  ok(await win.$('#list .it:has-text("Bonjour depuis Hamama")') !== null, 'copie dans « Envoyés »');
+  await win.click('#folders .fold:has-text("Boîte de réception")'); await win.waitForTimeout(1000);
+  await win.click('#list .it:has-text("Planning des interventions")'); await win.waitForSelector('#mframe'); await win.waitForTimeout(700);
+  // Glisser-déposer vers un dossier
+  await win.dragAndDrop('#list .it:has-text("GitHub")', '#folders .fold:has-text("Pyramid")');
+  await win.waitForSelector('.toast:has-text("déplacé")', { timeout: 15000 });
+  ok(await win.$('#list .it:has-text("GitHub")') === null, 'glisser-déposer vers « Projets / Pyramid »');
+  // Sélection multiple
+  await win.focus('#list'); await win.keyboard.press('Control+a'); await win.waitForTimeout(300);
+  ok(await win.isVisible('#bulk'), 'Ctrl+A : barre de sélection multiple (' + await win.textContent('#bulkN') + ')');
+  await win.screenshot({ path: path.join(SHOTS, '14-selection-multiple.png') });
+  await win.keyboard.press('Escape'); await win.waitForTimeout(300);
+  // Deuxième compte → boîte unifiée
+  await win.click('#addAccBtn'); await win.click('.modal [data-p=autre]');
+  await win.fill('[data-k=name]', 'Test'); await win.fill('[data-k=email]', 'testuser@autre.local'); await win.fill('[data-k=pass]', 'testpass');
+  await win.click('details.adv summary'); await win.fill('[data-k=user]', 'testuser');
+  await win.fill('[data-k=ih]', '127.0.0.1'); await win.fill('[data-k=ip]', '1143'); await win.selectOption('[data-k=is]', '0');
+  await win.fill('[data-k=sh]', '127.0.0.1'); await win.fill('[data-k=sp]', '1025'); await win.selectOption('[data-k=ss]', '0');
+  await win.check('[data-k=insecure]'); await win.click('[data-ok]');
+  try { await win.waitForSelector('#folders [data-uni]', { timeout: 30000 }); } catch (e) { await win.screenshot({ path: path.join(SHOTS, 'fail2.png') }); throw e; }
+  await win.click('#folders [data-uni]'); await win.waitForTimeout(2500);
+  const un = await win.$$eval('#list .it', l => l.length);
+  ok(un >= 14, `boîte unifiée sur 2 comptes (${un} messages)`);
+  await win.click('#list .it:has-text("Planning des interventions")'); await win.waitForSelector('#mframe'); await win.waitForTimeout(700);
+  await win.screenshot({ path: path.join(SHOTS, '15-boite-unifiee.png') });
+  // Réglages + thèmes
+  await win.click('#setBtn'); await win.waitForSelector('.card.set'); await win.waitForTimeout(300);
+  await win.screenshot({ path: path.join(SHOTS, '06-reglages.png') });
+  for (const th of ['clair', 'noir', 'sombre']){
+    await win.click(`[data-th=${th}]`); await win.waitForTimeout(250);
+    await win.keyboard.press('Escape'); await win.waitForTimeout(500);
+    await win.screenshot({ path: path.join(SHOTS, `07-theme-${th}.png`) });
+    await win.click('#setBtn'); await win.waitForSelector('.card.set');
+  }
+  await win.click('[data-th=graphite]');
+  await win.click('[data-tab=list]'); await win.waitForTimeout(200); await win.screenshot({ path: path.join(SHOTS, '08-reglages-liste.png') });
+  await win.click('[data-tab=look]'); await win.click('.seg[data-key=layout] [data-v=large]'); await win.keyboard.press('Escape'); await win.waitForTimeout(600);
+  await win.screenshot({ path: path.join(SHOTS, '09-lecture-en-dessous.png') });
+  await win.click('#setBtn'); await win.click('.seg[data-key=layout] [data-v=focus]'); await win.click('.seg[data-key=density] [data-v=compact]'); await win.keyboard.press('Escape'); await win.waitForTimeout(500);
+  await win.screenshot({ path: path.join(SHOTS, '10-focus-compact.png') });
+  await win.click('#setBtn'); await win.click('.seg[data-key=layout] [data-v=trois]'); await win.click('.seg[data-key=density] [data-v=confort]'); await win.click('[data-sw]').catch(() => {}); await win.click(`[data-a="#4a84c4"]`); await win.keyboard.press('Escape'); await win.waitForTimeout(500);
+  await win.screenshot({ path: path.join(SHOTS, '11-accent-bleu.png') });
+  // Soutenir
+  await win.click('#heartBtn'); await win.waitForTimeout(300); await win.screenshot({ path: path.join(SHOTS, '12-soutenir.png') }); await win.keyboard.press('Escape');
+  // Menu contextuel
+  await win.click('#list .it:has-text("Stripe")', { button: 'right' }); await win.waitForTimeout(250);
+  await win.screenshot({ path: path.join(SHOTS, '13-menu.png') }); await win.keyboard.press('Escape'); await win.mouse.click(5, 300);
+  // Mise à jour sans réinstaller : simulation des événements du module de mise à jour
+  const sendUpd = st => app.evaluate(({ BrowserWindow }, st) => BrowserWindow.getAllWindows()[0].webContents.send('update', st), st);
+  await sendUpd({ state: 'downloading', next: '1.0.1', percent: 40, mode: 'auto' }); await win.waitForTimeout(200);
+  ok(await win.isHidden('#updBtn'), 'pendant le téléchargement : pas de bouton (discret)');
+  await sendUpd({ state: 'ready', next: '1.0.1', mode: 'auto' });
+  await win.waitForSelector('#updBtn:not(.hidden)'); await win.waitForSelector('.toast:has-text("Mise à jour 1.0.1 prête")');
+  ok(/Redémarrer pour mettre à jour/.test(await win.textContent('#updBtn')), 'bouton « Redémarrer pour mettre à jour » + notification');
+  await win.click('#setBtn'); await win.click('[data-tab=about]'); await win.waitForTimeout(200);
+  ok(/Version 1\.0\.1 prête/.test(await win.textContent('[data-upd]')), 'Réglages → À propos : état de la mise à jour');
+  await win.screenshot({ path: path.join(SHOTS, '16-mise-a-jour.png') }); await win.keyboard.press('Escape');
+  ok(errs.length === 0, 'aucune erreur JavaScript' + (errs.length ? ' : ' + errs.join(' / ') : ''));
+  await app.close();
+})().catch(e => { console.error('ERREUR', e); process.exit(1); });

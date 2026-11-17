@@ -1,0 +1,133 @@
+{
+  "name": "hamama",
+  "version": "1.0.0",
+  "description": "Hamama — application mail",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win --x64 --publish never",
+    "dist:mac": "electron-builder --mac --publish never",
+    "dist:store": "electron-builder --win appx --x64 --publish never"
+  },
+  "author": "Kurylen",
+  "license": "ISC",
+  "dependencies": {
+    "electron-updater": "^6.8.11",
+    "iconv-lite": "^0.6.3",
+    "imapflow": "^1.0.0",
+    "mailparser": "^3.7.0",
+    "nodemailer": "^10.6.0"
+  },
+  "devDependencies": {
+    "@fontsource/inter": "^5.3.0",
+    "electron": "^45.3.3",
+    "electron-builder": "^25.1.8",
+    "resedit": "^2.0.3"
+  },
+  "productName": "Hamama",
+  "build": {
+    "appId": "fr.kurylen.hamama",
+    "productName": "Hamama",
+    "copyright": "© 2026 Kurylen",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "main.js",
+      "mail.js",
+      "oauth.js",
+      "updater.js",
+      "preload.js",
+      "app/**/*"
+    ],
+    "asar": true,
+    "afterPack": "./afterPack.js",
+    "protocols": [
+      {
+        "name": "E-mail",
+        "schemes": [
+          "mailto"
+        ]
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico",
+      "signAndEditExecutable": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": "always",
+      "createStartMenuShortcut": true,
+      "shortcutName": "Hamama",
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "installerLanguages": [
+        "fr_FR"
+      ],
+      "language": "1036",
+      "artifactName": "Hamama-Installation-${version}.exe",
+      "runAfterFinish": true,
+      "deleteAppDataOnUninstall": false,
+      "installerHeaderIcon": "build/icon.ico",
+      "uninstallDisplayName": "Hamama"
+    },
+    "portable": {
+      "artifactName": "Hamama-Portable-${version}.exe"
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "Fefe-Kurylen",
+        "repo": "Hamama",
+        "releaseType": "release"
+      }
+    ],
+    "mac": {
+      "target": [
+        {
+          "target": "zip",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        }
+      ],
+      "category": "public.app-category.productivity",
+      "icon": "build/icon.png",
+      "identity": null,
+      "darkModeSupport": true,
+      "artifactName": "Hamama-Mac-${arch}-${version}.${ext}"
+    },
+    "appx": {
+      "identityName": "Kurylen.Hamama",
+      "publisher": "CN=B85CD3FF-A422-425E-9A54-A6E74180E94E",
+      "publisherDisplayName": "Kurylen",
+      "applicationId": "Hamama",
+      "displayName": "Hamama",
+      "backgroundColor": "transparent",
+      "showNameOnTiles": false,
+      "languages": [
+        "fr-FR"
+      ],
+      "addAutoLaunchExtension": false,
+      "artifactName": "Hamama-Store-${version}.${ext}"
+    }
+  }
+}

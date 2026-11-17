@@ -1,0 +1,23 @@
+const fs = require('fs');
+const path = require('path');
+exports.default = async function (ctx) {
+  if (ctx.electronPlatformName !== 'win32') return;
+  const ResEdit = await import('resedit');
+  const R = ResEdit.default || ResEdit;
+  const exe = path.join(ctx.appOutDir, `${ctx.packager.appInfo.productFilename}.exe`);
+  const ex = R.NtExecutable.from(fs.readFileSync(exe), { ignoreCert: true });
+  const res = R.NtExecutableResource.from(ex);
+  const ico = R.Data.IconFile.from(fs.readFileSync(path.join(__dirname, 'build', 'icon.ico')));
+  const groups = R.Resource.IconGroupEntry.fromEntries(res.entries);
+  const gid = groups.length ? groups[0].id : 1, glang = groups.length ? groups[0].lang : 1033;
+  R.Resource.IconGroupEntry.replaceIconsForResource(res.entries, gid, glang, ico.icons.map(i => i.data));
+  const vi = R.Resource.VersionInfo.fromEntries(res.entries)[0];
+  const lang = vi.getAllLanguagesForStringValues()[0] || { lang: 1033, codepage: 1200 };
+  vi.setStringValues(lang, { ProductName: 'Hamama', FileDescription: 'Hamama', CompanyName: 'Kurylen', LegalCopyright: '© 2026 Hamama', OriginalFilename: path.basename(exe), InternalName: 'Hamama' });
+  vi.removeStringValue(lang, 'Comments');
+  const V = String(ctx.packager.appInfo.version).split('.').map(n => parseInt(n) || 0); vi.setFileVersion(V[0], V[1], V[2], 0, lang.lang); vi.setProductVersion(V[0], V[1], V[2], 0, lang.lang);
+  vi.outputToResourceEntries(res.entries);
+  res.outputResource(ex);
+  fs.writeFileSync(exe, Buffer.from(ex.generate()));
+  console.log('  • icône et infos Hamama appliquées à', path.basename(exe), '(groupe', gid + ')');
+};
