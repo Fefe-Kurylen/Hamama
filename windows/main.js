@@ -31,10 +31,10 @@ function send(ch, data) { if (win && ready) win.webContents.send(ch, data); else
 function createWindow() {
   win = new BrowserWindow({
     width: 1440, height: 900, minWidth: 760, minHeight: 520,
-    backgroundColor: '#1e2026', title: 'Hamama', show: !(PREF.startMin && process.argv.includes('--hidden')),
+    backgroundColor: '#262624', title: 'Hamama', show: !(PREF.startMin && process.argv.includes('--hidden')),
     icon: path.join(__dirname, 'app', 'icon.png'),
     titleBarStyle: isMac ? 'hiddenInset' : 'hidden',
-    ...(isMac ? { trafficLightPosition: { x: 16, y: 19 } } : { titleBarOverlay: { color: '#262930', symbolColor: '#e8eaf0', height: 52 } }),
+    ...(isMac ? { trafficLightPosition: { x: 16, y: 19 } } : { titleBarOverlay: { color: '#262624', symbolColor: '#f2f1ec', height: 52 } }),
     webPreferences: { preload: path.join(__dirname, 'preload.js'), contextIsolation: true, sandbox: true, spellcheck: true, v8CacheOptions: 'bypassHeatCheck', webviewTag: false }
   });
   try { win.webContents.session.setSpellCheckerLanguages(['fr', 'en-US']); } catch {}
