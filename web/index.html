@@ -620,10 +620,21 @@ html[data-unreadb=off] .it.unread .fr,html[data-unreadb=off] .it.unread .sb .s,h
 .it:hover .qa{animation:qaIn .16s ease-out both}
 .qa .ibtn{transition:color .15s,background .15s,transform .15s;animation:qaBtn .22s cubic-bezier(.2,.8,.3,1.2) both;animation-delay:calc(var(--n,0) * 35ms)}
 .qa .ibtn svg{transition:transform .18s cubic-bezier(.2,.8,.3,1.3)}
-.qa .ibtn:hover,.qa .ibtn.del:hover{color:var(--accent);background:rgba(var(--accent-rgb),.14)}
+/* une couleur par action (demande de Félix) : favori jaune, archiver vert, répondre bleu, poubelle rouge */
+.qa .ibtn{--qc:var(--accent-rgb)}
+.qa .ibtn.qstar{--qc:245,179,1}
+.qa .ibtn.qarch{--qc:52,168,120}
+.qa .ibtn.qrep{--qc:74,144,226}
+.qa .ibtn.qdel{--qc:239,83,80}
+[data-tone=light] .qa .ibtn.qstar{--qc:214,150,0}
+[data-tone=light] .qa .ibtn.qarch{--qc:28,140,94}
+[data-tone=light] .qa .ibtn.qrep{--qc:37,110,200}
+[data-tone=light] .qa .ibtn.qdel{--qc:214,58,55}
+.qa .ibtn.qstar,.qa .ibtn.qarch,.qa .ibtn.qrep,.qa .ibtn.qdel{color:rgba(var(--qc),.85)}
+.qa .ibtn:hover,.qa .ibtn.del:hover{color:rgb(var(--qc));background:rgba(var(--qc),.16)}
 .qa .ibtn:hover svg{transform:translateY(-1px) scale(1.12)}
 .qa .ibtn:active svg{transform:scale(.9)}
-.qa .ibtn.qstar.on{color:var(--accent)}
+.qa .ibtn.qstar.on{color:rgb(var(--qc))}
 .qa .ibtn.qstar.on .fillable{fill:currentColor}
 .qa .ibtn.pop svg{animation:qaPop .32s ease-out}
 @keyframes qaIn{from{opacity:0;transform:translateX(6px)}to{opacity:1;transform:none}}
@@ -1661,10 +1672,10 @@ function itemHTML(i){
   const QA_ORDER = ['star','archive','reply','read','trash'];
   const qa = QA_ORDER.filter(q => SET.qa.includes(q)).map((q, n) => ({
     star: `<button class="ibtn qstar${i.flagged ? ' on' : ''}" data-q="${i.flagged ? 'unstar' : 'star'}" title="${i.flagged ? 'Ne plus suivre (S)' : 'Suivre (S)'}">${ic('qstar')}</button>`,
-    archive: `<button class="ibtn" data-q="archive" title="Archiver (E)">${ic('qarchive')}</button>`,
-    reply: `<button class="ibtn" data-q="reply" title="Répondre (R)">${ic('qreply')}</button>`,
+    archive: `<button class="ibtn qarch" data-q="archive" title="Archiver (E)">${ic('qarchive')}</button>`,
+    reply: `<button class="ibtn qrep" data-q="reply" title="Répondre (R)">${ic('qreply')}</button>`,
     read: `<button class="ibtn" data-q="${i.seen ? 'unread' : 'read'}" title="${i.seen ? 'Marquer comme non lu (U)' : 'Marquer comme lu (U)'}">${ic(i.seen ? 'mail' : 'mail-open')}</button>`,
-    trash: `<button class="ibtn del" data-q="trash" title="Supprimer (Suppr)">${ic('qtrash')}</button>`
+    trash: `<button class="ibtn del qdel" data-q="trash" title="Supprimer (Suppr)">${ic('qtrash')}</button>`
   }[q] || '').replace('<button ', `<button style="--n:${n}" `)).join('');
   return `<div class="${cls}" data-k="${esc(i.key)}" draggable="true">
     ${avatar(whoA || { name: who }).replace('</div>', `<span class="ck">${ic('check')}</span></div>`)}
