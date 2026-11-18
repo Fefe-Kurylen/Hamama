@@ -615,6 +615,21 @@ html[data-unreadb=off] .it.unread .fr,html[data-unreadb=off] .it.unread .sb .s,h
 .swipebg.r{justify-content:flex-start;background:var(--accent)}
 .swipewrap{position:relative}
 .swipewrap > .it{position:relative;z-index:1;background:var(--bg)}
+
+/* ===== Actions au survol : icônes douces + petite animation à la couleur d'accent (18/11) ===== */
+.it:hover .qa{animation:qaIn .16s ease-out both}
+.qa .ibtn{transition:color .15s,background .15s,transform .15s;animation:qaBtn .22s cubic-bezier(.2,.8,.3,1.2) both;animation-delay:calc(var(--n,0) * 35ms)}
+.qa .ibtn svg{transition:transform .18s cubic-bezier(.2,.8,.3,1.3)}
+.qa .ibtn:hover,.qa .ibtn.del:hover{color:var(--accent);background:rgba(var(--accent-rgb),.14)}
+.qa .ibtn:hover svg{transform:translateY(-1px) scale(1.12)}
+.qa .ibtn:active svg{transform:scale(.9)}
+.qa .ibtn.qstar.on{color:var(--accent)}
+.qa .ibtn.qstar.on .fillable{fill:currentColor}
+.qa .ibtn.pop svg{animation:qaPop .32s ease-out}
+@keyframes qaIn{from{opacity:0;transform:translateX(6px)}to{opacity:1;transform:none}}
+@keyframes qaBtn{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+@keyframes qaPop{0%{transform:scale(1)}40%{transform:scale(1.35)}100%{transform:scale(1)}}
+@media (prefers-reduced-motion: reduce){.it:hover .qa,.qa .ibtn,.qa .ibtn.pop svg{animation:none}.qa .ibtn svg{transition:none}}
 </style>
 </head>
 <body>
@@ -1267,6 +1282,13 @@ const ICON = {
   ext:'<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
   open:'<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
 };
+// Icônes des actions au survol (dessin plus doux, 18/11)
+Object.assign(ICON, {
+  qstar:'<path d="M12 3.6l2.5 5.1 5.6.8-4 3.9.9 5.6L12 16.4 7 19l.9-5.6-4-3.9 5.6-.8z" class="fillable"/>',
+  qarchive:'<path d="M4 7.5h16"/><path d="M5.5 7.5v10.2c0 1 .8 1.8 1.8 1.8h9.4c1 0 1.8-.8 1.8-1.8V7.5"/><path d="M3.8 4.5h16.4c.4 0 .7.3.7.7v1.6c0 .4-.3.7-.7.7H3.8c-.4 0-.7-.3-.7-.7V5.2c0-.4.3-.7.7-.7z"/><path d="M12 10.8v5.4M9.6 13.8 12 16.2l2.4-2.4"/>',
+  qreply:'<path d="M10 5.5 4.5 11 10 16.5"/><path d="M4.8 11H14a6 6 0 0 1 6 6v1.5"/>',
+  qtrash:'<path d="M4 6.8h16"/><path d="M9.2 6.8V5.2c0-.7.6-1.2 1.2-1.2h3.2c.7 0 1.2.5 1.2 1.2v1.6"/><path d="M6.2 6.8l.9 11.6c.1 1 .9 1.6 1.8 1.6h6.2c1 0 1.8-.7 1.8-1.6l.9-11.6"/><path d="M10.2 10.6v5.6M13.8 10.6v5.6"/>'
+});
 const ic = n => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${ICON[n] || ''}</svg>`;
 document.querySelectorAll('[data-ic]').forEach(el => el.insertAdjacentHTML('afterbegin', ic(el.dataset.ic)));
 
@@ -1397,11 +1419,12 @@ const menuBelow = (btn, items) => { const r = btn.getBoundingClientRect(); menu(
 const ACCENTS = ['#c8703f','#c2524a','#bf5a82','#8a6cc4','#5d6bc9','#4a84c4','#3a98a8','#3d9579','#5c9a4b','#c0962e'];
 const DEF_SET = {
   theme:'graphite', accent:'#c8703f', layout:'trois', density:'confort', zoom:'m', radius:'doux', side:'shown',
-  preview:'1', avatars:'on', groups:'on', unified:'on', qa:['archive','trash','read','star'], after:'next',
+  preview:'1', avatars:'on', groups:'on', unified:'on', qa:['star','archive','reply','trash'], after:'next',
   uifont:'Inter', weight:'normal', unreadBold:'on', markRead:'delay', images:'ask', mailbg:'theme', spell:'auto', mailZoom:'100', labels:'off', readw:'normal',
   font:'Inter', fsize:'14', undoSend:'5', lang:'auto', compWin:'float', noSubjWarn:'on', keys:'on', counts:'unread'
 };
 let SET = { ...DEF_SET, ...J('hamama-settings', {}) };
+if (!SET.qa2){ SET.qa = ['star','archive','reply','trash']; SET.qa2 = 1; }   // 18/11 : favoris, archiver, répondre, poubelle
 if (!SET.mb2){ SET.mailbg = 'theme'; SET.mb2 = 1; }   // 18/11 : messages affichés sur le fond de l’appli (comme Mailbird)
 const ZOOMS = { s:.9, m:1, l:1.1, xl:1.25 };
 const UI_FONTS = ['Inter','Segoe UI','Arial','Calibri','Verdana','Tahoma','Trebuchet MS','Georgia'];
@@ -1635,12 +1658,14 @@ function itemHTML(i){
   const whoA = (role === 'sent' || role === 'drafts') ? (i.to || [])[0] : (i.from || [])[0];
   const cls = ['it', i.seen ? '' : 'unread', ST.open === i.key ? 'on' : '', ST.sel.has(i.key) && ST.sel.size > 0 && (ST.sel.size > 1 || ST.selMode) ? 'sel' : ''].join(' ');
   const a = accOf(i.acc);
-  const qa = SET.qa.map(q => ({
-    archive: `<button class="ibtn" data-q="archive" title="Archiver (E)">${ic('archive')}</button>`,
-    trash: `<button class="ibtn del" data-q="trash" title="Supprimer (Suppr)">${ic('trash')}</button>`,
+  const QA_ORDER = ['star','archive','reply','read','trash'];
+  const qa = QA_ORDER.filter(q => SET.qa.includes(q)).map((q, n) => ({
+    star: `<button class="ibtn qstar${i.flagged ? ' on' : ''}" data-q="${i.flagged ? 'unstar' : 'star'}" title="${i.flagged ? 'Ne plus suivre (S)' : 'Suivre (S)'}">${ic('qstar')}</button>`,
+    archive: `<button class="ibtn" data-q="archive" title="Archiver (E)">${ic('qarchive')}</button>`,
+    reply: `<button class="ibtn" data-q="reply" title="Répondre (R)">${ic('qreply')}</button>`,
     read: `<button class="ibtn" data-q="${i.seen ? 'unread' : 'read'}" title="${i.seen ? 'Marquer comme non lu (U)' : 'Marquer comme lu (U)'}">${ic(i.seen ? 'mail' : 'mail-open')}</button>`,
-    star: `<button class="ibtn" data-q="${i.flagged ? 'unstar' : 'star'}" title="${i.flagged ? 'Ne plus suivre (S)' : 'Suivre (S)'}">${ic('star')}</button>`
-  }[q] || '')).join('');
+    trash: `<button class="ibtn del" data-q="trash" title="Supprimer (Suppr)">${ic('qtrash')}</button>`
+  }[q] || '').replace('<button ', `<button style="--n:${n}" `)).join('');
   return `<div class="${cls}" data-k="${esc(i.key)}" draggable="true">
     ${avatar(whoA || { name: who }).replace('</div>', `<span class="ck">${ic('check')}</span></div>`)}
     <div class="bd"><div class="r1"><span class="fr">${i.draft || role === 'drafts' ? '<span style="color:#f87171">Brouillon</span> · ' : ''}<span data-notr>${esc(who)}</span></span><span class="dt">${ST.view && ST.view.uni || ST.search ? `<span class="adot" style="background:${accColor(a)}" title="${esc(accLabel(a))}"></span>` : ''}${fmtDate(i.date)}</span></div>
@@ -1683,7 +1708,11 @@ $('#list').addEventListener('click', e => {
   const it = e.target.closest('.it'); if (!it) return;
   const key = it.dataset.k;
   const q = e.target.closest('[data-q]');
-  if (q){ e.stopPropagation(); return act(q.dataset.q, [key]); }
+  if (q){
+    e.stopPropagation(); q.classList.remove('pop'); void q.offsetWidth; q.classList.add('pop');
+    if (q.dataset.q === 'reply') return replyTo(key, 'reply');
+    return act(q.dataset.q, [key]);
+  }
   if (e.target.closest('.av') && SET.avatars === 'on' || ST.selMode){ toggleSel(key); return; }
   if (e.shiftKey && ST.anchor){
     const vis = visible().map(i => i.key), a = vis.indexOf(ST.anchor), b = vis.indexOf(key);
@@ -2642,7 +2671,7 @@ async function openSettings(tab = 'look'){
       R('Grouper par date', seg('groups', yn)) +
       R('Boîte unifiée (tous les comptes)', seg('unified', yn)) +
       R('Compteurs des dossiers', seg('counts', [['unread','Non lus'],['total','Total'],['none','Aucun']])) +
-      R('Actions au survol', `<div class="toggles">${[['archive','Archiver'],['trash','Supprimer'],['read','Lu / non lu'],['star','Suivre']].map(([v, l]) => `<label class="chk"><input type="checkbox" data-qa="${v}"${SET.qa.includes(v) ? ' checked' : ''}> ${l}</label>`).join('')}</div>`) +
+      R('Actions au survol', `<div class="toggles">${[['star','Suivre'],['archive','Archiver'],['reply','Répondre'],['read','Lu / non lu'],['trash','Supprimer']].map(([v, l]) => `<label class="chk"><input type="checkbox" data-qa="${v}"${SET.qa.includes(v) ? ' checked' : ''}> ${l}</label>`).join('')}</div>`) +
       R('Après archivage ou suppression', seg('after', [['next','Message suivant'],['prev','Précédent'],['list','Revenir à la liste']]))],
     read: ['Lecture', () =>
       R('Marquer comme lu', seg('markRead', [['now','Tout de suite'],['delay','Après 2 s'],['never','Manuellement']])) +
