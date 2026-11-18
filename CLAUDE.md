@@ -90,6 +90,7 @@ Installateur et version portable Windows générés. Code sur GitHub (branche `m
 - [ ] **Outlook / Hotmail** : créer une inscription d'application Azure (gratuite) et mettre l'identifiant dans `oauth.js` → active « Se connecter avec Microsoft »
 - [ ] (option) Google OAuth pour Gmail sans mot de passe d'application (vérification Google requise pour le scope mail)
 - [ ] Lien **Stripe** dans `SUPPORT_URL` (fenêtre « Soutenir Hamama ») quand Félix le donnera
-- [ ] Réserver le nom « Hamama » dans Partner Center, mettre l'identité Store exacte dans `build.appx`, puis soumettre
+- [x] Microsoft Store : nom réservé (9NB60JPQ44R5), version 1.0.9 soumise le 18/11/2026 → en cours de certification
+- [ ] Supprimer la branche GitHub temporaire `store-upload`
 - [ ] Tester l'APK sur le téléphone Android de Félix ; iPhone : signer le .ipa (Sideloadly) ou compte Apple Developer
 - [ ] Plus tard : conversations groupées (fils), notifications push quand l'appli est fermée
