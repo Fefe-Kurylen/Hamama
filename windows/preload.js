@@ -8,6 +8,7 @@ contextBridge.exposeInMainWorld('native', {
     empty: I('mail:empty'), allRead: I('mail:allread'), mkdir: I('mail:mkdir'), rename: I('mail:rename'), rmdir: I('mail:rmdir'), send: I('mail:send'), draft: I('mail:draft')
   },
   att: { save: I('att:save'), open: I('att:open') },
+  block: { list: I('block:list'), add: I('block:add'), remove: I('block:remove') },
   pickFiles: I('file:pick'),
   prefs: I('prefs'),
   notify: I('notify'),

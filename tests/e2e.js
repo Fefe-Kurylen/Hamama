@@ -97,6 +97,32 @@ const ok = (c, m) => { console.log((c ? '✅ ' : '❌ ') + m); if (!c) process.e
   ok(await win.$('#list .it:has-text("Bonjour depuis Hamama")') !== null, 'copie dans « Envoyés »');
   await win.click('#folders .fold:has-text("Boîte de réception")'); await win.waitForTimeout(1000);
   await win.click('#list .it:has-text("Planning des interventions")'); await win.waitForSelector('#mframe'); await win.waitForTimeout(700);
+  // Blocage d'un expéditeur → Indésirables
+  await win.click('#list .it:has-text("Leboncoin")', { button: 'right' }); await win.waitForTimeout(200);
+  await win.click('.menu button:has-text("Bloquer noreply@leboncoin.example")');
+  await win.click('.modal [data-ok]');
+  await win.waitForSelector('.toast:has-text("bloqué")', { timeout: 20000 });
+  ok(/1 message déplacé dans Indésirables/.test(await win.textContent('.toast:has-text("bloqué")')), 'blocage : message existant déplacé dans Indésirables');
+  ok(await win.$('#list .it:has-text("Leboncoin")') === null, 'blocage : retiré de la boîte de réception');
+  // un nouveau message de l'expéditeur bloqué arrive
+  const nm = require(path.join(__dirname, '..', 'windows', 'node_modules', 'nodemailer'));
+  await nm.createTransport({ host: '127.0.0.1', port: 1025, secure: false, tls: { rejectUnauthorized: false } }).sendMail({ from: 'Leboncoin <noreply@leboncoin.example>', to: 'felix@test.local', subject: 'Relance annonce BMW', text: 'spam' });
+  await win.waitForTimeout(4000);
+  ok(await win.$('#list .it:has-text("Relance annonce BMW")') === null, 'blocage : nouveau message bloqué à l’arrivée (pas dans la réception)');
+  await win.click('#folders .fold:has-text("Indésirables")'); await win.waitForTimeout(1500);
+  ok(await win.$('#list .it:has-text("Relance annonce BMW")') !== null && await win.$('#list .it:has-text("Nouveau message pour votre annonce")') !== null, 'blocage : les 2 messages sont dans Indésirables');
+  await win.click('#list .it:has-text("Relance annonce BMW")'); await win.waitForSelector('[data-unblock]');
+  ok(true, 'bandeau « Cet expéditeur est bloqué » + Débloquer');
+  await win.screenshot({ path: path.join(SHOTS, '17-bloque.png') });
+  await win.click('#setBtn'); await win.click('[data-tab=blocked]'); await win.waitForTimeout(200);
+  ok(await win.$('[data-unb="noreply@leboncoin.example"]') !== null, 'Réglages → Bloqués : adresse listée');
+  await win.fill('[data-newblock]', 'pub-exemple.com'); await win.click('[data-addblock]'); await win.waitForTimeout(800);
+  ok(await win.$('[data-unb="@pub-exemple.com"]') !== null, 'Réglages → Bloqués : ajout d’un domaine entier');
+  await win.screenshot({ path: path.join(SHOTS, '18-reglages-bloques.png') });
+  await win.click('[data-unb="noreply@leboncoin.example"]'); await win.waitForTimeout(600);
+  ok(await win.$('[data-unb="noreply@leboncoin.example"]') === null, 'Débloquer depuis les réglages');
+  await win.keyboard.press('Escape');
+  await win.click('#folders .fold:has-text("Boîte de réception")'); await win.waitForTimeout(1200);
   // Glisser-déposer vers un dossier
   await win.dragAndDrop('#list .it:has-text("GitHub")', '#folders .fold:has-text("Pyramid")');
   await win.waitForSelector('.toast:has-text("déplacé")', { timeout: 15000 });

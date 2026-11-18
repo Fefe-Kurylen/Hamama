@@ -43,13 +43,15 @@ const exe = require(path.join(__dirname, '..', 'windows', 'node_modules', 'elect
     await win.screenshot({ path: path.join(SHOTS, `20-langue-${code}.png`) });
     const l1 = await leftovers();
     await win.click('#setBtn'); await win.waitForTimeout(300);
-    for (const t of ['look','list','read','write','accounts','notif','lang','keys','about']){ await win.click(`[data-tab=${t}]`); await win.waitForTimeout(120); l1.push(...await leftovers()); }
+    for (const t of ['look','list','read','write','accounts','blocked','notif','lang','keys','about']){ await win.click(`[data-tab=${t}]`); await win.waitForTimeout(120); l1.push(...await leftovers()); }
     await win.click('[data-tab=look]'); await win.screenshot({ path: path.join(SHOTS, `21-reglages-${code}.png`) });
     await win.keyboard.press('Escape');
     await win.keyboard.press('n'); await win.waitForSelector('#composer'); await win.waitForTimeout(200); l1.push(...await leftovers());
     await win.screenshot({ path: path.join(SHOTS, `22-redaction-${code}.png`) });
     await win.click('#composer [data-c=close]'); await win.waitForTimeout(300);
     await win.click('#list .it >> nth=2', { button: 'right' }); await win.waitForTimeout(200); l1.push(...await leftovers()); await win.keyboard.press('Escape'); await win.mouse.click(5, 400);
+    await win.click('#list .it >> nth=1'); await win.waitForSelector('#mframe'); await win.click('.vbar [data-v=more]'); await win.waitForTimeout(200); l1.push(...await leftovers());
+    const menuTxt = await win.textContent('.menu'); ok(!/Bloquer|Débloquer/.test(menuTxt), `${label} : menu de blocage traduit`); await win.keyboard.press('Escape'); await win.mouse.click(5, 400);
     const uniq = [...new Set(l1)];
     ok(uniq.length === 0, `${label} : textes restés en français : ${uniq.length}${uniq.length ? '\n   - ' + uniq.join('\n   - ') : ''}`);
     if (code === 'ar') ok(await win.evaluate(() => document.documentElement.dir) === 'rtl', 'arabe : affichage de droite à gauche');

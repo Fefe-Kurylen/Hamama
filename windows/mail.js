@@ -438,6 +438,38 @@ function writeCache(id, patch) {
 function writeList(id, box, items) { const c = readCache(id); const lists = c.lists || {}; lists[box] = items.slice(0, 60); writeCache(id, { lists }); }
 function cached(id, box) { const c = readCache(id); return { folders: c.folders || null, items: box && c.lists ? c.lists[box] || null : null }; }
 
+/* ---------------- Expéditeurs bloqués → Indésirables ---------------- */
+let BLOCKED = [];   // 'adresse@domaine.fr' ou '@domaine.fr' (tout le domaine)
+const blockFile = () => path.join(DIR, 'blocked.json');
+function loadBlocked() { try { BLOCKED = JSON.parse(fs.readFileSync(blockFile(), 'utf8')).filter(x => typeof x === 'string'); } catch { BLOCKED = []; } }
+function saveBlocked() { fs.mkdirSync(DIR, { recursive: true }); fs.writeFileSync(blockFile(), JSON.stringify(BLOCKED, null, 1)); }
+const normEntry = e => { e = String(e || '').trim().toLowerCase().replace(/^<|>$/g, ''); if (/^@?[a-z0-9.-]+\.[a-z]{2,}$/.test(e) && !e.includes('@', 1)) return e.startsWith('@') ? e : (e.includes('@') ? e : '@' + e); return /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(e) ? e : null; };
+const matchIn = (addr, list) => { addr = String(addr || '').toLowerCase(); if (!addr.includes('@')) return false; return list.includes(addr) || list.includes('@' + addr.split('@').pop()); };
+const isBlocked = addr => matchIn(addr, BLOCKED);
+/** Déplace dans Indésirables les messages de la boîte de réception venant des expéditeurs indiqués */
+async function sweep(id, entries = BLOCKED) {
+  if (!entries.length) return 0;
+  const junk = await roleBox(id, 'junk').catch(() => null);
+  if (!junk) return 0;
+  return withBox(id, 'INBOX', async c => {
+    const uids = new Set();
+    for (const e of entries) { const r = await c.search({ from: e.replace(/^@/, '') }, { uid: true }).catch(() => []); (r || []).forEach(u => uids.add(u)); }
+    if (!uids.size) return 0;
+    const ok = [];   // la recherche FROM est approximative : on vérifie l’adresse exacte
+    for await (const m of c.fetch([...uids].join(','), { uid: true, envelope: true }, { uid: true })) { const a = ((m.envelope && m.envelope.from) || [])[0]; if (a && matchIn(a.address, entries)) ok.push(m.uid); }
+    if (ok.length) await c.messageMove(ok.join(','), junk, { uid: true });
+    return ok.length;
+  });
+}
+async function block(entry) {
+  const e = normEntry(entry); if (!e) throw new Error('Adresse ou domaine invalide.');
+  if (!BLOCKED.includes(e)) { BLOCKED.push(e); BLOCKED.sort(); saveBlocked(); }
+  const res = await Promise.allSettled(ACCOUNTS.map(a => sweep(a.id, [e])));
+  const moved = res.reduce((n, r) => n + (r.status === 'fulfilled' ? r.value : 0), 0);
+  return { entry: e, blocked: BLOCKED.slice(), moved };
+}
+function unblock(entry) { const e = String(entry || '').toLowerCase(); BLOCKED = BLOCKED.filter(x => x !== e); saveBlocked(); return BLOCKED.slice(); }
+
 /* ---------------- Surveillance (IDLE) : nouveaux messages ---------------- */
 async function startWatch(a) {
   stopWatch(a.id);
@@ -452,15 +484,22 @@ async function startWatch(a) {
       c.on('exists', async ev => {
         if (ev.count <= ev.prevCount) return;
         try {
-          const news = [];
-          for await (const m of c.fetch(`${ev.prevCount + 1}:${ev.count}`, { uid: true, flags: true, envelope: true })) if (!m.flags.has('\\Seen')) news.push(item(m, a.id, 'INBOX'));
-          onEvent('new-mail', { acc: a.id, items: news });
+          const news = [], spam = [];
+          for await (const m of c.fetch(`${ev.prevCount + 1}:${ev.count}`, { uid: true, flags: true, envelope: true })) {
+            const from = ((m.envelope && m.envelope.from) || [])[0];
+            if (from && isBlocked(from.address)) spam.push(m.uid);
+            else if (!m.flags.has('\\Seen')) news.push(item(m, a.id, 'INBOX'));
+          }
+          if (spam.length) { const junk = await roleBox(a.id, 'junk').catch(() => null); if (junk) await c.messageMove(spam.join(','), junk, { uid: true }).catch(() => {}); }
+          onEvent('new-mail', { acc: a.id, items: news, blocked: spam.length });
         } catch { onEvent('new-mail', { acc: a.id, items: [] }); }
       });
       c.on('close', () => { if (!w.stop) w.timer = setTimeout(run, Math.min(5 * 60000, 15000 * (++w.retry))); });
       await c.connect();
       await c.mailboxOpen('INBOX');
       w.retry = 0;
+      // messages bloqués arrivés pendant que Hamama était fermé
+      if (BLOCKED.length && !w.swept) { w.swept = true; sweep(a.id).then(n => { if (n) onEvent('new-mail', { acc: a.id, items: [], blocked: n }); }).catch(() => {}); }
     } catch { if (!w.stop) w.timer = setTimeout(run, Math.min(5 * 60000, 20000 * (++w.retry))); }
   };
   run();
@@ -474,7 +513,7 @@ function stopWatch(id) {
 /* ---------------- Initialisation ---------------- */
 function init({ dir, safeStorage, netFetch, emit, oauth }) {
   DIR = dir; SAFE = safeStorage; NET = netFetch; OAUTH = oauth; onEvent = emit || onEvent;
-  load();
+  load(); loadBlocked();
   for (const a of ACCOUNTS) startWatch(a);
 }
 function shutdown() { for (const id of [...watchers.keys()]) stopWatch(id); for (const id of [...conns.keys()]) dropConn(id); }
@@ -483,5 +522,5 @@ const raw_ = id => acc(id);
 
 module.exports = {
   init, shutdown, PROVIDERS, detect, test, add, update, remove, accounts, folders, list, unified, search, searchAll, get, source, attachment,
-  flags, move, toRole, destroy, emptyBox, createFolder, renameFolder, deleteFolder, markAllRead, send, saveDraft, cached, enc, dec, _acc: raw_, save
+  flags, move, toRole, destroy, block, unblock, blockedList: () => BLOCKED.slice(), isBlocked, emptyBox, createFolder, renameFolder, deleteFolder, markAllRead, send, saveDraft, cached, enc, dec, _acc: raw_, save
 };

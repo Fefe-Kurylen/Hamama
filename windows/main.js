@@ -130,6 +130,9 @@ H('mail:mkdir', (id, name) => mail.createFolder(id, name));
 H('mail:rename', (id, from, to) => mail.renameFolder(id, from, to));
 H('mail:rmdir', (id, p) => mail.deleteFolder(id, p));
 H('mail:send', (id, m) => mail.send(id, m));
+H('block:list', () => mail.blockedList());
+H('block:add', e => mail.block(e));
+H('block:remove', e => mail.unblock(e));
 H('mail:draft', (id, m) => mail.saveDraft(id, m));
 H('att:save', async keys => {
   keys = [].concat(keys); const list = keys.map(k => mail.attachment(k)).filter(Boolean);
