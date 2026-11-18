@@ -41,7 +41,7 @@ jobs:
         run: |
           mkdir -p ~/private_keys
           printf '%s' "${{ secrets.ASC_KEY_P8 }}" > ~/private_keys/AuthKey_$ASC_KEY_ID.p8
-      - name: Archive (non signée : la signature App Store se fait à l'export, sans appareil enregistré)
+      - name: Archive non signée (signature App Store faite à l'export)
         if: steps.ok.outputs.ok == '1'
         working-directory: mobile
         run: |
