@@ -64,7 +64,7 @@ function createWindow() {
   win = new BrowserWindow({
     width: 1440, height: 900, minWidth: 760, minHeight: 520,
     backgroundColor: '#262624', title: 'Hamama', show: !(PREF.startMin && process.argv.includes('--hidden')),
-    icon: path.join(__dirname, 'app', 'icon.png'),
+    icon: path.join(__dirname, 'app', process.platform === 'win32' ? 'icon.ico' : 'icon.png'),   // .ico : bonne taille dans la barre des tâches
     titleBarStyle: isMac ? 'hiddenInset' : 'hidden',
     ...(isMac ? { trafficLightPosition: { x: 16, y: 19 } } : { titleBarOverlay: { color: '#262624', symbolColor: '#f2f1ec', height: 52 } }),
     webPreferences: { preload: path.join(__dirname, 'preload.js'), contextIsolation: true, sandbox: true, spellcheck: true, v8CacheOptions: 'bypassHeatCheck', webviewTag: false, backgroundThrottling: false }
@@ -112,7 +112,7 @@ function createWindow() {
 function setupTray() {
   if (!PREF.tray) { if (tray) { tray.destroy(); tray = null; } return; }
   if (tray) return;
-  tray = new Tray(nativeImage.createFromPath(path.join(__dirname, 'app', 'icon.png')).resize({ width: 16, height: 16 }));
+  tray = new Tray(process.platform === 'win32' ? path.join(__dirname, 'app', 'icon.ico') : nativeImage.createFromPath(path.join(__dirname, 'app', 'icon.png')).resize({ width: 16, height: 16 }));
   tray.setToolTip('Hamama');
   tray.setContextMenu(Menu.buildFromTemplate([
     { label: L('open'), click: () => { if (!win) createWindow(); win.show(); win.focus(); } },

@@ -10,10 +10,10 @@ def render(svg, size):
     png = subprocess.run(['rsvg-convert', '-w', str(size), '-h', str(size)], input=svg.encode(), capture_output=True, check=True).stdout
     return Image.open(io.BytesIO(png)).convert('RGBA')
 
-RECT = re.compile(r'<rect x="40" y="40" width="944" height="944" rx="230" fill="([^"]+)"/>')
+RECT = re.compile(r'<rect x="\d+" y="\d+" width="\d+" height="\d+" rx="\d+" fill="([^"]+)"/>')
 full = RECT.sub(lambda m: f'<rect width="1024" height="1024" fill="{m.group(1)}"/>', SVG)       # carré plein (iOS, fond adaptatif)
 bgonly = re.sub(r'</defs>.*</svg>', lambda m: '</defs>' + ''.join(f'<rect width="1024" height="1024" fill="{f}"/>' for f in RECT.findall(SVG)) + '</svg>', SVG, flags=re.S)
-fg = RECT.sub('', SVG).replace('</defs>', '</defs><g transform="translate(512 512) scale(.8) translate(-512 -512)">').replace('</svg>', '</g></svg>')
+fg = RECT.sub('', SVG).replace('</defs>', '</defs><g transform="translate(512 512) scale(.72) translate(-512 -512)">').replace('</svg>', '</g></svg>')
 rounded = SVG
 
 # ---- Android ----

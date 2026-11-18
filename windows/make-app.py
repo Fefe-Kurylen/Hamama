@@ -33,4 +33,5 @@ assert 'fonts.googleapis' not in s and '<script>' not in s
 open(os.path.join(APP, 'index.html'), 'w', encoding='utf-8').write(s)
 if os.path.exists(os.path.join(H, 'build', 'icon.png')):
     shutil.copy(os.path.join(H, 'build', 'icon.png'), os.path.join(APP, 'icon.png'))
+    shutil.copy(os.path.join(H, 'build', 'icon.ico'), os.path.join(APP, 'icon.ico'))
 print('app ok')
