@@ -24,4 +24,4 @@ Les mots de passe et jetons de connexion sont **chiffrés par le système** (Win
 Il ouvre la page de paiement Stripe dans ton navigateur. Le paiement est traité par Stripe selon sa propre politique de confidentialité ; Hamama n'a accès à aucune donnée bancaire.
 
 ## Contact
-Pour toute question : kurylen.apps@yahoo.fr — https://fefe-kurylen.github.io/Hamama/#contact (version complète : https://fefe-kurylen.github.io/Hamama/confidentialite.html)
+Pour toute question : kurylen.apps@yahoo.com — https://fefe-kurylen.github.io/Hamama/#contact (version complète : https://fefe-kurylen.github.io/Hamama/confidentialite.html)

@@ -9,5 +9,5 @@
   "privacyPolicyUrl": "https://fefe-kurylen.github.io/Hamama/confidentialite.html",
   "copyright": "2026 Kurylen",
   "notes": "Hamama is an email client (IMAP/SMTP). There is no Hamama account or server: the user adds his own email account (Gmail with an app password, Outlook, iCloud with an app-specific password, or any IMAP provider) from the welcome screen, and the app detects the server settings automatically. Passwords are stored encrypted on the device only. To test, please use any personal or test email account on the welcome screen (\"Autre adresse\" lets you enter IMAP/SMTP servers manually).",
-  "supportEmail": "kurylen.apps@yahoo.fr"
+  "supportEmail": "kurylen.apps@yahoo.com"
 }
