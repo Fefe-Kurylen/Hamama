@@ -26,6 +26,8 @@ Dossier du projet sur le PC : `C:\Users\felix\Desktop\Claude\Hamama` · GitHub :
 - `tests/` — `mobile.js` (11 vérifications : interface téléphone 390×844 tactile + vrai moteur Node contre le serveur de test : tiroir, retour, lecture plein écran, balayage = archiver, rédaction plein écran, envoi + réception IDLE), `i18n.js` (passage en anglais et en arabe + détection des textes restés en français), `server.js` (serveur IMAP + SMTP de test hoodiecrow avec 9 mails d’exemple), `e2e.js` (38 vérifications en pilotant la vraie appli Electron), `relaunch.js` (redémarrage + cache)
 - `.github/workflows/release.yml` — installateur + portable dans les Releases GitHub, **lancement manuel uniquement** (plus de mise à jour automatique)
 - `.github/workflows/mobile.yml` — à chaque push touchant `mobile/`, `web/` ou le moteur : **APK Android** (signé si secrets `ANDROID_KEYSTORE_B64` / `ANDROID_KEYSTORE_PASSWORD`, sinon debug) + **.ipa iPhone non signé** (Mac de GitHub) dans les artifacts
+- `.github/workflows/apple.yml` — Mac de GitHub : iPhone/iPad signé automatiquement (clé App Store Connect) et **envoyé sur App Store Connect** (TestFlight → App Store), quand la version de `mobile/package.json` change ou à la main. Secrets (mêmes valeurs que Pyramid PDF) : `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_P8`, `APPLE_TEAM_ID`
+- `store/apple/` — captures App Store iPhone 6,9" (1320×2868) et iPad 13" (2064×2752) faites par `captures.js` (appli mobile + vrai moteur + `store/demo-server.js`)
 - `.github/workflows/windows-store.yml` — fabrique et teste le paquet Microsoft Store sur un Windows de GitHub (comme Pyramid)
 - `PRIVACY.md` — politique de confidentialité (URL pour le Store)
 
@@ -45,6 +47,7 @@ CAPACITOR_NODEJS_SKIP_DOWNLOAD=1 npm install   # (sur Mac : npm install, pour le
 python make-mobile.py && npx cap sync           # après chaque modification de web/ ou du moteur
 cd android && ./gradlew assembleRelease         # → app/build/outputs/apk/release/app-release.apk
 ```
+- **Tablette** (iPad, plus petit côté d'écran ≥ 700 px) : classe `tablet` au lieu de `mobile` → disposition en colonnes comme sur ordinateur, mais réglages tactiles (pas de raccourcis, pas d'actions au survol)
 - Interface : classe `mobile` sur `<html>` (`MOBILE` dans le script) → tiroir des dossiers, une seule colonne, rédaction plein écran, fenêtres en bas d'écran, balayage gauche = archiver / droite = lu-non lu, appui long = menu, pas de raccourcis clavier / impression / zone de notification. Les petites fenêtres de bureau (< 640 px) prennent la même disposition (classe `narrow`).
 - Limites : notifications seulement quand l'appli est ouverte ou en arrière-plan récent (pas de push serveur), pas encore d'OAuth sur téléphone (mot de passe d'application), iPhone = signature Apple nécessaire (identifiant Apple gratuit via Sideloadly : 7 jours ; compte Developer 99 €/an pour l'App Store).
 

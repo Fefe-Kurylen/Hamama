@@ -1,0 +1,77 @@
+# Publication iPhone / iPad sur un Mac de GitHub : signature automatique (clé App Store Connect)
+# puis envoi sur App Store Connect (TestFlight → App Store). Les mises à jour passent par l'App Store.
+# Secrets du dépôt (mêmes valeurs que pour Pyramid PDF) : ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_P8, APPLE_TEAM_ID
+# Se lance quand la version de mobile/package.json change, ou à la main (Actions → Apple → Run workflow).
+name: Apple - App Store
+on:
+  push:
+    branches: [main]
+    paths: ['mobile/package.json', '.github/workflows/apple.yml']
+  workflow_dispatch:
+concurrency:
+  group: apple
+  cancel-in-progress: false
+jobs:
+  iphone:
+    runs-on: macos-15
+    env:
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Secrets présents ?
+        id: ok
+        run: |
+          if [ -n "$ASC_KEY_ID" ] && [ -n "$ASC_ISSUER_ID" ] && [ -n "$TEAM_ID" ]; then echo "ok=1" >> $GITHUB_OUTPUT
+          else echo "ok=0" >> $GITHUB_OUTPUT; echo "::warning::Secrets Apple absents (ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_P8, APPLE_TEAM_ID) : rien à faire"; fi
+      - uses: actions/setup-node@v4
+        if: steps.ok.outputs.ok == '1'
+        with: { node-version: 22 }
+      - name: Moteur mail (dépendances)
+        if: steps.ok.outputs.ok == '1'
+        working-directory: windows
+        run: ELECTRON_SKIP_BINARY_DOWNLOAD=1 npm ci --ignore-scripts
+      - name: Interface + moteur pour iPhone (+ Node.js embarqué)
+        if: steps.ok.outputs.ok == '1'
+        working-directory: mobile
+        run: npm ci && python3 make-mobile.py && npx cap sync ios
+      - name: Clé App Store Connect
+        if: steps.ok.outputs.ok == '1'
+        run: |
+          mkdir -p ~/private_keys
+          printf '%s' "${{ secrets.ASC_KEY_P8 }}" > ~/private_keys/AuthKey_$ASC_KEY_ID.p8
+      - name: Archive signée (signature automatique)
+        if: steps.ok.outputs.ok == '1'
+        working-directory: mobile
+        run: |
+          V=$(node -p "require('./package.json').version"); BUILD=$((100 + ${{ github.run_number }}))
+          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release \
+            -destination 'generic/platform=iOS' -archivePath build/App.xcarchive \
+            DEVELOPMENT_TEAM=$TEAM_ID CODE_SIGN_STYLE=Automatic MARKETING_VERSION=$V CURRENT_PROJECT_VERSION=$BUILD \
+            -allowProvisioningUpdates -authenticationKeyPath ~/private_keys/AuthKey_$ASC_KEY_ID.p8 \
+            -authenticationKeyID $ASC_KEY_ID -authenticationKeyIssuerID $ASC_ISSUER_ID archive | tail -n 40
+          test ${PIPESTATUS[0]} -eq 0
+      - name: Envoi sur App Store Connect
+        if: steps.ok.outputs.ok == '1'
+        working-directory: mobile
+        run: |
+          cat > build/ExportOptions.plist <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>destination</key><string>upload</string>
+            <key>teamID</key><string>$TEAM_ID</string>
+            <key>signingStyle</key><string>automatic</string>
+            <key>uploadSymbols</key><true/>
+            <key>manageAppVersionAndBuildNumber</key><false/>
+          </dict></plist>
+          PLIST
+          xcodebuild -exportArchive -archivePath build/App.xcarchive -exportOptionsPlist build/ExportOptions.plist \
+            -exportPath build/export -allowProvisioningUpdates -authenticationKeyPath ~/private_keys/AuthKey_$ASC_KEY_ID.p8 \
+            -authenticationKeyID $ASC_KEY_ID -authenticationKeyIssuerID $ASC_ISSUER_ID | tail -n 40
+          test ${PIPESTATUS[0]} -eq 0
+          echo "✅ Hamama $(node -p "require('./package.json').version") ($((100 + ${{ github.run_number }}))) envoyée sur App Store Connect" | tee -a $GITHUB_STEP_SUMMARY
+      - if: always()
+        run: rm -rf ~/private_keys

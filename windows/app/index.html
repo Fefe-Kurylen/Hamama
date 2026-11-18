@@ -531,6 +531,11 @@ html:not([data-tone=light]) #ed > blockquote a,html:not([data-tone=light]) #ed >
 .lhead h2{font-weight:700;font-size:17px}
 .acct > .ah{color:var(--text);font-weight:600}
 .vin h1{font-weight:700}
+/* écrans tactiles : pas d'actions « au survol » qui restent affichées après un appui */
+@media (hover: none){ .it .qa{display:none!important} }
+/* tablette : pas de rebond de page, zone du bas (barre d'accueil) respectée */
+.tablet,.tablet body{overflow:hidden;overscroll-behavior:none}
+.tablet #app{padding-bottom:var(--sab)}
 /* séparation des colonnes bien visible */
 #side,#listCol{border-right-color:var(--line2)}
 [data-layout=large] #listCol{border-bottom-color:var(--line2)}

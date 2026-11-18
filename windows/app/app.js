@@ -597,6 +597,8 @@ document.querySelectorAll('[data-ic]').forEach(el => el.insertAdjacentHTML('afte
 const $ = s => document.querySelector(s);
 const N = window.native || null;
 const MOBILE = !!N && (N.platform === 'android' || N.platform === 'ios');
+// tablette (iPad, grande tablette Android) : disposition en colonnes comme sur ordinateur, mais réglages tactiles
+const TABLET = MOBILE && Math.min(screen.width, screen.height) >= 700;
 const LIGHT_THEMES = ['clair','ciel','menthe','rose'];
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
 const store = { get(k){ try{ return localStorage.getItem(k); }catch{ return null; } }, set(k,v){ try{ localStorage.setItem(k,v); }catch{} }, del(k){ try{ localStorage.removeItem(k); }catch{} } };
@@ -751,10 +753,10 @@ function applySettings(save = true){
   }
 }
 applySettings(false);
-if (N) document.documentElement.classList.add(MOBILE ? 'mobile' : 'desk', 'plat-' + N.platform);
-const narrowCheck = () => document.documentElement.classList.toggle('narrow', !MOBILE && innerWidth < 640);
+if (N) document.documentElement.classList.add(TABLET ? 'tablet' : MOBILE ? 'mobile' : 'desk', 'plat-' + N.platform);
+const narrowCheck = () => document.documentElement.classList.toggle('narrow', (!MOBILE || TABLET) && innerWidth < 640);
 narrowCheck(); addEventListener('resize', narrowCheck);
-const isSmall = () => MOBILE || innerWidth < 640;
+const isSmall = () => (MOBILE && !TABLET) || innerWidth < 640;
 const setDrawer = on => document.documentElement.classList.toggle('drawer', !!on);
 
 /* ================= État ================= */
@@ -1199,7 +1201,7 @@ let openTok = 0, readT = null;
 function showEmptyView(){
   ST.msg = null;
   $('#view').innerHTML = `<div class="vempty" style="height:100%"><div><div class="big">${ic('mail-open')}</div><h3>Aucun message sélectionné</h3><div>Choisis un message dans la liste pour le lire ici.</div>
-    ${SET.keys === 'on' ? `<div class="keys"><span><kbd class="k">N</kbd> nouveau</span><span><kbd class="k">J</kbd> <kbd class="k">K</kbd> naviguer</span><span><kbd class="k">R</kbd> répondre</span><span><kbd class="k">E</kbd> archiver</span><span><kbd class="k">?</kbd> tous les raccourcis</span></div>` : ''}</div></div>`;
+    ${SET.keys === 'on' && !MOBILE ? `<div class="keys"><span><kbd class="k">N</kbd> nouveau</span><span><kbd class="k">J</kbd> <kbd class="k">K</kbd> naviguer</span><span><kbd class="k">R</kbd> répondre</span><span><kbd class="k">E</kbd> archiver</span><span><kbd class="k">?</kbd> tous les raccourcis</span></div>` : ''}</div></div>`;
 }
 function showMultiView(n){
   $('#view').innerHTML = `<div class="vempty" style="height:100%"><div><div class="big">${ic('square-check')}</div><h3>${n} messages sélectionnés</h3><div>Utilise la barre au-dessus de la liste, ou :</div>
