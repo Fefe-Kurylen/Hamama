@@ -116,7 +116,6 @@
     defaultMail: async function () { return false; },
     print: async function () { window.print(); return true; },
     version: async function () { try { var i = await P.App.getInfo(); return i.version; } catch (e) { return '1.0.0'; } },
-    update: { state: async function () { return { state: 'off', mode: 'store' }; }, check: async function () { return { state: 'off', mode: 'store' }; }, install: async function () { return false; } },
     on: function (ch, cb) { (listeners[ch] = listeners[ch] || []).push(cb); },
     setTitleBar: function () {},
     ready: function () {},

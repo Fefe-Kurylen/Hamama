@@ -1977,7 +1977,6 @@ async function openSettings(tab = 'look'){
       R('Raccourcis clavier', seg('keys', [['on','Activés'],['off','Désactivés']])) + `<div class="keyl" style="margin-top:14px">${KEYS.map(([k, l]) => `<div><span>${l}</span><span>${k.split(' ').map(x => `<kbd class="k">${x}</kbd>`).join(' ')}</span></div>`).join('')}</div>`],
     about: ['À propos', () =>
       `<div style="text-align:center;padding:10px 0"><div class="drop" style="border:0;padding:10px;background:none"><div class="big">${ic('plane')}</div><h1 style="font-size:22px">Hamama</h1><p data-ver style="margin-bottom:10px">Application mail</p></div>
-       <div data-upd style="text-align:left;margin:4px 0 14px"></div>
        <div class="note" style="text-align:center">Sans publicité · sans pistage · tes messages restent entre toi et ton fournisseur.</div>
        <div class="row" style="justify-content:center"><button class="btn ghost heart" data-sup>${ic('heart')}Soutenir Hamama</button></div></div>`]
   };
@@ -2014,7 +2013,6 @@ async function openSettings(tab = 'look'){
       const dm = body.querySelector('[data-defmail]'); if (dm) dm.onclick = () => N.defaultMail().catch(errToast);
       const sp = body.querySelector('[data-sup]'); if (sp) sp.onclick = () => openSupport();
       const vr = body.querySelector('[data-ver]'); if (vr) N.version().then(v => vr.textContent = 'Version ' + v).catch(() => {});
-      const ub = body.querySelector('[data-upd]'); if (ub){ const paint = () => { if (!ub.isConnected){ updPaint = null; return; } ub.innerHTML = updHTML(); const b = ub.querySelector('[data-uact]'); if (b) b.onclick = () => b.dataset.uact === 'check' ? N.update.check().catch(errToast) : installUpdate(); }; updPaint = paint; paint(); }
     };
     const changed = () => { applySettings(); show(tab); renderSide(); renderList(); if (ST.msg) renderView(ST.msg); };
     card.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => show(b.dataset.tab));
@@ -2188,40 +2186,6 @@ if (N){
 setInterval(() => { if (ST.accounts.length) loadAllFolders(); }, 3 * 60000);
 setInterval(() => { if (ST.view && !ST.search && !document.hidden) refreshList(); }, 5 * 60000);
 window.addEventListener('focus', () => { if (ST.view && !ST.search && Date.now() - (window._lastF || 0) > 60000){ window._lastF = Date.now(); refreshList(); } });
-
-/* ================= Mises à jour (sans réinstaller) ================= */
-let UPD = { state: 'idle' }, updPaint = null;
-function updHTML(){
-  const s = UPD, n = s.next || '';
-  const row = (t, sub, btn) => `<div class="updbox">${ic(s.state === 'ready' || s.state === 'available' ? 'download' : s.state === 'error' ? 'info' : 'check')}<span>${t}${sub ? `<small>${sub}</small>` : ''}</span>${btn || ''}</div>`;
-  const chk = '<button class="btn ghost" data-uact="check">Rechercher</button>';
-  switch (s.state){
-    case 'store': case 'off': return row('Mises à jour automatiques', s.mode === 'dev' ? 'Désactivées en mode développement' : 'Assurées par le Microsoft Store');
-    case 'checking': return row('Recherche d’une mise à jour…');
-    case 'uptodate': return row('Hamama est à jour', 'Les nouvelles versions s’installent toutes seules, sans réinstaller.', chk);
-    case 'downloading': return row(`Téléchargement de la version ${esc(n)}… ${s.percent || 0} %`, 'Tu peux continuer à utiliser Hamama.');
-    case 'ready': return row(`Version ${esc(n)} prête`, 'Un simple redémarrage de Hamama suffit.', '<button class="btn primary" data-uact="install">Redémarrer</button>');
-    case 'available': return row(`Version ${esc(n)} disponible`, 'Version portable : télécharge le nouveau fichier.', '<button class="btn primary" data-uact="install">Télécharger</button>');
-    case 'error': return row('Impossible de vérifier les mises à jour', esc(s.err || 'Pas de connexion ?'), chk);
-    default: return row('Mises à jour automatiques', 'Vérification au démarrage puis toutes les 30 minutes.', chk);
-  }
-}
-function renderUpd(){
-  const b = $('#updBtn'), st = UPD.state, show = st === 'ready' || st === 'available';
-  b.classList.toggle('hidden', !show);
-  b.querySelector('span').textContent = st === 'ready' ? 'Mettre à jour' : 'Nouvelle version';
-  b.dataset.tip = st === 'ready' ? `Version ${UPD.next} prête : Hamama redémarre en quelques secondes` : `Hamama ${UPD.next || ''} est disponible`;
-  if (updPaint) updPaint();
-}
-async function installUpdate(){
-  if (CMP && CMP.dirty) await closeComposer('save', true);
-  try { await N.update.install(); } catch (e) { errToast(e); }
-}
-$('#updBtn').onclick = installUpdate;
-if (N && N.update){
-  N.on('update', s => { const was = UPD.state; UPD = s; renderUpd(); if (s.state === 'ready' && was !== 'ready') toast(`Nouvelle version ${s.next} prête`, { label: 'Mettre à jour', fn: installUpdate }, 10000); });
-  N.update.state().then(s => { if (s && s.state){ UPD = s; renderUpd(); } }).catch(() => {});
-}
 
 /* ================= Démarrage ================= */
 async function start(){

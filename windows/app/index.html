@@ -27,12 +27,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 input,textarea,select{font:inherit;color:inherit}
 svg{width:var(--is);height:var(--is);flex:none}
 .hidden{display:none!important}
-.upd{height:calc(var(--ib) - 6px);padding:0 11px;font-size:12.5px;color:var(--accent);border-color:rgba(var(--accent-rgb),.45)!important;--is:15px}
-.upd:hover{background:rgba(var(--accent-rgb),.1)!important}
-.updbox{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:var(--rc);font-size:13px}
-.updbox span{flex:1}
-.updbox small{display:block;color:var(--muted);font-size:12px;margin-top:2px}
-.noacc header .srch,.noacc #refreshBtn,.noacc #compose,.noacc #sideBtn,.noacc header .hsep,.noacc #updBtn{display:none!important}
+.noacc header .srch,.noacc #refreshBtn,.noacc #compose,.noacc #sideBtn,.noacc header .hsep{display:none!important}
 .noacc header .logo{margin-right:auto}
 ::-webkit-scrollbar{width:9px;height:9px}
 ::-webkit-scrollbar-thumb{background:var(--line2);border-radius:8px;border:2px solid transparent;background-clip:padding-box}
@@ -614,7 +609,6 @@ html[data-unreadb=off] .it.unread .fr,html[data-unreadb=off] .it.unread .sb .s,h
   <div class="logo"><div class="mark" data-ic="plane"></div><span>Hamama</span></div>
   <button class="ibtn" id="sideBtn" title="Afficher / masquer les dossiers" data-ic="sidebar"></button>
   <label class="srch" id="srch"><span data-ic="search"></span><input id="q" placeholder="Rechercher dans les messages" autocomplete="off" spellcheck="false"><button class="scope" id="scopeBtn" type="button">Ce dossier</button><kbd>Ctrl K</kbd></label>
-  <button class="btn ghost upd hidden" id="updBtn" data-ic="download"><span>Mettre à jour</span></button>
   <button class="ibtn" id="refreshBtn" title="Actualiser (F5)" data-ic="refresh"></button>
   <div class="hsep"></div>
   <button class="ibtn" id="setBtn" title="Personnaliser Hamama" data-ic="settings"></button>

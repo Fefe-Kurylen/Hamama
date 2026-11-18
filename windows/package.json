@@ -12,7 +12,6 @@
   "author": "Kurylen",
   "license": "ISC",
   "dependencies": {
-    "electron-updater": "^6.8.11",
     "iconv-lite": "^0.6.3",
     "imapflow": "^1.0.0",
     "mailparser": "^3.7.0",

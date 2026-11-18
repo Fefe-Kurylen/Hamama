@@ -6,15 +6,14 @@ Félix parle français : répondre en français, avec beaucoup d'emojis, répons
 (titres avec emoji, listes à cocher, tableaux seulement si utiles), sans conseils non demandés.
 
 ## 📁 Structure
-Dossier du projet sur le PC : `C:\Users\felix\Desktop\Claude\Hamama` · GitHub : **Fefe-Kurylen/Hamama** (public ; même contenu que le dossier du PC + Releases pour les mises à jour automatiques).
+Dossier du projet sur le PC : `C:\Users\felix\Desktop\Claude\Hamama` · GitHub : **Fefe-Kurylen/Hamama** (public : la politique de confidentialité et les workflows de fabrication y sont).
 
 - `web/index.html` — **source principale de l'interface** (un seul fichier : CSS + HTML + une IIFE JS), comme Pyramid.
 - `windows/`
   - `main.js` — processus principal : fenêtre (titleBarOverlay), IPC, notifications, zone de notification, liens `mailto:`, impression, pièces jointes
   - `mail.js` — **moteur mail** : comptes chiffrés (safeStorage = DPAPI Windows), détection auto des serveurs (fournisseurs connus → base Mozilla ISPDB → MX → devinette), dossiers (rôles spéciaux traduits), liste paginée + aperçu du texte, lecture (mailparser), drapeaux, déplacer / archiver / corbeille (avec `uidMap` pour Annuler), recherche (dossier ou partout), envoi SMTP + copie dans Envoyés, brouillons, cache disque, **surveillance IDLE** (nouveaux messages en temps réel)
-  - `updater.js` — **mises à jour sans réinstaller** (electron-updater + GitHub Releases de Fefe-Kurylen/Hamama) : vérification 15 s après l'ouverture, toutes les 30 min et au retour sur la fenêtre (si > 10 min), téléchargement différentiel en arrière-plan, bouton **« Mettre à jour »** dans la barre du haut + notification ; version portable → lien « Nouvelle version » ; version Store / développement → désactivé (le Store met à jour lui-même)
   - `oauth.js` — connexion OAuth2 Microsoft / Google (PKCE + redirection http://localhost). **Inactive tant que les identifiants client sont vides** (`HAMAMA_MS_CLIENT_ID`, `HAMAMA_GOOGLE_CLIENT_ID` / `_SECRET`, ou constantes dans le fichier)
-  - `preload.js` — expose `window.native` (acc, mail, att, pickFiles, prefs, notify, badge, defaultMail, print, version, on, setTitleBar, ready)
+  - `preload.js` — expose `window.native` (acc, mail, att, block, pickFiles, prefs, notify, badge, defaultMail, print, version, on, setTitleBar, ready)
   - `make-app.py` — `web/index.html` → `windows/app/` (polices Inter locales, script sorti dans `app.js`, CSP stricte sans script en ligne)
   - `afterPack.js` — icône + infos de version dans l'exe (resedit)
   - `build/icon.svg|png|ico`, `build/appx/` (logos Store)
@@ -25,7 +24,7 @@ Dossier du projet sur le PC : `C:\Users\felix\Desktop\Claude\Hamama` · GitHub :
   - `make-icons.py` — icônes Android (adaptatives) + iPhone + écrans de démarrage depuis `windows/build/icon.svg`
   - `android/` (signature : `keystore.properties` + `hamama-release.jks` **hors GitHub**, copie dans `Hamama\Clés-Android` sur le PC ; APK limité à arm64, moteur compressé → ≈ 48 Mo), `ios/`
 - `tests/` — `mobile.js` (11 vérifications : interface téléphone 390×844 tactile + vrai moteur Node contre le serveur de test : tiroir, retour, lecture plein écran, balayage = archiver, rédaction plein écran, envoi + réception IDLE), `i18n.js` (passage en anglais et en arabe + détection des textes restés en français), `server.js` (serveur IMAP + SMTP de test hoodiecrow avec 9 mails d’exemple), `e2e.js` (38 vérifications en pilotant la vraie appli Electron), `relaunch.js` (redémarrage + cache)
-- `.github/workflows/release.yml` — **publie automatiquement une mise à jour à chaque push sur `main`** qui touche `web/` ou `windows/` : version `MAJEUR.MINEUR.(patch + n° de publication)`, installateur + portable + `latest.yml` dans les Releases GitHub → bouton « Mettre à jour » dans les applis installées
+- `.github/workflows/release.yml` — installateur + portable dans les Releases GitHub, **lancement manuel uniquement** (plus de mise à jour automatique)
 - `.github/workflows/mobile.yml` — à chaque push touchant `mobile/`, `web/` ou le moteur : **APK Android** (signé si secrets `ANDROID_KEYSTORE_B64` / `ANDROID_KEYSTORE_PASSWORD`, sinon debug) + **.ipa iPhone non signé** (Mac de GitHub) dans les artifacts
 - `.github/workflows/windows-store.yml` — fabrique et teste le paquet Microsoft Store sur un Windows de GitHub (comme Pyramid)
 - `PRIVACY.md` — politique de confidentialité (URL pour le Store)
@@ -49,13 +48,11 @@ cd android && ./gradlew assembleRelease         # → app/build/outputs/apk/rele
 - Interface : classe `mobile` sur `<html>` (`MOBILE` dans le script) → tiroir des dossiers, une seule colonne, rédaction plein écran, fenêtres en bas d'écran, balayage gauche = archiver / droite = lu-non lu, appui long = menu, pas de raccourcis clavier / impression / zone de notification. Les petites fenêtres de bureau (< 640 px) prennent la même disposition (classe `narrow`).
 - Limites : notifications seulement quand l'appli est ouverte ou en arrière-plan récent (pas de push serveur), pas encore d'OAuth sur téléphone (mot de passe d'application), iPhone = signature Apple nécessaire (identifiant Apple gratuit via Sideloadly : 7 jours ; compte Developer 99 €/an pour l'App Store).
 
-## 🔄 Mises à jour (sans réinstaller)
-1. Modifier le code ici (dossier du PC / cette session) et **pousser sur GitHub (`main`)** — c'est tout
-2. Le workflow `release.yml` fabrique la nouvelle version (≈ 5-8 min) et la publie dans les Releases (numéro automatique : 1.0.1, 1.0.2…)
-3. Chaque Hamama installé la détecte, la télécharge en arrière-plan et affiche **« Mettre à jour »** → redémarrage de quelques secondes
-- `version` de `windows/package.json` = base MAJEUR.MINEUR (ne la changer que pour passer à 1.1, 2.0…). Les modifications de documentation seule (`*.md`, `tests/`) ne publient pas de version.
-- ⚠️ Le dépôt **Fefe-Kurylen/Hamama doit être public** (sinon les applis ne peuvent pas lire les Releases).
-- Store : workflow `windows-store.yml` → `.appx` dans les artifacts → Partner Center ; le Store met ensuite à jour tout seul.
+## 🔄 Mises à jour = par les stores (décision de Félix, 18/11/2026)
+- **Plus de bouton « Mettre à jour » ni d'electron-updater** dans l'appli : les mises à jour passent par le **Microsoft Store** (Windows), et plus tard Google Play / App Store / Mac App Store.
+- Nouvelle version Windows : pousser sur `main` → le workflow `windows-store.yml` fabrique et teste le `.appx` (artifact `hamama-store`) → nouvelle soumission dans l'Espace partenaires (produit **9NB60JPQ44R5**, identité `Kurylen.Hamama`, éditeur `CN=B85CD3FF-A422-425E-9A54-A6E74180E94E`) → le Store met à jour les PC.
+- Envoi du paquet dans l'Espace partenaires depuis le navigateur intégré : le fichier est découpé (< 100 Mo), poussé sur une branche temporaire, reconstitué dans la page via `raw.githubusercontent.com` puis donné au champ `input[type=file].fileuploader` (UN seul événement, sinon envois en double). Les captures (`store/captures/*.png`, faites avec `store/demo-server.js` + `store/captures.js`) passent de la même façon, une par une.
+- Accepter les conditions (IARC) et cliquer « Soumettre pour certification » : à faire par Félix.
 
 ## 🧪 Tests
 ```

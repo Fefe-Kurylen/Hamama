@@ -185,16 +185,6 @@ const ok = (c, m) => { console.log((c ? '✅ ' : '❌ ') + m); if (!c) process.e
   // Menu contextuel
   await win.click('#list .it:has-text("Stripe")', { button: 'right' }); await win.waitForTimeout(250);
   await win.screenshot({ path: path.join(SHOTS, '13-menu.png') }); await win.keyboard.press('Escape'); await win.mouse.click(5, 300);
-  // Mise à jour sans réinstaller : simulation des événements du module de mise à jour
-  const sendUpd = st => app.evaluate(({ BrowserWindow }, st) => BrowserWindow.getAllWindows()[0].webContents.send('update', st), st);
-  await sendUpd({ state: 'downloading', next: '1.0.1', percent: 40, mode: 'auto' }); await win.waitForTimeout(200);
-  ok(await win.isHidden('#updBtn'), 'pendant le téléchargement : pas de bouton (discret)');
-  await sendUpd({ state: 'ready', next: '1.0.1', mode: 'auto' });
-  await win.waitForSelector('#updBtn:not(.hidden)'); await win.waitForSelector('.toast:has-text("Nouvelle version 1.0.1 prête")');
-  ok(/Mettre à jour/.test(await win.textContent('#updBtn')), 'bouton « Mettre à jour » + notification');
-  await win.click('#setBtn'); await win.click('[data-tab=about]'); await win.waitForTimeout(200);
-  ok(/Version 1\.0\.1 prête/.test(await win.textContent('[data-upd]')), 'Réglages → À propos : état de la mise à jour');
-  await win.screenshot({ path: path.join(SHOTS, '16-mise-a-jour.png') }); await win.keyboard.press('Escape');
   ok(errs.length === 0, 'aucune erreur JavaScript' + (errs.length ? ' : ' + errs.join(' / ') : ''));
   await app.close();
 })().catch(e => { console.error('ERREUR', e); process.exit(1); });

@@ -5,7 +5,6 @@ const path = require('path');
 const fs = require('fs');
 const mail = require('./mail');
 const oauth = require('./oauth');
-const updater = require('./updater');
 
 app.setPath('userData', path.join(app.getPath('appData'), 'Hamama'));
 if (process.env.HAMAMA_DATA) app.setPath('userData', process.env.HAMAMA_DATA); // tests
@@ -106,7 +105,7 @@ function createWindow() {
     }
   });
   win.on('closed', () => { win = null; ready = false; });
-  win.on('focus', () => { if (win) win.flashFrame(false); updater.onFocus(); });
+  win.on('focus', () => { if (win) win.flashFrame(false); });
 }
 
 function setupTray() {
@@ -217,9 +216,6 @@ H('print', async html => {
   finally { w.destroy(); fs.promises.unlink(f).catch(() => {}); }
 });
 H('app-version', () => app.getVersion());
-H('upd:state', () => updater.get());
-H('upd:check', () => updater.check());
-H('upd:install', () => updater.install());
 ipcMain.on('titlebar', (e, o) => {
   if (!win || !fromApp(e) || !o) return;
   try {
@@ -243,7 +239,7 @@ else {
   app.whenReady().then(() => {
     mail.init({ dir: app.getPath('userData'), safeStorage, netFetch: (u, o) => net.fetch(u, o), emit: send, oauth });
     oauth.init({ netFetch: (u, o) => net.fetch(u, o), openExternal: u => shell.openExternal(u), mail });
-    createWindow(); setupTray(); loginItem(); updater.init(send);
+    createWindow(); setupTray(); loginItem();
     for (const m of mailtoArgs(process.argv)) send('mailto', m);
   });
   app.on('before-quit', () => { quitting = true; mail.shutdown(); });

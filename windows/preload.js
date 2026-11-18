@@ -16,8 +16,7 @@ contextBridge.exposeInMainWorld('native', {
   defaultMail: I('default-mail'),
   print: I('print'),
   version: I('app-version'),
-  update: { state: I('upd:state'), check: I('upd:check'), install: I('upd:install') },
-  on: (ch, cb) => { if (['new-mail', 'mailto', 'open-key', 'update'].includes(ch)) ipcRenderer.on(ch, (e, d) => cb(d)); },
+  on: (ch, cb) => { if (['new-mail', 'mailto', 'open-key'].includes(ch)) ipcRenderer.on(ch, (e, d) => cb(d)); },
   setTitleBar: o => ipcRenderer.send('titlebar', o),
   ready: () => ipcRenderer.send('ready'),
   platform: process.platform
