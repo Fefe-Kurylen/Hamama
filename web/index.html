@@ -641,19 +641,26 @@ html[data-unreadb=off] .it.unread .fr,html[data-unreadb=off] .it.unread .sb .s,h
 @keyframes qaBtn{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
 @keyframes qaPop{0%{transform:scale(1)}40%{transform:scale(1.35)}100%{transform:scale(1)}}
 @media (prefers-reduced-motion: reduce){.it:hover .qa,.qa .ibtn,.qa .ibtn.pop svg{animation:none}.qa .ibtn svg{transition:none}}
+
+/* « Nouveau message » à côté de la recherche (demande de Félix, 18/11) */
+.hmid{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:8px}
+.hmid .srch{margin:0;flex:1;max-width:560px}
+.hmid #compose{flex:none}
+.noacc .hmid #compose{display:none!important}
 </style>
 </head>
 <body>
 <header>
   <div class="logo"><div class="mark" data-ic="plane"></div><span>Hamama</span></div>
   <button class="ibtn" id="sideBtn" title="Afficher / masquer les dossiers" data-ic="sidebar"></button>
-  <label class="srch" id="srch"><span data-ic="search"></span><input id="q" placeholder="Rechercher dans les messages" autocomplete="off" spellcheck="false"><button class="scope" id="scopeBtn" type="button">Ce dossier</button><kbd>Ctrl K</kbd></label>
+  <div class="hmid">
+    <label class="srch" id="srch"><span data-ic="search"></span><input id="q" placeholder="Rechercher dans les messages" autocomplete="off" spellcheck="false"><button class="scope" id="scopeBtn" type="button">Ce dossier</button><kbd>Ctrl K</kbd></label>
+    <button class="btn primary" id="compose" title="Nouveau message (N)" data-ic="pen"><span>Nouveau message</span></button>
+  </div>
   <button class="ibtn" id="refreshBtn" title="Actualiser (F5)" data-ic="refresh"></button>
   <div class="hsep"></div>
   <button class="ibtn" id="setBtn" title="Personnaliser Hamama" data-ic="settings"></button>
   <button class="ibtn heart" id="heartBtn" title="Soutenir Hamama" data-ic="heart"></button>
-  <div class="hsep"></div>
-  <button class="btn primary" id="compose" title="Nouveau message (N)" data-ic="pen"><span>Nouveau message</span></button>
 </header>
 
 <div id="welcome" class="hidden">
