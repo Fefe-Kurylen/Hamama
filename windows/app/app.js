@@ -581,6 +581,7 @@ document.querySelectorAll('[data-ic]').forEach(el => el.insertAdjacentHTML('afte
 /* ================= Outils ================= */
 const $ = s => document.querySelector(s);
 const N = window.native || null;
+const MOBILE = !!N && (N.platform === 'android' || N.platform === 'ios');
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
 const store = { get(k){ try{ return localStorage.getItem(k); }catch{ return null; } }, set(k,v){ try{ localStorage.setItem(k,v); }catch{} }, del(k){ try{ localStorage.removeItem(k); }catch{} } };
 const J = (k, d) => { try { const v = JSON.parse(store.get(k)); return v == null ? d : v; } catch { return d; } };
@@ -614,6 +615,7 @@ const fmtAddr = a => a.name ? `${a.name} <${a.address}>` : a.address;
 /* ================= Bulles d’aide, toasts, fenêtres, menus ================= */
 const tipEl = $('#tip'); let tipT = null;
 document.addEventListener('mouseover', e => {
+  if (matchMedia('(hover: none)').matches) return;
   const el = e.target.closest('[title],[data-tip]');
   if (el && el.title){ el.dataset.tip = el.title; el.removeAttribute('title'); }
   clearTimeout(tipT); tipEl.classList.remove('show');
@@ -717,6 +719,7 @@ function applySettings(save = true){
   d.theme = SET.theme; d.layout = SET.layout; d.density = SET.density; d.radius = SET.radius; d.side = SET.side;
   d.preview = SET.preview; d.avatars = SET.avatars; d.labels = SET.labels; d.mailbg = SET.mailbg; d.weight = SET.weight; d.unreadb = SET.unreadBold;
   r.style.setProperty('--uif', uiFont());
+  if (MOBILE && SET.labels === 'on') d.labels = 'off';
   r.style.setProperty('--readw', { normal:'980px', large:'1240px', plein:'100%' }[SET.readw] || '980px');
   document.body.style.zoom = ZOOMS[SET.zoom] || 1;
   setAccent(SET.accent);
@@ -727,7 +730,11 @@ function applySettings(save = true){
   }
 }
 applySettings(false);
-if (N){ document.documentElement.classList.add('desk', 'plat-' + N.platform); }
+if (N) document.documentElement.classList.add(MOBILE ? 'mobile' : 'desk', 'plat-' + N.platform);
+const narrowCheck = () => document.documentElement.classList.toggle('narrow', !MOBILE && innerWidth < 640);
+narrowCheck(); addEventListener('resize', narrowCheck);
+const isSmall = () => MOBILE || innerWidth < 640;
+const setDrawer = on => document.documentElement.classList.toggle('drawer', !!on);
 
 /* ================= État ================= */
 const ST = {
@@ -787,8 +794,8 @@ function renderSide(){
   if (N) N.badge(n).catch(() => {});
 }
 $('#folders').addEventListener('click', e => {
-  const u = e.target.closest('[data-uni]'); if (u) return openView({ uni: true });
-  const f = e.target.closest('.fold[data-box]'); if (f) return openView({ acc: f.dataset.acc, box: f.dataset.box });
+  const u = e.target.closest('[data-uni]'); if (u){ setDrawer(false); return openView({ uni: true }); }
+  const f = e.target.closest('.fold[data-box]'); if (f){ setDrawer(false); return openView({ acc: f.dataset.acc, box: f.dataset.box }); }
   const ah = e.target.closest('[data-ah]');
   if (ah){ const id = ah.dataset.ah; collapsed.has(id) ? collapsed.delete(id) : collapsed.add(id); store.set('hamama-collapsed', JSON.stringify([...collapsed])); ah.parentNode.classList.toggle('closed'); return; }
   const fx = e.target.closest('[data-fix]'); if (fx) return openAccount(fx.dataset.fix);
@@ -1001,6 +1008,38 @@ $('#bulk').addEventListener('click', e => {
   if (b.dataset.b === 'move') return pickFolder(keys, b);
   act(b.dataset.b, keys);
 });
+/* Toucher : glisser à gauche = archiver, à droite = lu / non lu ; appui long = menu */
+(() => {
+  let st = null, lp = null;
+  const L = $('#list');
+  L.addEventListener('touchstart', e => {
+    const it = e.target.closest('.it'); if (!it || e.touches.length > 1) return;
+    const t = e.touches[0]; st = { it, x: t.clientX, y: t.clientY, dx: 0, on: false };
+    clearTimeout(lp); lp = setTimeout(() => { if (st && !st.on && Math.abs(st.dx) < 8){ const r = it.getBoundingClientRect(); st.cancel = true; navigator.vibrate && navigator.vibrate(12); it.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, clientX: Math.min(t.clientX, innerWidth - 250), clientY: r.bottom })); } }, 520);
+  }, { passive: true });
+  L.addEventListener('touchmove', e => {
+    if (!st) return; const t = e.touches[0], dx = t.clientX - st.x, dy = t.clientY - st.y; st.dx = dx;
+    if (!st.on){ if (Math.abs(dy) > 10 && Math.abs(dy) > Math.abs(dx)){ clearTimeout(lp); st = null; return; } if (Math.abs(dx) < 12) return;
+      clearTimeout(lp); st.on = true; const i = itemOf(st.it.dataset.k);
+      const w = document.createElement('div'); w.className = 'swipewrap'; st.it.before(w); w.appendChild(st.it);
+      w.insertAdjacentHTML('afterbegin', `<div class="swipebg l">${ic('archive')}<span>${T('Archiver')}</span></div><div class="swipebg r">${ic(i && i.seen ? 'mail' : 'mail-open')}<span>${T(i && i.seen ? 'Non lus' : 'Lu')}</span></div>`);
+      st.wrap = w; st.it.classList.add('swiping'); }
+    st.wrap.querySelector('.l').style.opacity = dx < 0 ? 1 : 0; st.wrap.querySelector('.r').style.opacity = dx > 0 ? 1 : 0;
+    st.it.style.transform = `translateX(${dx}px)`;
+  }, { passive: true });
+  const end = () => {
+    clearTimeout(lp); if (!st) return; const s0 = st; st = null;
+    if (!s0.on) return;
+    const key = s0.it.dataset.k, dx = s0.dx, wrap = s0.wrap, it = s0.it;
+    it.classList.remove('swiping'); it.style.transition = 'transform .2s';
+    const done = () => { if (wrap.isConnected){ wrap.before(it); wrap.remove(); } it.style.transform = ''; it.style.transition = ''; };
+    if (dx < -90){ it.style.transform = 'translateX(-110%)'; setTimeout(() => { done(); act('archive', [key]); }, 180); }
+    else if (dx > 90){ const i = itemOf(key); it.style.transform = 'translateX(0)'; setTimeout(() => { done(); act(i && i.seen ? 'unread' : 'read', [key]); }, 200); }
+    else { it.style.transform = 'translateX(0)'; setTimeout(done, 210); }
+  };
+  L.addEventListener('touchend', end); L.addEventListener('touchcancel', end);
+  L.addEventListener('click', e => { if (st && st.cancel) { e.stopPropagation(); e.preventDefault(); } }, true);
+})();
 $('#list').addEventListener('contextmenu', e => {
   const it = e.target.closest('.it'); if (!it) return; e.preventDefault();
   const key = it.dataset.k; if (!ST.sel.has(key)){ ST.sel = new Set([key]); renderList(); }
@@ -1288,7 +1327,7 @@ async function viewAction(v, btn, ev){
   if (v === 'more') return menuBelow(btn, [
     { ic:'junk', label:'Signaler comme indésirable', fn: () => act('junk', [key]) },
     ...(m && m.from && m.from[0] ? blockItems(m.from[0].address) : []),
-    { ic:'print', label:'Imprimer', kbd:'Ctrl P', fn: printMsg },
+    MOBILE ? null : { ic:'print', label:'Imprimer', kbd:'Ctrl P', fn: printMsg },
     { ic:'code', label:'Afficher la source', fn: showSource },
     '-',
     { ic:'image', label: SET.images === 'always' ? 'Images : toujours affichées' : 'Afficher les images', disabled: !m || SET.images === 'always', fn: () => { m._imgs = true; renderView(m); } },
@@ -1825,10 +1864,10 @@ async function openSettings(tab = 'look'){
       R('Expéditeurs bloqués', `<div style="display:flex;gap:8px"><input class="field" data-newblock placeholder="Adresse ou @domaine" spellcheck="false"><button class="btn primary" data-addblock>Ajouter</button></div><div data-blist style="margin-top:12px"></div>`, 'Les messages des expéditeurs bloqués vont directement dans Indésirables, sans notification. Pour bloquer tout un domaine, écris @domaine.fr.')],
     notif: ['Notifications', () =>
       R('Notifications des nouveaux messages', pseg('notify', pyn)) +
-      R('Son', pseg('sound', pyn)) +
+      (MOBILE ? '' : R('Son', pseg('sound', pyn)) +
       R('Garder Hamama dans la zone de notification à la fermeture', pseg('tray', pyn), 'Hamama continue de recevoir les messages quand la fenêtre est fermée.') +
       R('Lancer Hamama au démarrage de Windows', pseg('startup', pyn)) +
-      R('Application mail par défaut', `<button class="btn ghost" data-defmail>${ic('mail')}Définir Hamama pour les liens « mailto: »</button>`, 'Windows ouvre ses Paramètres : choisis Hamama pour « MAILTO ».')],
+      R('Application mail par défaut', `<button class="btn ghost" data-defmail>${ic('mail')}Définir Hamama pour les liens « mailto: »</button>`, 'Windows ouvre ses Paramètres : choisis Hamama pour « MAILTO ».'))],
     lang: ['Langue', () =>
       R('Langue de l’application', `<div class="seg" data-langs style="flex-direction:column">${[['auto','Automatique (langue de Windows)'], ...LANGS].map(([v, l]) => `<button data-lang="${v}" class="${(SET.lang || 'auto') === v ? 'on' : ''}" style="text-align:left;padding:0 14px;height:38px"${v === 'auto' ? '' : ' data-notr'}>${l}</button>`).join('')}</div>`, 'Hamama redémarre son interface pour appliquer la langue.')],
     keys: ['Raccourcis', () =>
@@ -1839,6 +1878,7 @@ async function openSettings(tab = 'look'){
        <div class="note" style="text-align:center">Sans publicité · sans pistage · tes messages restent entre toi et ton fournisseur.</div>
        <div class="row" style="justify-content:center"><button class="btn ghost heart" data-sup>${ic('heart')}Soutenir Hamama</button></div></div>`]
   };
+  if (MOBILE) delete TABS.keys;
   modal(`<h2>Personnaliser Hamama</h2><div class="sub">Les changements s’appliquent tout de suite et sont mémorisés.</div>
     <div class="setwrap"><div class="tabs v">${Object.entries(TABS).map(([k, [l]]) => `<button data-tab="${k}">${l}</button>`).join('')}</div><div data-body></div></div>
     <div class="row"><button class="btn ghost" data-reset>Réinitialiser l’apparence</button><span class="spacer"></span><button class="btn primary" data-x>${ic('check')}Terminé</button></div>`,
@@ -1971,6 +2011,17 @@ function onKey(e){
   }
 }
 document.addEventListener('keydown', onKey);
+// Bouton retour Android : ferme ce qui est ouvert, sinon l'appli passe en arrière-plan
+addEventListener('hamama-back', e => {
+  const md = [...document.querySelectorAll('.modal')].pop();
+  if (menuEl){ closeMenu(); e.preventDefault(); return; }
+  if (md){ document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })); e.preventDefault(); return; }
+  if ($('#composer')){ closeComposer(CMP && CMP.dirty ? 'save' : 'discard'); e.preventDefault(); return; }
+  if (document.documentElement.classList.contains('drawer')){ setDrawer(false); e.preventDefault(); return; }
+  if (ST.search){ clearSearch(); e.preventDefault(); return; }
+  if (document.documentElement.classList.contains('reading')){ viewAction('back'); e.preventDefault(); return; }
+  if (ST.sel.size > 1 || ST.selMode){ ST.sel.clear(); ST.selMode = false; renderList(); e.preventDefault(); }
+});
 
 /* ================= Redimensionnement des colonnes ================= */
 (() => {
@@ -2002,8 +2053,9 @@ document.addEventListener('keydown', onKey);
 $('#compose').onclick = () => openComposer();
 $('#setBtn').onclick = () => openSettings();
 $('#heartBtn').onclick = () => openSupport();
-$('#addAccBtn').onclick = () => openAddAccount();
-$('#sideBtn').onclick = () => { SET.side = SET.side === 'hidden' ? 'shown' : 'hidden'; applySettings(); };
+$('#addAccBtn').onclick = () => { setDrawer(false); openAddAccount(); };
+$('#sideBtn').onclick = () => { if (isSmall()) return setDrawer(!document.documentElement.classList.contains('drawer')); SET.side = SET.side === 'hidden' ? 'shown' : 'hidden'; applySettings(); };
+$('#drawerBack').onclick = () => setDrawer(false);
 $('#refreshBtn').onclick = () => refreshAll();
 async function refreshAll(){
   const b = $('#refreshBtn'); b.animate([{ transform:'rotate(0)' }, { transform:'rotate(360deg)' }], { duration: 600 });

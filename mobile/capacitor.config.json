@@ -1,0 +1,13 @@
+{
+  "appId": "fr.kurylen.hamama",
+  "appName": "Hamama",
+  "webDir": "www",
+  "backgroundColor": "#262624",
+  "android": { "allowMixedContent": false },
+  "ios": { "contentInset": "never", "backgroundColor": "#262624" },
+  "plugins": {
+    "Nodejs": { "nodeDir": "nodejs", "startMode": "auto" },
+    "SystemBars": { "insetsHandling": "css", "initialViewportFitValueHint": "cover", "style": "DARK" },
+    "LocalNotifications": { "iconColor": "#c8703f" }
+  }
+}

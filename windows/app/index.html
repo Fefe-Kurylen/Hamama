@@ -10,7 +10,7 @@
 :root{
   --accent:#c8703f; --accent-rgb:200,112,63; --danger:#ef4444; --star:#f5b301;
   --hh:52px; --ib:32px; --is:17px; --rb:9px; --rc:13px;
-  --sidew:232px; --listw:400px; --sat:env(safe-area-inset-top);
+  --sidew:232px; --listw:400px; --sat:max(env(safe-area-inset-top), var(--safe-area-inset-top, 0px)); --sab:max(env(safe-area-inset-bottom), var(--safe-area-inset-bottom, 0px));
 }
 :root,[data-theme=graphite]{--bg:#262624;--panel:#2e2e2b;--panel2:#363633;--line:#3a3a37;--line2:#4a4a46;--text:#f2f1ec;--muted:#a3a19a;--float:rgba(48,48,45,.94);--shade:rgba(0,0,0,.4);--card:#2b2b29}
 [data-theme=sombre]{--bg:#0c0c0f;--panel:#141418;--panel2:#1b1b21;--line:#26262e;--line2:#33333d;--text:#ececf1;--muted:#8b8b98;--float:rgba(27,27,33,.9);--shade:rgba(0,0,0,.5);--card:#17171c}
@@ -473,6 +473,64 @@ header{background:var(--bg);border-bottom-color:var(--line)}
 [data-weight=leger] :is(.vin h1,.lhead h2,.drop h1,.card h2,.it.unread .fr,.logo){font-weight:600!important}
 [data-weight=fin] body *:not(#ed):not(#ed *){font-weight:400!important}
 html[data-unreadb=off] .it.unread .fr,html[data-unreadb=off] .it.unread .sb .s,html[data-unreadb=off] .fold.unread .t,html[data-unreadb=off] .it.unread .dt{font-weight:400!important}
+
+/* ================= Téléphone (iPhone / Android) et petites fenêtres ================= */
+#drawerBack{display:none}
+:is(.mobile,.narrow) #side{display:flex!important;position:fixed;top:0;bottom:0;left:0;width:min(84vw,320px);z-index:55;transform:translateX(-104%);transition:transform .22s cubic-bezier(.2,.8,.3,1);padding-top:var(--sat);padding-bottom:var(--sab);box-shadow:0 0 40px rgba(0,0,0,.35);border-right:1px solid var(--line)}
+[dir=rtl]:is(.mobile,.narrow) #side{left:auto;right:0;transform:translateX(104%)}
+:is(.mobile,.narrow).drawer #side{transform:none}
+:is(.mobile,.narrow).drawer #drawerBack{display:block;position:fixed;inset:0;z-index:54;background:rgba(0,0,0,.4);animation:fd .15s}
+:is(.mobile,.narrow) #gripSide,:is(.mobile,.narrow) #gripList{display:none!important}
+:is(.mobile,.narrow) #listCol{flex:1;width:auto!important;height:auto!important;border-right:0;min-width:0}
+:is(.mobile,.narrow) #viewCol{min-width:0}
+:is(.mobile,.narrow) .cols{min-width:0;overflow:hidden}
+.mobile,.mobile body{overflow:hidden;overscroll-behavior:none}
+:is(.mobile,.narrow) #viewCol{display:none}
+:is(.mobile,.narrow).reading #listCol{display:none}
+:is(.mobile,.narrow).reading #viewCol{display:flex}
+:is(.mobile,.narrow) .backBtn{display:grid!important}
+:is(.mobile,.narrow) .cols{flex-direction:row!important}
+:is(.mobile,.narrow) header{gap:4px;padding-left:8px;padding-right:8px}
+:is(.mobile,.narrow) .logo span,:is(.mobile,.narrow) .srch kbd,:is(.mobile,.narrow) #compose span,:is(.mobile,.narrow) header .hsep,:is(.mobile,.narrow) #heartBtn{display:none}
+:is(.mobile,.narrow) #compose{width:var(--ib);padding:0;justify-content:center}
+:is(.mobile,.narrow) .srch{margin:0 2px}
+:is(.mobile,.narrow) .srch .scope{display:none}
+.mobile #refreshBtn{display:none}
+.mobile .it .qa{display:none!important}
+.mobile .it{-webkit-touch-callout:none;touch-action:pan-y}
+.mobile .it .av .ck{display:none}
+.mobile.selmodeOn .it .av .ck,.mobile .it.sel .av .ck{display:grid}
+.mobile .fold{height:42px;font-size:15px}
+.mobile .it .fr{font-size:15px}.mobile .it .sb{font-size:14px}.mobile .it .pv{font-size:13.5px}
+.mobile input,.mobile textarea,.mobile select,.mobile #ed{font-size:16px!important}
+.mobile .vempty .keys{display:none}
+.mobile #list{padding-bottom:calc(16px + var(--sab))}
+.mobile .vin{padding:16px 14px calc(30px + var(--sab))}
+.mobile .vin h1{font-size:19px}
+.mobile .vbar{padding:6px 8px;gap:0}
+.mobile #composer,.mobile #composer.max{inset:0;width:auto;height:auto;transform:none;border-radius:0;border:0;padding-top:var(--sat);padding-bottom:var(--sab);animation:up .2s}
+.mobile #composer .chead [data-c=min],.mobile #composer .chead [data-c=max]{display:none}
+.mobile .cf > label{width:40px}
+.mobile .modal{padding:calc(10px + var(--sat)) 10px calc(10px + var(--sab));align-items:end}
+.mobile .card{width:100%!important;max-height:calc(100vh - var(--sat) - var(--sab) - 20px);border-radius:18px;padding:18px}
+.mobile .setwrap{grid-template-columns:1fr;min-height:0}
+.mobile .tabs.v{flex-direction:row;overflow-x:auto;scrollbar-width:none}
+.mobile .tabs.v button{flex:none}
+.mobile .themes,.mobile .fonts{grid-template-columns:repeat(2,1fr)}
+.mobile #toasts{bottom:calc(22px + var(--sab))}
+.mobile:has(#composer) #toasts{bottom:calc(76px + var(--sab))}
+.mobile .etools{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+.mobile .etools>*{flex:none}
+.mobile .menu{min-width:240px}
+.mobile .menu button{padding:11px 12px;font-size:15px}
+.mobile #welcome{top:calc(var(--hh) + var(--sat))}
+.mobile .drop{padding:26px 14px}
+.it.swiping{transition:none!important}
+.swipebg{position:absolute;inset:0 0 1px 0;border-radius:var(--rc);display:flex;align-items:center;padding:0 22px;color:#fff;font-weight:600;font-size:13px;gap:8px;z-index:0}
+.swipebg.l{justify-content:flex-end;background:#3d9579}
+.swipebg.r{justify-content:flex-start;background:var(--accent)}
+.swipewrap{position:relative}
+.swipewrap > .it{position:relative;z-index:1;background:var(--bg)}
 </style>
 </head>
 <body>
@@ -498,6 +556,7 @@ html[data-unreadb=off] .it.unread .fr,html[data-unreadb=off] .it.unread .sb .s,h
   </div>
 </div>
 
+<div id="drawerBack"></div>
 <main id="app" class="hidden">
   <aside id="side"><div class="fl" id="folders"></div><div class="sfoot"><button class="btn" id="addAccBtn" data-ic="plus">Ajouter un compte</button></div></aside>
   <div class="grip" id="gripSide" title="Glisser pour redimensionner (double-clic : taille par défaut)"></div>

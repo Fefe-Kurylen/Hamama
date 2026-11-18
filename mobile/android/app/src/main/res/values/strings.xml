@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Hamama</string>
+    <string name="title_activity_main">Hamama</string>
+    <string name="package_name">fr.kurylen.hamama</string>
+    <string name="custom_url_scheme">fr.kurylen.hamama</string>
+</resources>

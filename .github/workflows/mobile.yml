@@ -1,0 +1,90 @@
+# Applis téléphone : APK Android (Linux de GitHub) + .ipa iPhone non signé (Mac de GitHub)
+# - Android : signé avec la clé de Félix si les secrets ANDROID_KEYSTORE_B64 / ANDROID_KEYSTORE_PASSWORD existent
+# - iPhone : .ipa non signé, à signer avec son identifiant Apple (Sideloadly / AltStore) ou le compte Apple Developer
+name: Téléphones - Android et iPhone
+on:
+  push:
+    branches: [main]
+    paths: ['mobile/**', 'web/**', 'windows/app/**', 'windows/mail.js', '.github/workflows/mobile.yml']
+  workflow_dispatch:
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 21 }
+      - name: Moteur mail (dépendances)
+        working-directory: windows
+        run: ELECTRON_SKIP_BINARY_DOWNLOAD=1 npm ci --ignore-scripts
+      - name: Interface + moteur pour téléphone
+        working-directory: mobile
+        run: |
+          CAPACITOR_NODEJS_SKIP_DOWNLOAD=1 npm ci
+          python3 make-mobile.py
+          npx cap sync android
+      - name: Clé de signature (si disponible)
+        working-directory: mobile
+        env:
+          KS: ${{ secrets.ANDROID_KEYSTORE_B64 }}
+          PW: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        run: |
+          if [ -n "$KS" ]; then
+            echo "$KS" | base64 -d > hamama-release.jks
+            printf "storeFile=../../hamama-release.jks\nstorePassword=%s\nkeyAlias=hamama\nkeyPassword=%s\n" "$PW" "$PW" > keystore.properties
+          fi
+      - name: Fabrication de l'APK
+        working-directory: mobile/android
+        run: |
+          export HAMAMA_VERSION="$(node -p "require('../../windows/package.json').version.split('.').slice(0,2).join('.')").${{ github.run_number }}"
+          export HAMAMA_BUILD=$(( 1000 + ${{ github.run_number }} ))
+          if [ -f ../keystore.properties ]; then T=assembleRelease; D=release; else T=assembleDebug; D=debug; fi
+          ./gradlew $T --no-daemon
+          mkdir -p ../build && cp app/build/outputs/apk/$D/*.apk "../build/Hamama-Android-$HAMAMA_VERSION.apk"
+          ls -la ../build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hamama-android
+          path: mobile/build/*.apk
+
+  ios:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: Moteur mail (dépendances)
+        working-directory: windows
+        run: ELECTRON_SKIP_BINARY_DOWNLOAD=1 npm ci --ignore-scripts
+      - name: Interface + moteur pour téléphone (+ Node.js pour iPhone)
+        working-directory: mobile
+        run: |
+          npm ci
+          python3 make-mobile.py
+          npx cap sync ios
+      - name: Compilation pour le simulateur iPhone
+        working-directory: mobile
+        run: |
+          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Debug \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO build | tail -n 40
+          test ${PIPESTATUS[0]} -eq 0
+      - name: Fabrication de l'appli iPhone (.ipa non signé)
+        working-directory: mobile
+        run: |
+          V="$(node -p "require('../windows/package.json').version.split('.').slice(0,2).join('.')").${{ github.run_number }}"
+          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release \
+            -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath build/dd \
+            MARKETING_VERSION=$V CURRENT_PROJECT_VERSION=${{ github.run_number }} \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY= build | tail -n 20
+          test ${PIPESTATUS[0]} -eq 0
+          rm -rf build/ipa && mkdir -p build/ipa/Payload
+          cp -R build/dd/Build/Products/Release-iphoneos/App.app build/ipa/Payload/
+          (cd build/ipa && zip -qry "../Hamama-iPhone-$V.ipa" Payload)
+          ls -la build/*.ipa
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hamama-iphone
+          path: mobile/build/*.ipa

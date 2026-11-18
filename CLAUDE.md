@@ -1,6 +1,6 @@
 # Hamama — application mail de Félix
 
-Client mail de bureau (Windows, Mac via Electron) : IMAP + SMTP, plusieurs comptes, boîte unifiée.
+Client mail IMAP + SMTP, plusieurs comptes, boîte unifiée : **Windows** (Electron) + **iPhone / Android** (Capacitor, même interface et même moteur).
 Hamama (حمامة) = « colombe voyageuse », le messager — dans l’esprit de Qafila (la caravane). Même famille visuelle que Pyramid PDF, Merifa et Qafila (éditeur « Kurylen »).
 Félix parle français : répondre en français, avec beaucoup d'emojis, réponses visuelles et structurées
 (titres avec emoji, listes à cocher, tableaux seulement si utiles), sans conseils non demandés.
@@ -18,8 +18,15 @@ Dossier du projet sur le PC : `C:\Users\felix\Desktop\Claude\Hamama` · GitHub :
   - `make-app.py` — `web/index.html` → `windows/app/` (polices Inter locales, script sorti dans `app.js`, CSP stricte sans script en ligne)
   - `afterPack.js` — icône + infos de version dans l'exe (resedit)
   - `build/icon.svg|png|ico`, `build/appx/` (logos Store)
-- `tests/` — `i18n.js` (passage en anglais et en arabe + détection des textes restés en français), `server.js` (serveur IMAP + SMTP de test hoodiecrow avec 9 mails d’exemple), `e2e.js` (34 vérifications en pilotant la vraie appli Electron), `relaunch.js` (redémarrage + cache)
+- `mobile/` — **appli iPhone / Android** (Capacitor 8, appId `fr.kurylen.hamama`)
+  - `make-mobile.py` — `windows/app` → `www/` (+ `native-bridge.js`, CSP avec `'unsafe-inline'` pour le script de Capacitor) et **moteur mail regroupé** par esbuild (`node/main.js` + `windows/mail.js` + dépendances) → `www/nodejs/main.js`
+  - `node/main.js` — moteur sur téléphone : tourne dans le **Node.js embarqué** (`@capawesome/capacitor-nodejs`, Node 24) → aucun serveur ; mots de passe chiffrés AES-256-GCM (clé `.cle` dans le dossier privé de l'appli) ; module `bridge` (`channel.on('call')` → `channel.post('reply' / 'event')`), `app.on('resume')` → `mail.wake()`
+  - `native-bridge.js` — définit `window.native` (même API que `preload.js`) : appels vers Node, pièces jointes → fichier + feuille de partage, notifications locales, bouton retour Android (`hamama-back`), liens `mailto:`
+  - `make-icons.py` — icônes Android (adaptatives) + iPhone + écrans de démarrage depuis `windows/build/icon.svg`
+  - `android/` (signature : `keystore.properties` + `hamama-release.jks` **hors GitHub**, copie dans `Hamama\Clés-Android` sur le PC ; APK limité à arm64, moteur compressé → ≈ 48 Mo), `ios/`
+- `tests/` — `mobile.js` (11 vérifications : interface téléphone 390×844 tactile + vrai moteur Node contre le serveur de test : tiroir, retour, lecture plein écran, balayage = archiver, rédaction plein écran, envoi + réception IDLE), `i18n.js` (passage en anglais et en arabe + détection des textes restés en français), `server.js` (serveur IMAP + SMTP de test hoodiecrow avec 9 mails d’exemple), `e2e.js` (34 vérifications en pilotant la vraie appli Electron), `relaunch.js` (redémarrage + cache)
 - `.github/workflows/release.yml` — **publie automatiquement une mise à jour à chaque push sur `main`** qui touche `web/` ou `windows/` : version `MAJEUR.MINEUR.(patch + n° de publication)`, installateur + portable + `latest.yml` dans les Releases GitHub → bouton « Mettre à jour » dans les applis installées
+- `.github/workflows/mobile.yml` — à chaque push touchant `mobile/`, `web/` ou le moteur : **APK Android** (signé si secrets `ANDROID_KEYSTORE_B64` / `ANDROID_KEYSTORE_PASSWORD`, sinon debug) + **.ipa iPhone non signé** (Mac de GitHub) dans les artifacts
 - `.github/workflows/windows-store.yml` — fabrique et teste le paquet Microsoft Store sur un Windows de GitHub (comme Pyramid)
 - `PRIVACY.md` — politique de confidentialité (URL pour le Store)
 
@@ -32,6 +39,16 @@ npm start                 # lancer en développement
 npm run dist              # → dist/Hamama-Installation-X.Y.Z.exe + Hamama-Portable-X.Y.Z.exe
 ```
 Depuis Linux, `npm run dist` demande wine (wine64 + wine32). electron-builder **25.1.8** (la 26 exige wine aussi pour NSIS).
+## 📱 Téléphones
+```
+cd mobile
+CAPACITOR_NODEJS_SKIP_DOWNLOAD=1 npm install   # (sur Mac : npm install, pour le Node.js iPhone)
+python make-mobile.py && npx cap sync           # après chaque modification de web/ ou du moteur
+cd android && ./gradlew assembleRelease         # → app/build/outputs/apk/release/app-release.apk
+```
+- Interface : classe `mobile` sur `<html>` (`MOBILE` dans le script) → tiroir des dossiers, une seule colonne, rédaction plein écran, fenêtres en bas d'écran, balayage gauche = archiver / droite = lu-non lu, appui long = menu, pas de raccourcis clavier / impression / zone de notification. Les petites fenêtres de bureau (< 640 px) prennent la même disposition (classe `narrow`).
+- Limites : notifications seulement quand l'appli est ouverte ou en arrière-plan récent (pas de push serveur), pas encore d'OAuth sur téléphone (mot de passe d'application), iPhone = signature Apple nécessaire (identifiant Apple gratuit via Sideloadly : 7 jours ; compte Developer 99 €/an pour l'App Store).
+
 ## 🔄 Mises à jour (sans réinstaller)
 1. Modifier le code ici (dossier du PC / cette session) et **pousser sur GitHub (`main`)** — c'est tout
 2. Le workflow `release.yml` fabrique la nouvelle version (≈ 5-8 min) et la publie dans les Releases (numéro automatique : 1.0.1, 1.0.2…)
@@ -62,7 +79,10 @@ xvfb-run -a node e2e.js                # Linux ; sous Windows : node e2e.js
 - **Débogage** : `HAMAMA_DEBUG=1` → `window.__hamama` ; `HAMAMA_DATA=<dossier>` change le dossier de données (tests).
 - Dossier de données : `%APPDATA%\Hamama` (`accounts.json`, `prefs.json`, `cache/`).
 
-## ✅ État actuel (17/11/2026) — version 1.0.0
+## ✅ État actuel (18/11/2026)
+Applis iPhone / Android créées (18/11) : test téléphone 11/11, APK Android signé généré.
+
+### Bureau — version 1.0.x
 Tous les tests passent : 34/34 de bout en bout + 10/10 langues (blocage d'expéditeurs, ajout de compte, liste, lecture HTML, pièce jointe, pixel espion bloqué,
 désabonnement, suivi, envoi SMTP réel, réception IDLE, réponse avec citation, brouillon, archiver + annuler, supprimer,
 recherche, Envoyés, glisser-déposer, sélection multiple, boîte unifiée 2 comptes, bouton de mise à jour) + redémarrage (liste en < 1 s depuis le cache).
@@ -74,4 +94,5 @@ Installateur et version portable Windows générés. Code sur GitHub (branche `m
 - [ ] (option) Google OAuth pour Gmail sans mot de passe d'application (vérification Google requise pour le scope mail)
 - [ ] Lien **Stripe** dans `SUPPORT_URL` (fenêtre « Soutenir Hamama ») quand Félix le donnera
 - [ ] Réserver le nom « Hamama » dans Partner Center, mettre l'identité Store exacte dans `build.appx`, puis soumettre
-- [ ] Plus tard : conversations groupées (fils), version iPhone / Android (Capacitor, comme Pyramid)
+- [ ] Tester l'APK sur le téléphone Android de Félix ; iPhone : signer le .ipa (Sideloadly) ou compte Apple Developer
+- [ ] Plus tard : conversations groupées (fils), notifications push quand l'appli est fermée

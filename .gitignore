@@ -2,3 +2,17 @@ node_modules/
 dist/
 *.log
 tests/shots/
+# Téléphones : fichiers fabriqués et clé de signature (jamais sur GitHub)
+mobile/www/
+mobile/build/
+mobile/android/.gradle/
+mobile/android/build/
+mobile/android/app/build/
+mobile/android/capacitor-cordova-android-plugins/build/
+mobile/android/local.properties
+mobile/ios/App/Pods/
+mobile/ios/App/build/
+mobile/ios/DerivedData/
+mobile/keystore.properties
+*.jks
+*.keystore

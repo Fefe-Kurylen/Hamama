@@ -1,0 +1,24 @@
+{
+  "name": "hamama-mobile",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Hamama — version iPhone et Android (Capacitor + moteur mail Node.js embarqué)",
+  "scripts": {
+    "build:web": "python3 make-mobile.py",
+    "sync": "python3 make-mobile.py && npx cap sync"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.6.2",
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/cli": "^8.6.2",
+    "@capacitor/core": "^8.6.2",
+    "@capacitor/filesystem": "^8.1.5",
+    "@capacitor/ios": "^8.6.2",
+    "@capacitor/local-notifications": "^8.0.0",
+    "@capacitor/share": "^8.0.3",
+    "@capawesome/capacitor-nodejs": "^0.3.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}

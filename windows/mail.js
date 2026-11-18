@@ -516,11 +516,13 @@ function init({ dir, safeStorage, netFetch, emit, oauth }) {
   load(); loadBlocked();
   for (const a of ACCOUNTS) startWatch(a);
 }
+/** Téléphone : au retour au premier plan, les connexions mises en veille par le système sont recréées */
+function wake() { for (const id of [...conns.keys()]) dropConn(id); for (const a of ACCOUNTS) startWatch(a); }
 function shutdown() { for (const id of [...watchers.keys()]) stopWatch(id); for (const id of [...conns.keys()]) dropConn(id); }
 const accounts = () => ACCOUNTS.map(pub);
 const raw_ = id => acc(id);
 
 module.exports = {
-  init, shutdown, PROVIDERS, detect, test, add, update, remove, accounts, folders, list, unified, search, searchAll, get, source, attachment,
+  init, shutdown, wake, PROVIDERS, detect, test, add, update, remove, accounts, folders, list, unified, search, searchAll, get, source, attachment,
   flags, move, toRole, destroy, block, unblock, blockedList: () => BLOCKED.slice(), isBlocked, emptyBox, createFolder, renameFolder, deleteFolder, markAllRead, send, saveDraft, cached, enc, dec, _acc: raw_, save
 };
