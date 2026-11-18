@@ -170,6 +170,13 @@ const I18N = {
 "Insérer la signature":["Insert signature","Insertar firma","Signatur einfügen","Inserisci firma","Inserir assinatura","إدراج التوقيع"],
 "Envoyer":["Send","Enviar","Senden","Invia","Enviar","إرسال"],
 "Envoyer (Ctrl Entrée)":["Send (Ctrl Enter)","Enviar (Ctrl Intro)","Senden (Strg Enter)","Invia (Ctrl Invio)","Enviar (Ctrl Enter)","إرسال (Ctrl Enter)"],
+"Réponse":["Reply","Respuesta","Antwort","Risposta","Resposta","رد"],
+"Réponse à tous":["Reply all","Responder a todos","Allen antworten","Rispondi a tutti","Responder a todos","رد على الكل"],
+"Transfert":["Forward","Reenvío","Weiterleitung","Inoltro","Reencaminhamento","إعادة توجيه"],
+"Correcteur orthographique":["Spell checker","Corrector ortográfico","Rechtschreibprüfung","Correttore ortografico","Corretor ortográfico","المدقق الإملائي"],
+"Désactivé":["Off","Desactivado","Aus","Disattivato","Desativado","معطّل"],
+"Automatique (langue de l’appli)":["Automatic (app language)","Automático (idioma de la app)","Automatisch (App-Sprache)","Automatico (lingua dell’app)","Automático (idioma da app)","تلقائي (لغة التطبيق)"],
+"Automatique":["Automatic","Automático","Automatisch","Automatico","Automático","تلقائي"],
 "Joindre":["Attach","Adjuntar","Anhängen","Allega","Anexar","إرفاق"],
 "Joindre des fichiers":["Attach files","Adjuntar archivos","Dateien anhängen","Allega file","Anexar ficheiros","إرفاق ملفات"],
 "Supprimer le brouillon":["Discard draft","Descartar borrador","Entwurf verwerfen","Elimina bozza","Eliminar rascunho","حذف المسودة"],
@@ -704,7 +711,7 @@ const ACCENTS = ['#c8703f','#c2524a','#bf5a82','#8a6cc4','#5d6bc9','#4a84c4','#3
 const DEF_SET = {
   theme:'graphite', accent:'#c8703f', layout:'trois', density:'confort', zoom:'m', radius:'doux', side:'shown',
   preview:'1', avatars:'on', groups:'on', unified:'on', qa:['archive','trash','read','star'], after:'next',
-  uifont:'Inter', weight:'normal', unreadBold:'on', markRead:'delay', images:'ask', mailbg:'theme', mailZoom:'100', labels:'off', readw:'normal',
+  uifont:'Inter', weight:'normal', unreadBold:'on', markRead:'delay', images:'ask', mailbg:'theme', spell:'auto', mailZoom:'100', labels:'off', readw:'normal',
   font:'Inter', fsize:'14', undoSend:'5', lang:'auto', compWin:'float', noSubjWarn:'on', keys:'on', counts:'unread'
 };
 let SET = { ...DEF_SET, ...J('hamama-settings', {}) };
@@ -716,6 +723,7 @@ function setAccent(hex){
   const n = parseInt(hex.slice(1), 16), r = document.documentElement;
   r.style.setProperty('--accent', hex); r.style.setProperty('--accent-rgb', `${n>>16&255},${n>>8&255},${n&255}`);
 }
+const spellLang = () => SET.spell && !['auto','off'].includes(SET.spell) ? SET.spell : LANG;
 function applySettings(save = true){
   const r = document.documentElement, d = r.dataset;
   d.theme = SET.theme; d.layout = SET.layout; d.density = SET.density; d.radius = SET.radius; d.side = SET.side;
@@ -725,7 +733,10 @@ function applySettings(save = true){
   r.style.setProperty('--readw', { normal:'980px', large:'1240px', plein:'100%' }[SET.readw] || '980px');
   document.body.style.zoom = ZOOMS[SET.zoom] || 1;
   setAccent(SET.accent);
+  try { r.style.setProperty('--inv', mailInv()); } catch {}
   if (save) store.set('hamama-settings', JSON.stringify(SET));
+  if (N && N.prefs && applySettings.spell !== SET.spell && document.readyState !== 'loading'){ applySettings.spell = SET.spell; N.prefs({ spell: SET.spell }).catch(() => {}); }
+  const ed = document.getElementById('ed'); if (ed){ ed.spellcheck = SET.spell !== 'off'; ed.lang = spellLang(); }
   if (N && N.setTitleBar){
     const cs = getComputedStyle(r);
     try { N.setTitleBar({ color: cs.getPropertyValue('--bg').trim(), symbolColor: cs.getPropertyValue('--text').trim(), height: Math.round((parseInt(cs.getPropertyValue('--hh')) || 52) * (ZOOMS[SET.zoom] || 1)) }); } catch {}
@@ -785,7 +796,7 @@ function renderSide(){
     if (!fl.length && !ST.accErr[a.id]) h += '<div class="skel" style="height:30px;margin:4px 6px"></div><div class="skel" style="height:30px;margin:4px 6px"></div>';
     for (const f of fl){
       const n = SET.counts === 'none' ? 0 : SET.counts === 'total' && !['inbox','junk'].includes(f.role) ? f.total : f.unseen;
-      const unread = f.unseen && f.role !== 'trash' && f.role !== 'sent';
+      const unread = f.unseen && !['trash','sent','junk','drafts'].includes(f.role);   // Indésirables, Corbeille… jamais en gras
       h += `<button class="fold${vk === a.id + '|' + f.path ? ' on' : ''}${unread ? ' unread' : ''}" data-acc="${a.id}" data-box="${esc(f.path)}" style="padding-left:${10 + f.depth * 16}px">${ic(ROLE_IC[f.role] || 'folder')}<span class="t"${f.role ? '' : ' data-notr'}>${esc(f.name)}</span>${n && (f.role !== 'trash' && f.role !== 'sent' || SET.counts === 'total') ? `<span class="n">${n}</span>` : ''}</button>`;
     }
     h += '</div></div>';
@@ -1404,7 +1415,7 @@ function quoteBlock(m){
 function fwdBlock(m){
   const f = x => esc((x || []).map(fmtAddr).join(', '));
   const body = m.html ? cleanForEditor(m.html, false) : esc(m.text || '').replace(/\n/g, '<br>');
-  return `<br><div>---------- ${T('Message transféré')} ----------<br>${T('De :')} ${f(m.from)}<br>${T('Date :')} ${esc(fmtLong(m.date))}<br>${T('Objet :')} ${esc(m.subject)}<br>${T('À :')} ${f(m.to)}${m.cc && m.cc.length ? '<br>' + T('Cc :') + ' ' + f(m.cc) : ''}</div><br>${body}`;
+  return `<br><div class="fwdh">---------- ${T('Message transféré')} ----------<br>${T('De :')} ${f(m.from)}<br>${T('Date :')} ${esc(fmtLong(m.date))}<br>${T('Objet :')} ${esc(m.subject)}<br>${T('À :')} ${f(m.to)}${m.cc && m.cc.length ? '<br>' + T('Cc :') + ' ' + f(m.cc) : ''}</div><br><div class="fwd">${body}</div>`;
 }
 async function replyTo(key, mode){
   const i = itemOf(key); if (!i) return;
@@ -1423,6 +1434,7 @@ async function replyTo(key, mode){
   to = dedupe(to); cc = dedupe(cc).filter(x => !to.some(t => t.address.toLowerCase() === x.address.toLowerCase()));
   const fwd = mode === 'fwd';
   openComposer({
+    kind: mode === 'fwd' ? 'fwd' : mode === 'all' ? 'all' : 'reply',
     acc: acc && a ? acc : undefined, to, cc,
     subject: fwd ? reSubj('Tr', m.subject) : reSubj('Re', m.subject),
     html: `<p><br></p>${sigHTML(acc)}${fwd ? fwdBlock(m) : quoteBlock(m)}`,
@@ -1458,6 +1470,37 @@ function composerPlace(el, x, y){
 function composerDrag(el){
   const small = () => document.documentElement.classList.contains('mobile') || document.documentElement.classList.contains('narrow');
   try { const p = JSON.parse(store.get('hamama-compose-pos') || 'null'); if (p && !small()) requestAnimationFrame(() => composerPlace(el, p[0], p[1])); } catch {}
+  try { const z = JSON.parse(store.get('hamama-compose-size') || 'null'); if (z && !small()){ el.style.width = Math.min(z[0], innerWidth - 16) + 'px'; el.style.height = Math.min(z[1], innerHeight - 60) + 'px'; } } catch {}
+  // agrandir / réduire par les bords et les coins
+  for (const d of ['n','s','e','w','ne','nw','se','sw']){
+    const h = document.createElement('div'); h.className = 'rz'; h.dataset.d = d; el.appendChild(h);
+    h.addEventListener('pointerdown', e => {
+      if (e.button !== 0 || el.classList.contains('max') || el.classList.contains('min') || small()) return;
+      e.preventDefault(); e.stopPropagation();
+      const r0 = el.getBoundingClientRect(), x0 = e.clientX, y0 = e.clientY, hh = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--hh')) || 0;
+      composerPlace(el, r0.left, r0.top);
+      h.setPointerCapture(e.pointerId); el.classList.add('dragging');
+      const mv = ev => {
+        let L = r0.left, Tp = r0.top, W = r0.width, Hh = r0.height;
+        const dx = ev.clientX - x0, dy = ev.clientY - y0;
+        if (d.includes('e')) W = r0.width + dx;
+        if (d.includes('s')) Hh = r0.height + dy;
+        if (d.includes('w')){ W = r0.width - dx; }
+        if (d.includes('n')){ Hh = r0.height - dy; }
+        W = Math.max(440, Math.min(W, innerWidth - 16)); Hh = Math.max(320, Math.min(Hh, innerHeight - hh - 8));
+        if (d.includes('w')) L = r0.right - W;
+        if (d.includes('n')) Tp = Math.max(hh, r0.bottom - Hh), Hh = r0.bottom - Tp;
+        el.style.width = W + 'px'; el.style.height = Hh + 'px'; el.style.left = L + 'px'; el.style.top = Tp + 'px';
+      };
+      const up = () => {
+        h.removeEventListener('pointermove', mv); h.removeEventListener('pointerup', up); h.removeEventListener('pointercancel', up);
+        el.classList.remove('dragging');
+        const r = el.getBoundingClientRect();
+        try { store.set('hamama-compose-size', JSON.stringify([Math.round(r.width), Math.round(r.height)])); store.set('hamama-compose-pos', JSON.stringify([Math.round(r.left), Math.round(r.top)])); } catch {}
+      };
+      h.addEventListener('pointermove', mv); h.addEventListener('pointerup', up); h.addEventListener('pointercancel', up);
+    });
+  }
   const head = el.querySelector('.chead');
   head.addEventListener('pointerdown', e => {
     if (e.button !== 0 || e.target.closest('button') || el.classList.contains('max') || small()) return;
@@ -1494,12 +1537,12 @@ async function openComposer(o = {}){
     await closeComposer('save');
   } else if (CMP) closeComposer('discard', true);
   const acc = o.acc || (ST.view && ST.view.acc) || (ST.open && ST.open.split('|')[0]) || ST.accounts[0].id;
-  CMP = { acc, to: o.to || [], cc: o.cc || [], bcc: o.bcc || [], atts: o.atts || [], inReplyTo: o.inReplyTo || '', references: o.references || [], replyRef: o.replyRef || null, draftUid: o.draftUid || null, draftBox: o.draftBox || null, dirty: false };
+  CMP = { kind: o.kind || (o.draftUid ? 'draft' : o.inReplyTo ? 'reply' : 'new'), acc, to: o.to || [], cc: o.cc || [], bcc: o.bcc || [], atts: o.atts || [], inReplyTo: o.inReplyTo || '', references: o.references || [], replyRef: o.replyRef || null, draftUid: o.draftUid || null, draftBox: o.draftBox || null, dirty: false };
   const showCc = CMP.cc.length || CMP.bcc.length;
   const el = document.createElement('div'); el.id = 'composer';
   if (SET.compWin === 'max') el.classList.add('max');
   el.innerHTML = `
-    <div class="chead"><b id="cTitle" data-notr>${esc(o.subject || 'Nouveau message')}</b>
+    <div class="chead"><b id="cTitle">${{ reply:'Réponse', all:'Réponse à tous', fwd:'Transfert', draft:'Brouillon' }[CMP.kind] || 'Nouveau message'}</b>
       <button class="ibtn" data-c="min" title="Réduire">${ic('min')}</button><button class="ibtn" data-c="max" title="Agrandir">${ic('max')}</button><button class="ibtn" data-c="close" title="Fermer (le brouillon est enregistré)">${ic('x')}</button></div>
     <div class="cbody">
       ${ST.accounts.length > 1 ? `<div class="cf"><label>De</label><select id="cFrom" data-notr>${ST.accounts.map(a => `<option value="${a.id}"${a.id === acc ? ' selected' : ''}>${esc(a.name ? `${a.name} <${a.email}>` : a.email)}</option>`).join('')}</select></div>` : ''}
@@ -1521,13 +1564,12 @@ async function openComposer(o = {}){
         <button class="ibtn" data-e="removeFormat" title="Effacer la mise en forme">${ic('eraser')}</button>
         <div class="sep"></div><button class="ibtn" data-e="sig" title="Insérer la signature">${ic('sig')}</button>
       </div>
-      <div id="ed" contenteditable="true" spellcheck="true" data-ph="Écris ton message…" style="font-family:${FONTS[SET.font] || FONTS.Inter};font-size:${SET.fsize}px"></div>
+       <div id="ed" contenteditable="true" spellcheck="${SET.spell !== 'off'}" lang="${spellLang()}" data-ph="Écris ton message…" style="font-family:${FONTS[SET.font] || FONTS.Inter};font-size:${SET.fsize}px"></div>
       <div class="catts" id="cAtts"></div>
     </div>
-    <div class="cfoot"><button class="btn primary" id="cSend" title="Envoyer (Ctrl Entrée)">${ic('send')}Envoyer</button>
-
+    <div class="cfoot"><button class="ibtn del" id="cDel" title="Supprimer le brouillon">${ic('trash')}</button>
       <span class="st" id="cSt"></span>
-      <button class="ibtn del" id="cDel" title="Supprimer le brouillon">${ic('trash')}</button></div>`;
+      <button class="btn primary send" id="cSend" title="Envoyer (Ctrl Entrée)">${ic('send')}Envoyer</button></div>`;
   document.body.appendChild(el);
   const ed = $('#ed');
   ed.innerHTML = o.html != null ? o.html : `<p><br></p>${sigHTML(acc)}`;
@@ -1539,7 +1581,7 @@ async function openComposer(o = {}){
     if (old) old.outerHTML = s || ''; else if (s && !CMP.inReplyTo) ed.insertAdjacentHTML('beforeend', s);
     dirty();
   };
-  $('#cSubj').oninput = () => { $('#cTitle').textContent = $('#cSubj').value || T('Nouveau message'); dirty(); };
+  $('#cSubj').oninput = () => dirty();
   ed.addEventListener('input', dirty);
   el.querySelector('[data-cc]') && (el.querySelector('[data-cc]').onclick = e => { el.querySelectorAll('[data-ccrow]').forEach(r => r.classList.remove('hidden')); e.target.remove(); el.querySelector('[data-f=cc] input').focus(); });
   el.querySelectorAll('.toks').forEach(t => wireToks(t));
@@ -1590,7 +1632,7 @@ function dirty(){
   clearTimeout(saveLocalT); saveLocalT = setTimeout(saveLocal, 1500);
 }
 function snapshot(){
-  return { acc: CMP.acc, to: CMP.to, cc: CMP.cc, bcc: CMP.bcc, subject: $('#cSubj').value, html: $('#ed').innerHTML, inReplyTo: CMP.inReplyTo, references: CMP.references, replyRef: CMP.replyRef, draftUid: CMP.draftUid, draftBox: CMP.draftBox,
+  return { kind: CMP.kind, acc: CMP.acc, to: CMP.to, cc: CMP.cc, bcc: CMP.bcc, subject: $('#cSubj').value, html: $('#ed').innerHTML, inReplyTo: CMP.inReplyTo, references: CMP.references, replyRef: CMP.replyRef, draftUid: CMP.draftUid, draftBox: CMP.draftBox,
     atts: CMP.atts.filter(a => a.key || (a.data && a.size < 4 * 1048576)).map(a => a.key ? { name: a.name, size: a.size, key: a.key } : { name: a.name, size: a.size, type: a.type, b64: btoa(Array.from(a.data, c => String.fromCharCode(c)).join('')) }) };
 }
 function saveLocal(){ if (!CMP || !$('#composer')) return; try { store.set('hamama-compose', JSON.stringify(snapshot())); $('#cSt').textContent = 'Enregistré sur cet ordinateur'; } catch {} }
@@ -1875,7 +1917,8 @@ const THEME_PREV = { graphite:['#262624','#2e2e2b','#3a3a37'], sombre:['#0c0c0f'
 async function openSettings(tab = 'look'){
   let prefs = { notify: true, sound: true, tray: false, startup: false };
   try { prefs = await N.prefs(); } catch {}
-  const seg = (key, opts) => `<div class="seg" data-key="${key}">${opts.map(([v, l]) => `<button data-v="${v}" class="${String(SET[key]) === v ? 'on' : ''}">${l}</button>`).join('')}</div>`;
+  const LN = new Set(['Français','English','Español','Deutsch','Italiano','Português','العربية']);
+  const seg = (key, opts) => `<div class="seg" data-key="${key}">${opts.map(([v, l]) => `<button data-v="${v}" class="${String(SET[key]) === v ? 'on' : ''}"${LN.has(l) ? ' data-notr' : ''}>${l}</button>`).join('')}</div>`;
   const pseg = (key, opts) => `<div class="seg" data-pkey="${key}">${opts.map(([v, l]) => `<button data-v="${v}" class="${String(!!prefs[key]) === v ? 'on' : ''}">${l}</button>`).join('')}</div>`;
   const R = (lbl, inner, note) => `<div class="setrow"><span class="lbl">${lbl}</span>${inner}${note ? `<div class="note">${note}</div>` : ''}</div>`;
   const yn = [['on','Oui'],['off','Non']], pyn = [['true','Oui'],['false','Non']];
@@ -1909,6 +1952,7 @@ async function openSettings(tab = 'look'){
     write: ['Rédaction', () =>
       R('Police par défaut', `<select class="field" data-sel="font">${Object.keys(FONTS).map(f => `<option${f === SET.font ? ' selected' : ''} style="font-family:${FONTS[f]}">${f}</option>`).join('')}</select>`) +
       R('Taille du texte', seg('fsize', [['13','13'],['14','14'],['16','16'],['18','18']])) +
+      (MOBILE ? '' : R('Correcteur orthographique', `<select class="field" data-sel="spell">${[['auto','Automatique (langue de l’appli)'],['fr','Français'],['en','English'],['es','Español'],['de','Deutsch'],['it','Italiano'],['pt','Português'],['off','Désactivé']].map(([v, l]) => `<option value="${v}"${SET.spell === v ? ' selected' : ''}${['auto','off'].includes(v) ? '' : ' data-notr'}>${l}</option>`).join('')}</select>`)) +
       R('Délai pour annuler l’envoi', seg('undoSend', [['0','Aucun'],['5','5 s'],['10','10 s'],['20','20 s']])) +
       R('Fenêtre de rédaction', seg('compWin', [['float','Flottante'],['max','Grande']])) +
       R('Avertir si l’objet est vide', seg('noSubjWarn', yn))],
@@ -2184,7 +2228,7 @@ async function start(){
   await reloadAccounts();
   if (ST.accounts.length) await openDefault();
   N.ready();
-  N.prefs({ lang: LANG }).catch(() => {});
+  applySettings.spell = SET.spell; N.prefs({ lang: LANG, spell: SET.spell }).catch(() => {});
   const pend = J('hamama-compose', null);
   if (pend && (pend.html || pend.subject)) toast('Un message non envoyé a été récupéré', { label: 'Ouvrir', fn: () => openComposer({ ...pend, atts: restoreAtts(pend.atts) }) }, 12000);
   if (location.search.includes('debug')) window.__hamama = { ST, SET, openMsg, openView, act, openComposer, openSettings, refreshList };

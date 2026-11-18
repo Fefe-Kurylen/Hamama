@@ -42,6 +42,24 @@ const mailtoArgs = argv => argv.filter(a => /^mailto:/i.test(a));
 
 function send(ch, data) { if (win && ready) win.webContents.send(ch, data); else pending.push([ch, data]); }
 
+// Correcteur : une seule langue (celle de l'appli, ou celle choisie dans Réglages → Rédaction), avec le bon code régional.
+// Avant : ['fr', 'en-US'] → sous Windows « fr » n'existe pas (il faut « fr-FR ») et le mélange donnait des suggestions anglaises.
+function applySpell() {
+  if (!win) return;
+  const ses = win.webContents.session;
+  try {
+    if (PREF.spell === 'off') { ses.setSpellCheckerEnabled(false); return; }
+    ses.setSpellCheckerEnabled(true);
+    if (isMac) return;                                                     // macOS : correcteur du système
+    const want = (PREF.spell && PREF.spell !== 'auto' ? PREF.spell : (PREF.lang || app.getLocale() || 'fr')).toLowerCase();
+    const base = want.split('-')[0];
+    const pref = { fr: 'fr-FR', en: 'en-US', es: 'es-ES', de: 'de-DE', it: 'it-IT', pt: 'pt-PT', ar: 'ar' }[base] || want;
+    const av = ses.availableSpellCheckerLanguages || [];
+    const pick = av.find(l => l.toLowerCase() === want) || av.find(l => l.toLowerCase() === pref.toLowerCase()) || av.find(l => l.toLowerCase().split('-')[0] === base);
+    if (pick) ses.setSpellCheckerLanguages([pick]);
+  } catch (e) { console.error('correcteur', e); }
+}
+
 function createWindow() {
   win = new BrowserWindow({
     width: 1440, height: 900, minWidth: 760, minHeight: 520,
@@ -51,7 +69,7 @@ function createWindow() {
     ...(isMac ? { trafficLightPosition: { x: 16, y: 19 } } : { titleBarOverlay: { color: '#262624', symbolColor: '#f2f1ec', height: 52 } }),
     webPreferences: { preload: path.join(__dirname, 'preload.js'), contextIsolation: true, sandbox: true, spellcheck: true, v8CacheOptions: 'bypassHeatCheck', webviewTag: false, backgroundThrottling: false }
   });
-  try { win.webContents.session.setSpellCheckerLanguages(['fr', 'en-US']); } catch {}
+  applySpell();
   win.loadFile(path.join(__dirname, 'app', 'index.html'), process.env.HAMAMA_DEBUG ? { query: { debug: '1' } } : undefined);
   const home = require('url').pathToFileURL(path.join(__dirname, 'app', 'index.html')).href;
   // Liens des mails → navigateur ; mailto: → fenêtre de rédaction de Hamama
@@ -183,7 +201,7 @@ H('file:pick', async () => {
   for (const f of r.filePaths) { const st = fs.statSync(f); if (st.size > 35 * 1024 * 1024) throw new Error(L('big', path.basename(f))); out.push({ name: path.basename(f), size: st.size, data: new Uint8Array(fs.readFileSync(f)) }); }
   return out;
 });
-H('prefs', p => { if (p && typeof p === 'object') { const oldLang = PREF.lang; Object.assign(PREF, p); fs.writeFileSync(prefFile(), JSON.stringify(PREF)); if (PREF.lang !== oldLang && tray) { tray.destroy(); tray = null; } setupTray(); loginItem(); } return PREF; });
+H('prefs', p => { if (p && typeof p === 'object') { const oldLang = PREF.lang, oldSpell = PREF.spell; Object.assign(PREF, p); if (PREF.lang !== oldLang || PREF.spell !== oldSpell) applySpell(); fs.writeFileSync(prefFile(), JSON.stringify(PREF)); if (PREF.lang !== oldLang && tray) { tray.destroy(); tray = null; } setupTray(); loginItem(); } return PREF; });
 H('notify', ({ title, body, key, silent }) => {
   if (!PREF.notify || !Notification.isSupported()) return false;
   const n = new Notification({ title: String(title || 'Hamama').slice(0, 120), body: String(body || '').slice(0, 240), silent: !PREF.sound || !!silent, icon: path.join(__dirname, 'app', 'icon.png') });

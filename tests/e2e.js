@@ -57,10 +57,18 @@ const ok = (c, m) => { console.log((c ? '✅ ' : '❌ ') + m); if (!c) process.e
   const b0 = await win.$eval('#composer', e => { const r = e.getBoundingClientRect(); return [r.left, r.top]; });
   const hb = await (await win.$('#composer .chead b')).boundingBox();
   await win.mouse.move(hb.x + 20, hb.y + 8); await win.mouse.down();
-  await win.mouse.move(hb.x - 200, hb.y - 100, { steps: 8 }); await win.mouse.up();
+  await win.mouse.move(hb.x - 200, hb.y - 50, { steps: 8 }); await win.mouse.up();
   const b1 = await win.$eval('#composer', e => { const r = e.getBoundingClientRect(); return [r.left, r.top]; });
-  ok(Math.abs(b1[0] - b0[0] + 220) < 4 && Math.abs(b1[1] - b0[1] + 108) < 4, `fenêtre de rédaction déplacée (${Math.round(b0[0])},${Math.round(b0[1])} → ${Math.round(b1[0])},${Math.round(b1[1])})`);
+  ok(Math.abs(b1[0] - b0[0] + 220) < 4 && Math.abs(b1[1] - b0[1] + 58) < 4, `fenêtre de rédaction déplacée (${Math.round(b0[0])},${Math.round(b0[1])} → ${Math.round(b1[0])},${Math.round(b1[1])})`);
   await win.screenshot({ path: path.join(SHOTS, '05b-redaction-deplacee.png') });
+  // Agrandir par le coin bas-droit
+  const rz = await (await win.$('#composer .rz[data-d=se]')).boundingBox();
+  const w0 = await win.$eval('#composer', e => e.getBoundingClientRect().width);
+  await win.mouse.move(rz.x + 7, rz.y + 7); await win.mouse.down(); await win.mouse.move(rz.x + 127, rz.y + 7, { steps: 6 }); await win.mouse.up();
+  const w1 = await win.$eval('#composer', e => e.getBoundingClientRect().width);
+  ok(Math.abs(w1 - w0 - 120) < 4, `fenêtre de rédaction agrandie (${Math.round(w0)} → ${Math.round(w1)} px)`);
+  await win.fill('#cSubj', 'Test titre');
+  ok(await win.$eval('#cTitle', e => e.textContent) === 'Nouveau message', 'titre de la fenêtre : « Nouveau message » (pas l’objet)');
   await win.fill('#composer [data-f=to] input', 'felix@test.local'); await win.keyboard.press('Enter');
   await win.fill('#cSubj', 'Bonjour depuis Hamama ✉️');
   await win.click('#ed'); await win.keyboard.type('Ceci est un test d’envoi réel. ');
@@ -79,6 +87,7 @@ const ok = (c, m) => { console.log((c ? '✅ ' : '❌ ') + m); if (!c) process.e
   ok(/En gras/.test(body), 'contenu du message reçu correct');
   await win.focus('#list'); await win.keyboard.press('r'); await win.waitForSelector('#composer');
   const subj = await win.$eval('#cSubj', i => i.value); ok(/^Re : Bonjour/.test(subj), 'réponse : objet « ' + subj + ' »');
+  ok(await win.$eval('#cTitle', e => e.textContent) === 'Réponse', 'titre de la fenêtre : « Réponse »');
   const quoted = await win.$eval('#ed', e => e.innerHTML); ok(/a écrit/.test(quoted) && /blockquote/.test(quoted), 'citation du message d’origine');
   await win.keyboard.type('Merci, bien reçu.');
   await win.click('#composer [data-c=close]');   await win.waitForSelector('.toast:has-text("Brouillon enregistré")', { timeout: 15000 });
