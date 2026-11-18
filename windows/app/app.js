@@ -170,6 +170,7 @@ const I18N = {
 "Insérer la signature":["Insert signature","Insertar firma","Signatur einfügen","Inserisci firma","Inserir assinatura","إدراج التوقيع"],
 "Envoyer":["Send","Enviar","Senden","Invia","Enviar","إرسال"],
 "Envoyer (Ctrl Entrée)":["Send (Ctrl Enter)","Enviar (Ctrl Intro)","Senden (Strg Enter)","Invia (Ctrl Invio)","Enviar (Ctrl Enter)","إرسال (Ctrl Enter)"],
+"Joindre":["Attach","Adjuntar","Anhängen","Allega","Anexar","إرفاق"],
 "Joindre des fichiers":["Attach files","Adjuntar archivos","Dateien anhängen","Allega file","Anexar ficheiros","إرفاق ملفات"],
 "Supprimer le brouillon":["Discard draft","Descartar borrador","Entwurf verwerfen","Elimina bozza","Eliminar rascunho","حذف المسودة"],
 "Supprimer ce brouillon ?":["Discard this draft?","¿Descartar este borrador?","Diesen Entwurf verwerfen?","Eliminare questa bozza?","Eliminar este rascunho?","حذف هذه المسودة؟"],
@@ -632,7 +633,7 @@ document.addEventListener('mouseover', e => {
 });
 document.addEventListener('mousedown', () => { clearTimeout(tipT); tipEl.classList.remove('show'); }, true);
 
-function toast(msg, action, ms = 3200){
+function toast(msg, action, ms = 3200, exact){
   const t = document.createElement('div'); t.className = 'toast';
   t.innerHTML = `<span>${esc(msg)}</span>`;
   let done = false;
@@ -640,7 +641,7 @@ function toast(msg, action, ms = 3200){
   if (action){ const b = document.createElement('button'); b.textContent = action.label; b.onclick = () => { close(); action.fn(); }; t.appendChild(b); }
   $('#toasts').appendChild(t);
   while ($('#toasts').children.length > 3) $('#toasts').firstChild.remove();
-  setTimeout(close, action ? Math.max(ms, 6000) : ms);
+  setTimeout(close, action && !exact ? Math.max(ms, 6000) : ms);
   return { close, el: t };
 }
 const errToast = e => toast('' + String(e && e.message || e).replace(/^Error invoking remote method '[^']+': (Error: )?/, ''));
@@ -703,10 +704,11 @@ const ACCENTS = ['#c8703f','#c2524a','#bf5a82','#8a6cc4','#5d6bc9','#4a84c4','#3
 const DEF_SET = {
   theme:'graphite', accent:'#c8703f', layout:'trois', density:'confort', zoom:'m', radius:'doux', side:'shown',
   preview:'1', avatars:'on', groups:'on', unified:'on', qa:['archive','trash','read','star'], after:'next',
-  uifont:'Inter', weight:'normal', unreadBold:'on', markRead:'delay', images:'ask', mailbg:'blanc', mailZoom:'100', labels:'off', readw:'normal',
+  uifont:'Inter', weight:'normal', unreadBold:'on', markRead:'delay', images:'ask', mailbg:'theme', mailZoom:'100', labels:'off', readw:'normal',
   font:'Inter', fsize:'14', undoSend:'5', lang:'auto', compWin:'float', noSubjWarn:'on', keys:'on', counts:'unread'
 };
 let SET = { ...DEF_SET, ...J('hamama-settings', {}) };
+if (!SET.mb2){ SET.mailbg = 'theme'; SET.mb2 = 1; }   // 18/11 : messages affichés sur le fond de l’appli (comme Mailbird)
 const ZOOMS = { s:.9, m:1, l:1.1, xl:1.25 };
 const UI_FONTS = ['Inter','Segoe UI','Arial','Calibri','Verdana','Tahoma','Trebuchet MS','Georgia'];
 const uiFont = () => SET.uifont === 'Inter' || !UI_FONTS.includes(SET.uifont) ? 'Inter' : `"${SET.uifont}"`;
@@ -1186,6 +1188,13 @@ function showMultiView(n){
   $('#view').querySelectorAll('[data-m]').forEach(b => b.onclick = () => act(b.dataset.m, [...ST.sel]));
 }
 const mailIsDark = () => SET.mailbg === 'theme' && SET.theme !== 'clair';
+// intensité d'inversion pour que le blanc du message devienne exactement le fond de l'appli
+function mailInv(){
+  const c = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim().replace('#', '');
+  const h = c.length === 3 ? c.split('').map(x => x + x).join('') : c;
+  const v = h.length === 6 ? (parseInt(h.slice(0, 2), 16) + parseInt(h.slice(2, 4), 16) + parseInt(h.slice(4, 6), 16)) / 765 : .15;
+  return (1 - v).toFixed(3);
+}
 function sanitizeMailHtml(html){
   const d = new DOMParser().parseFromString(html, 'text/html');
   d.querySelectorAll('script,meta,base,iframe,frame,frameset,object,embed,applet,form button[type=submit],link[rel=import],noscript').forEach(n => n.remove());
@@ -1203,11 +1212,11 @@ function mailDoc(m, allowImg){
   let styles = '', body = '';
   if (m.html){ const s = sanitizeMailHtml(m.html); styles = s.styles; body = s.body; }
   else body = `<div style="white-space:pre-wrap;font-family:inherit">${linkify(m.text || '')}</div>`;
-  const z = (+SET.mailZoom || 100) / 100;
+  const z = (+SET.mailZoom || 100) / 100, flat = SET.mailbg === 'theme', inv = dark ? mailInv() : 1;
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="${csp}"><base target="_blank">${styles}
-<style>html{zoom:${z}}body{margin:0;padding:22px 26px;font:14px/1.6 ${uiFont()},Inter,"Segoe UI",Arial,sans-serif;color:#1d1d1f;background:${dark ? '#fff' : 'transparent'};word-wrap:break-word;overflow-wrap:anywhere;overflow-x:auto}
+<style>html{zoom:${z}}body{margin:0;padding:${flat ? '6px 2px 18px' : '22px 26px'};font:14px/1.6 ${uiFont()},Inter,"Segoe UI",Arial,sans-serif;color:#1d1d1f;background:${dark ? '#fff' : 'transparent'};word-wrap:break-word;overflow-wrap:anywhere;overflow-x:auto}
 img{max-width:100%;height:auto}pre{white-space:pre-wrap}a{color:#1a73e8}blockquote{margin:8px 0;padding-left:12px;border-left:3px solid #d0d4dc;color:#555}table{max-width:100%}
-${dark ? 'html{filter:invert(.9) hue-rotate(180deg)}img,video,picture,[style*="background-image"]{filter:invert(1) hue-rotate(180deg)}' : ''}</style></head><body>${body}</body></html>`;
+${dark ? `html{filter:invert(${inv}) hue-rotate(180deg)}img,video,picture,[style*="background-image"]{filter:invert(1) hue-rotate(180deg)}` : ''}</style></head><body>${body}</body></html>`;
 }
 function hasRemote(m){ return !!m.html && /<img[^>]+src\s*=\s*["']?\s*https?:|url\(\s*["']?https?:|<link[^>]+href\s*=\s*["']?https?:/i.test(m.html); }
 async function openMsg(key, { keepSel = false } = {}){
@@ -1438,6 +1447,45 @@ function composeMailto(url){
   } catch { openComposer({}); }
 }
 
+// Fenêtre « Nouveau message » déplaçable par sa barre de titre (position mémorisée)
+function composerPlace(el, x, y){
+  const r = el.getBoundingClientRect(), hh = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--hh')) || 0;
+  x = Math.max(8 - r.width + 120, Math.min(innerWidth - 120, x));          // garde au moins 120 px visibles
+  y = Math.max(hh, Math.min(innerHeight - 44, y));                          // barre de titre toujours atteignable
+  el.classList.add('moved'); el.style.left = x + 'px'; el.style.top = y + 'px'; el.style.right = 'auto'; el.style.bottom = 'auto';
+  return [x, y];
+}
+function composerDrag(el){
+  const small = () => document.documentElement.classList.contains('mobile') || document.documentElement.classList.contains('narrow');
+  try { const p = JSON.parse(store.get('hamama-compose-pos') || 'null'); if (p && !small()) requestAnimationFrame(() => composerPlace(el, p[0], p[1])); } catch {}
+  const head = el.querySelector('.chead');
+  head.addEventListener('pointerdown', e => {
+    if (e.button !== 0 || e.target.closest('button') || el.classList.contains('max') || small()) return;
+    const r = el.getBoundingClientRect(), dx = e.clientX - r.left, dy = e.clientY - r.top;
+    let moved = false, last = null;
+    head.setPointerCapture(e.pointerId);
+    const mv = ev => {
+      if (!moved && Math.hypot(ev.clientX - e.clientX, ev.clientY - e.clientY) < 4) return;
+      moved = true; el.classList.add('dragging');
+      last = composerPlace(el, ev.clientX - dx, ev.clientY - dy);
+    };
+    const up = () => {
+      head.removeEventListener('pointermove', mv); head.removeEventListener('pointerup', up); head.removeEventListener('pointercancel', up);
+      el.classList.remove('dragging');
+      if (last) try { store.set('hamama-compose-pos', JSON.stringify(last)); } catch {}
+    };
+    head.addEventListener('pointermove', mv); head.addEventListener('pointerup', up); head.addEventListener('pointercancel', up);
+  });
+  const onRs = () => {
+    if (!el.isConnected) return removeEventListener('resize', onRs);
+    if (small()){ el.classList.remove('moved'); el.style.left = el.style.top = el.style.right = el.style.bottom = ''; return; }
+    let p = null; try { p = JSON.parse(store.get('hamama-compose-pos') || 'null'); } catch {}
+    if (el.classList.contains('moved')){ const r = el.getBoundingClientRect(); composerPlace(el, r.left, r.top); }
+    else if (p) composerPlace(el, p[0], p[1]);
+  };
+  addEventListener('resize', onRs);
+}
+
 async function openComposer(o = {}){
   if (!ST.accounts.length) return openAddAccount();
   if (CMP && CMP.dirty){
@@ -1460,6 +1508,8 @@ async function openComposer(o = {}){
       <div class="cf${showCc ? '' : ' hidden'}" data-ccrow><label>Cci</label><div class="toks" data-f="bcc"><input autocomplete="off" spellcheck="false"></div></div>
       <div class="cf"><label>Objet</label><input class="plain" id="cSubj" value="${esc(o.subject || '')}" placeholder="Objet du message"></div>
       <div class="etools">
+        <button class="attb" id="cAttach" title="Joindre des fichiers">${ic('clip')}<span>Joindre</span></button>
+        <div class="sep"></div>
         <select id="eFont" title="Police">${Object.keys(FONTS).map(f => `<option${f === SET.font ? ' selected' : ''}>${f}</option>`).join('')}</select>
         <select id="eSize" title="Taille"><option value="2">Petit</option><option value="3" selected>Normal</option><option value="4">Grand</option><option value="5">Très grand</option></select>
         <div class="sep"></div>
@@ -1475,7 +1525,7 @@ async function openComposer(o = {}){
       <div class="catts" id="cAtts"></div>
     </div>
     <div class="cfoot"><button class="btn primary" id="cSend" title="Envoyer (Ctrl Entrée)">${ic('send')}Envoyer</button>
-      <button class="ibtn" id="cAttach" title="Joindre des fichiers">${ic('clip')}</button>
+
       <span class="st" id="cSt"></span>
       <button class="ibtn del" id="cDel" title="Supprimer le brouillon">${ic('trash')}</button></div>`;
   document.body.appendChild(el);
@@ -1497,6 +1547,7 @@ async function openComposer(o = {}){
   el.querySelector('[data-c=max]').onclick = () => { el.classList.toggle('max'); el.classList.remove('min'); };
   el.querySelector('[data-c=close]').onclick = () => closeComposer(CMP.dirty ? 'save' : 'discard');
   el.querySelector('.chead').ondblclick = e => { if (!e.target.closest('button')) el.classList.toggle('min'); };
+  composerDrag(el);
   $('#cDel').onclick = async () => { if (!CMP.dirty || await confirmBox('Supprimer ce brouillon ?', 'Le message en cours sera perdu.', 'Supprimer', true)) closeComposer('discard'); };
   $('#cAttach').onclick = async () => { try { const fs = await N.pickFiles(); fs.forEach(f => CMP.atts.push({ name: f.name, size: f.size, data: f.data })); renderAtts(); dirty(); } catch (e) { errToast(e); } };
   $('#cSend').onclick = () => sendNow();
@@ -1650,8 +1701,13 @@ async function sendNow(){
     }
   };
   if (delay){
-    toast(`Envoi dans ${delay / 1000} s`, { label: 'Annuler', fn: () => { cancelled = true; openComposer({ ...snap, atts: restoreAtts(snap.atts) }); toast('Envoi annulé'); } }, delay);
-    setTimeout(go, delay);
+    // décompte en temps réel ; l'envoi part exactement à 0
+    const end = Date.now() + delay;
+    const t = toast(T(`Envoi dans ${Math.ceil(delay / 1000)} s`), { label: 'Annuler', fn: () => { cancelled = true; clearInterval(tick); clearTimeout(timer); openComposer({ ...snap, atts: restoreAtts(snap.atts) }); toast('Envoi annulé'); } }, delay, true);
+    t.el.classList.add('count'); t.el.style.setProperty('--dur', delay + 'ms');
+    const sp = t.el.querySelector('span'); sp.setAttribute('data-notr', '');
+    const tick = setInterval(() => { const r = Math.max(1, Math.ceil((end - Date.now()) / 1000)); sp.textContent = T(`Envoi dans ${r} s`); }, 200);
+    const timer = setTimeout(() => { clearInterval(tick); t.close(); go(); }, delay);
   } else go();
 }
 const restoreAtts = l => (l || []).map(a => a.b64 ? { name: a.name, size: a.size, type: a.type, data: Uint8Array.from(atob(a.b64), c => c.charCodeAt(0)) } : a);

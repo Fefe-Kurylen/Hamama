@@ -52,6 +52,15 @@ const ok = (c, m) => { console.log((c ? '✅ ' : '❌ ') + m); if (!c) process.e
   // Rédaction + envoi
   await win.keyboard.press('n');
   await win.waitForSelector('#composer');
+  // Déplacer la fenêtre « Nouveau message » par sa barre de titre
+  await win.waitForTimeout(700);
+  const b0 = await win.$eval('#composer', e => { const r = e.getBoundingClientRect(); return [r.left, r.top]; });
+  const hb = await (await win.$('#composer .chead b')).boundingBox();
+  await win.mouse.move(hb.x + 20, hb.y + 8); await win.mouse.down();
+  await win.mouse.move(hb.x - 200, hb.y - 100, { steps: 8 }); await win.mouse.up();
+  const b1 = await win.$eval('#composer', e => { const r = e.getBoundingClientRect(); return [r.left, r.top]; });
+  ok(Math.abs(b1[0] - b0[0] + 220) < 4 && Math.abs(b1[1] - b0[1] + 108) < 4, `fenêtre de rédaction déplacée (${Math.round(b0[0])},${Math.round(b0[1])} → ${Math.round(b1[0])},${Math.round(b1[1])})`);
+  await win.screenshot({ path: path.join(SHOTS, '05b-redaction-deplacee.png') });
   await win.fill('#composer [data-f=to] input', 'felix@test.local'); await win.keyboard.press('Enter');
   await win.fill('#cSubj', 'Bonjour depuis Hamama ✉️');
   await win.click('#ed'); await win.keyboard.type('Ceci est un test d’envoi réel. ');

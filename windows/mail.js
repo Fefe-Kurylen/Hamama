@@ -406,8 +406,9 @@ async function send(id, m) {
   const t = nodemailer.createTransport(smtpOpts(a, (await authOf(a)).smtp));
   try { await t.sendMail(mail); } catch (e) { throw new Error(frErr(e)); } finally { t.close(); }
   // copie dans « Envoyés » (Gmail et Outlook le font eux-mêmes)
+  // (en arrière-plan : « Message envoyé » s'affiche dès que le serveur SMTP a accepté le message)
   if (a.saveSent !== false) {
-    try { const sent = await roleBox(id, 'sent'); if (sent) { const c = await client(id); await c.append(sent, await raw(mail), ['\\Seen']); } } catch {}
+    (async () => { const sent = await roleBox(id, 'sent'); if (sent) { const c = await client(id); await c.append(sent, await raw(mail), ['\\Seen']); onEvent('new-mail', { acc: id, items: [] }); } })().catch(() => {});
   }
   if (m.replyTo && m.replyTo.uid) flags(id, m.replyTo.box, [m.replyTo.uid], { answered: true }).catch(() => {});
   if (m.draftUid && m.draftBox) destroy(id, m.draftBox, [m.draftUid]).catch(() => {});

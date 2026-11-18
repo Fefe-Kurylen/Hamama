@@ -18,7 +18,9 @@
 [data-theme=clair]{--bg:#eceef2;--panel:#ffffff;--panel2:#f2f3f6;--line:#e1e4ea;--line2:#d0d4dc;--text:#15161a;--muted:#6b7080;--float:rgba(255,255,255,.94);--shade:rgba(30,35,50,.16);--card:#f7f8fa}
 [data-density=compact]{--hh:42px;--ib:27px;--is:15px}
 [data-radius=carre]{--rb:3px;--rc:5px}
+:root{--rbx:var(--rb)}
 [data-radius=rond]{--rb:999px;--rc:22px}
+[data-radius=rond]{--rbx:16px}   /* blocs d'information, menus, champs sur plusieurs lignes : pas en forme de pilule */
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;background:var(--bg);color:var(--text);font:14px/1.4 var(--uif,Inter),system-ui,"Segoe UI",sans-serif;overflow:hidden}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
@@ -188,8 +190,8 @@ main{position:absolute;top:calc(var(--hh) + var(--sat));left:0;right:0;bottom:0;
 @keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
 /* ---------- Lecture ---------- */
-.vbar{display:flex;align-items:center;gap:2px;padding:8px 14px;flex:none;border-bottom:1px solid var(--line);--ib:32px;--is:17px;min-height:49px}
-[data-density=compact] .vbar{padding:4px 10px;min-height:39px;--ib:28px;--is:15px}
+.vbar{display:flex;align-items:center;gap:3px;padding:8px 14px;flex:none;border-bottom:1px solid var(--line);--ib:36px;--is:19.5px;min-height:53px}
+[data-density=compact] .vbar{padding:4px 10px;min-height:43px;--ib:32px;--is:17px}
 .vbar .btn{height:var(--ib);padding:0 11px;font-size:13px;gap:7px}
 .vbar .lbl-t{}
 [data-labels=off] .vbar .lbl-t{display:none}
@@ -211,12 +213,12 @@ main{position:absolute;top:calc(var(--hh) + var(--sat));left:0;right:0;bottom:0;
 .who .wd{color:var(--muted);font-size:12.5px;white-space:nowrap}
 .addr{cursor:pointer;border-radius:4px}
 .addr:hover{color:var(--accent)}
-.banner{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--rb);background:var(--panel2);font-size:12.5px;color:var(--muted);margin-bottom:12px;--is:16px}
+.banner{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--rbx);background:var(--panel2);font-size:12.5px;color:var(--muted);margin-bottom:12px;--is:16px}
 .banner span{flex:1}
 .banner button{color:var(--accent);font-weight:600;font-size:12.5px;padding:3px 6px;border-radius:6px}
 .banner button:hover{background:rgba(var(--accent-rgb),.12)}
 .atts{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
-.att{display:flex;align-items:center;gap:10px;padding:7px 8px 7px 10px;border:1px solid var(--line2);border-radius:var(--rb);background:var(--panel);max-width:280px;cursor:pointer;transition:.12s}
+.att{display:flex;align-items:center;gap:10px;padding:7px 8px 7px 10px;border:1px solid var(--line2);border-radius:var(--rbx);background:var(--panel);max-width:280px;cursor:pointer;transition:.12s}
 .att:hover{border-color:var(--accent)}
 .att .ai{width:32px;height:32px;border-radius:min(8px,var(--rb));background:rgba(var(--accent-rgb),.15);color:var(--accent);display:grid;place-items:center;font-size:10px;font-weight:700;flex:none;text-transform:uppercase}
 .att .an{min-width:0;font-size:12.5px}
@@ -268,18 +270,18 @@ kbd.k{display:inline-block;min-width:20px;text-align:center;font:600 11px Inter,
 .card h2{font-size:17px;margin-bottom:6px;display:flex;align-items:center;gap:8px}
 .card .sub{color:var(--muted);font-size:13px;margin-bottom:16px;line-height:1.5}
 .card .row{display:flex;gap:8px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap;align-items:center}
-.field{width:100%;height:40px;border-radius:min(10px,var(--rb));background:var(--panel2);border:1px solid var(--line2);color:var(--text);padding:0 12px;font:inherit}
+.field{width:100%;height:40px;border-radius:min(10px,var(--rbx));background:var(--panel2);border:1px solid var(--line2);color:var(--text);padding:0 12px;font:inherit}
 .field:focus{outline:2px solid var(--accent);border-color:transparent}
 textarea.field{height:auto;padding:10px 12px;resize:vertical;min-height:80px}
 .lbl{font-size:12px;color:var(--muted);margin:12px 0 6px;display:block}
 .note{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.5}
 .note a,.lnk{color:var(--accent);cursor:pointer;text-decoration:none;font-weight:500}
-.err-box{background:rgba(239,68,68,.12);color:#f87171;border-radius:var(--rb);padding:10px 12px;font-size:12.5px;margin-top:12px;line-height:1.5}
+.err-box{background:rgba(239,68,68,.12);color:#f87171;border-radius:var(--rbx);padding:10px 12px;font-size:12.5px;margin-top:12px;line-height:1.5}
 [data-theme=clair] .err-box{color:#c62828}
-.ok-box{background:rgba(61,149,121,.14);color:#4fbf97;border-radius:var(--rb);padding:10px 12px;font-size:12.5px;margin-top:12px}
+.ok-box{background:rgba(61,149,121,.14);color:#4fbf97;border-radius:var(--rbx);padding:10px 12px;font-size:12.5px;margin-top:12px}
 .g2{display:grid;grid-template-columns:1fr 110px 110px;gap:8px;align-items:end}
 .g2 .lbl{margin-top:8px}
-details.adv{margin-top:14px;border:1px solid var(--line);border-radius:var(--rb);padding:10px 12px}
+details.adv{margin-top:14px;border:1px solid var(--line);border-radius:var(--rbx);padding:10px 12px}
 details.adv summary{cursor:pointer;color:var(--muted);font-size:12.5px;font-weight:500}
 .chk{display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;margin-top:10px}
 .chk input{accent-color:var(--accent);width:16px;height:16px}
@@ -294,7 +296,7 @@ details.adv summary{cursor:pointer;color:var(--muted);font-size:12.5px;font-weig
 .themes{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .themes button{border:2px solid var(--line2);border-radius:calc(var(--rb) + 2px);padding:6px;text-align:left;font-size:12px;font-weight:500}
 .themes button.on{border-color:var(--accent)}
-.themes .mini{height:52px;border-radius:min(6px,var(--rb));margin-bottom:6px;display:flex;overflow:hidden;gap:2px}
+.themes .mini{height:52px;border-radius:min(6px,var(--rbx));margin-bottom:6px;display:flex;overflow:hidden;gap:2px}
 .sw{width:26px;height:26px;border-radius:50%;border:2px solid transparent;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15);flex:none}
 .sw.on{border-color:var(--text)}
 .cpick{position:relative;width:26px;height:26px;border-radius:50%;overflow:hidden;background:conic-gradient(red,yellow,lime,cyan,blue,magenta,red);flex:none}
@@ -317,7 +319,13 @@ details.adv summary{cursor:pointer;color:var(--muted);font-size:12.5px;font-weig
 #composer{position:fixed;right:20px;bottom:0;width:min(620px,calc(100vw - 40px));height:min(620px,calc(100vh - var(--hh) - 30px));z-index:40;background:var(--panel);border:1px solid var(--line2);border-bottom:0;border-radius:var(--rc) var(--rc) 0 0;box-shadow:0 18px 60px rgba(0,0,0,.45);display:flex;flex-direction:column;animation:up .2s cubic-bezier(.2,.9,.3,1)}
 @keyframes up{from{transform:translateY(30px);opacity:0}}
 #composer.max{right:50%;bottom:50%;transform:translate(50%,50%);width:min(980px,calc(100vw - 60px));height:calc(100vh - var(--hh) - 60px);border-radius:var(--rc);border-bottom:1px solid var(--line2);animation:none}
+#composer.max{left:50%!important;top:50%!important;right:auto;bottom:auto;transform:translate(-50%,-50%)}
 #composer.min{height:auto}
+#composer.moved{border-bottom:1px solid var(--line2);border-radius:var(--rc);animation:none}
+#composer.moved:not(.min){max-height:calc(100vh - var(--hh) - 12px)}
+#composer.dragging{animation:none;transition:none;user-select:none;opacity:.96}
+html:not(.mobile):not(.narrow) #composer:not(.max) .chead{cursor:move}
+.mobile #composer.max{left:0!important;top:0!important;transform:none}
 #composer.min .cbody,#composer.min .cfoot{display:none}
 .chead{display:flex;align-items:center;gap:2px;padding:8px 8px 8px 16px;border-bottom:1px solid var(--line);cursor:default;--ib:28px;--is:15px;flex:none}
 .chead b{flex:1;font-size:13.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -339,7 +347,7 @@ details.adv summary{cursor:pointer;color:var(--muted);font-size:12.5px;font-weig
 .tok button{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;color:var(--muted)}
 .tok button:hover{background:var(--line2);color:var(--text)}
 .tok button svg{width:11px;height:11px}
-.ac{position:fixed;z-index:80;background:var(--panel);border:1px solid var(--line2);border-radius:calc(var(--rb) + 3px);box-shadow:0 14px 40px var(--shade);padding:4px;min-width:280px;max-width:420px}
+.ac{position:fixed;z-index:80;background:var(--panel);border:1px solid var(--line2);border-radius:calc(var(--rbx) + 3px);box-shadow:0 14px 40px var(--shade);padding:4px;min-width:280px;max-width:420px}
 .ac button{display:flex;align-items:center;gap:10px;width:100%;padding:6px 8px;border-radius:var(--rb);text-align:left;font-size:13px}
 .ac button .av{width:28px;height:28px;font-size:11px}
 .ac button small{display:block;color:var(--muted);font-size:11.5px}
@@ -349,6 +357,8 @@ details.adv summary{cursor:pointer;color:var(--muted);font-size:12.5px;font-weig
 .etools .ibtn{flex:none}
 .etools .ibtn{color:var(--muted)}
 .etools .ibtn:hover,.etools .ibtn.on{color:var(--text)}
+.etools .attb{flex:none;display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 11px 0 9px;border:1px solid var(--line2);border-radius:var(--rb);font-size:12.5px;font-weight:500;color:var(--text);--is:16px;transition:.12s}
+.etools .attb:hover{border-color:var(--accent);color:var(--accent);background:rgba(var(--accent-rgb),.08)}
 .etools .sep{width:1px;height:18px;background:var(--line2);margin:0 4px}
 .etools select{flex:none;max-width:96px;height:26px;background:var(--panel2);border:1px solid var(--line2);border-radius:6px;font-size:12px;padding:0 4px;color:var(--text)}
 #ed{flex:1;overflow:auto;padding:16px 18px;outline:0;line-height:1.55;font-size:14px;min-height:80px;word-wrap:break-word}
@@ -377,7 +387,7 @@ details.adv summary{cursor:pointer;color:var(--muted);font-size:12.5px;font-weig
 #tip{position:fixed;z-index:90;pointer-events:none;background:var(--text);color:var(--bg);font-size:12px;font-weight:500;padding:5px 9px;border-radius:7px;white-space:nowrap;opacity:0;transform:translateY(3px);transition:opacity .12s,transform .12s;box-shadow:0 6px 20px var(--shade)}
 #tip.show{opacity:1;transform:none}
 #tip kbd{font:inherit;opacity:.55;margin-left:8px;font-size:11px}
-.menu,.fpick{position:fixed;z-index:75;background:var(--panel);border:1px solid var(--line2);border-radius:calc(var(--rb) + 3px);padding:5px;box-shadow:0 16px 44px var(--shade);animation:fd .1s}
+.menu,.fpick{position:fixed;z-index:75;background:var(--panel);border:1px solid var(--line2);border-radius:calc(var(--rbx) + 3px);padding:5px;box-shadow:0 16px 44px var(--shade);animation:fd .1s}
 .menu{min-width:230px}
 .menu button{display:flex;align-items:center;gap:10px;width:100%;padding:7px 10px;border-radius:var(--rb);text-align:left;font-size:13px;--is:16px}
 .menu button svg{color:var(--muted)}
@@ -395,6 +405,9 @@ details.adv summary{cursor:pointer;color:var(--muted);font-size:12.5px;font-weig
 .toast button{color:var(--accent);font-weight:700;font-size:13px;padding:3px 8px;border-radius:6px;filter:brightness(1.15)}
 [data-theme=clair] .toast button{filter:none}
 .toast button:hover{background:rgba(var(--accent-rgb),.15)}
+.toast.count{position:relative;overflow:hidden}
+.toast.count::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:100%;background:var(--accent);transform-origin:left;animation:cnt var(--dur) linear forwards}
+@keyframes cnt{to{transform:scaleX(0)}}
 @media (max-width:1000px){ .lbl-t{display:none} .vbar .btn{padding:0;width:var(--ib);justify-content:center} }
 @media (max-width:900px){ [data-layout=trois] #viewCol{display:none} [data-layout=trois].reading #listCol{display:none} [data-layout=trois].reading #viewCol{display:flex} [data-layout=trois] .backBtn{display:grid!important} [data-layout=trois] #listCol{flex:1;width:auto} [data-layout=trois] #gripList{display:none} }
 @media (max-width:640px){ #side,#gripSide{display:none} .srch kbd,#compose span,.logo span{display:none} #compose{width:var(--ib);padding:0;justify-content:center} }
@@ -460,6 +473,15 @@ header{background:var(--bg);border-bottom-color:var(--line)}
 .themes button,.sw{transition:.12s}
 #composer{box-shadow:0 14px 44px rgba(0,0,0,.3);background:var(--bg)}
 .toast{box-shadow:0 8px 24px rgba(0,0,0,.25)}
+/* messages directement sur le fond de l'appli (comme Mailbird), sans carte blanche */
+html[data-mailbg=theme] .mbody{background:transparent;border:0;box-shadow:none;border-radius:0}
+/* séparation des colonnes bien visible */
+#side,#listCol{border-right-color:var(--line2)}
+[data-layout=large] #listCol{border-bottom-color:var(--line2)}
+/* actions au survol d'un message : à droite, centrées, sur le fond de la ligne */
+.it{--qabg:var(--panel)}
+.it.on,.it.sel{--qabg:var(--panel2)}
+.it .qa{top:auto;bottom:5px;right:6px;transform:none;background:var(--qabg)!important;border:0!important;box-shadow:-18px 0 14px -4px var(--qabg)!important;padding:2px 0 2px 2px;--ib:30px;--is:16px}
 
 [dir=rtl] [data-notr]{unicode-bidi:plaintext}
 /* ================= Police de l'interface et graisse ================= */
@@ -762,6 +784,7 @@ const I18N = {
 "Insérer la signature":["Insert signature","Insertar firma","Signatur einfügen","Inserisci firma","Inserir assinatura","إدراج التوقيع"],
 "Envoyer":["Send","Enviar","Senden","Invia","Enviar","إرسال"],
 "Envoyer (Ctrl Entrée)":["Send (Ctrl Enter)","Enviar (Ctrl Intro)","Senden (Strg Enter)","Invia (Ctrl Invio)","Enviar (Ctrl Enter)","إرسال (Ctrl Enter)"],
+"Joindre":["Attach","Adjuntar","Anhängen","Allega","Anexar","إرفاق"],
 "Joindre des fichiers":["Attach files","Adjuntar archivos","Dateien anhängen","Allega file","Anexar ficheiros","إرفاق ملفات"],
 "Supprimer le brouillon":["Discard draft","Descartar borrador","Entwurf verwerfen","Elimina bozza","Eliminar rascunho","حذف المسودة"],
 "Supprimer ce brouillon ?":["Discard this draft?","¿Descartar este borrador?","Diesen Entwurf verwerfen?","Eliminare questa bozza?","Eliminar este rascunho?","حذف هذه المسودة؟"],
@@ -1224,7 +1247,7 @@ document.addEventListener('mouseover', e => {
 });
 document.addEventListener('mousedown', () => { clearTimeout(tipT); tipEl.classList.remove('show'); }, true);
 
-function toast(msg, action, ms = 3200){
+function toast(msg, action, ms = 3200, exact){
   const t = document.createElement('div'); t.className = 'toast';
   t.innerHTML = `<span>${esc(msg)}</span>`;
   let done = false;
@@ -1232,7 +1255,7 @@ function toast(msg, action, ms = 3200){
   if (action){ const b = document.createElement('button'); b.textContent = action.label; b.onclick = () => { close(); action.fn(); }; t.appendChild(b); }
   $('#toasts').appendChild(t);
   while ($('#toasts').children.length > 3) $('#toasts').firstChild.remove();
-  setTimeout(close, action ? Math.max(ms, 6000) : ms);
+  setTimeout(close, action && !exact ? Math.max(ms, 6000) : ms);
   return { close, el: t };
 }
 const errToast = e => toast('' + String(e && e.message || e).replace(/^Error invoking remote method '[^']+': (Error: )?/, ''));
@@ -1295,10 +1318,11 @@ const ACCENTS = ['#c8703f','#c2524a','#bf5a82','#8a6cc4','#5d6bc9','#4a84c4','#3
 const DEF_SET = {
   theme:'graphite', accent:'#c8703f', layout:'trois', density:'confort', zoom:'m', radius:'doux', side:'shown',
   preview:'1', avatars:'on', groups:'on', unified:'on', qa:['archive','trash','read','star'], after:'next',
-  uifont:'Inter', weight:'normal', unreadBold:'on', markRead:'delay', images:'ask', mailbg:'blanc', mailZoom:'100', labels:'off', readw:'normal',
+  uifont:'Inter', weight:'normal', unreadBold:'on', markRead:'delay', images:'ask', mailbg:'theme', mailZoom:'100', labels:'off', readw:'normal',
   font:'Inter', fsize:'14', undoSend:'5', lang:'auto', compWin:'float', noSubjWarn:'on', keys:'on', counts:'unread'
 };
 let SET = { ...DEF_SET, ...J('hamama-settings', {}) };
+if (!SET.mb2){ SET.mailbg = 'theme'; SET.mb2 = 1; }   // 18/11 : messages affichés sur le fond de l’appli (comme Mailbird)
 const ZOOMS = { s:.9, m:1, l:1.1, xl:1.25 };
 const UI_FONTS = ['Inter','Segoe UI','Arial','Calibri','Verdana','Tahoma','Trebuchet MS','Georgia'];
 const uiFont = () => SET.uifont === 'Inter' || !UI_FONTS.includes(SET.uifont) ? 'Inter' : `"${SET.uifont}"`;
@@ -1778,6 +1802,13 @@ function showMultiView(n){
   $('#view').querySelectorAll('[data-m]').forEach(b => b.onclick = () => act(b.dataset.m, [...ST.sel]));
 }
 const mailIsDark = () => SET.mailbg === 'theme' && SET.theme !== 'clair';
+// intensité d'inversion pour que le blanc du message devienne exactement le fond de l'appli
+function mailInv(){
+  const c = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim().replace('#', '');
+  const h = c.length === 3 ? c.split('').map(x => x + x).join('') : c;
+  const v = h.length === 6 ? (parseInt(h.slice(0, 2), 16) + parseInt(h.slice(2, 4), 16) + parseInt(h.slice(4, 6), 16)) / 765 : .15;
+  return (1 - v).toFixed(3);
+}
 function sanitizeMailHtml(html){
   const d = new DOMParser().parseFromString(html, 'text/html');
   d.querySelectorAll('script,meta,base,iframe,frame,frameset,object,embed,applet,form button[type=submit],link[rel=import],noscript').forEach(n => n.remove());
@@ -1795,11 +1826,11 @@ function mailDoc(m, allowImg){
   let styles = '', body = '';
   if (m.html){ const s = sanitizeMailHtml(m.html); styles = s.styles; body = s.body; }
   else body = `<div style="white-space:pre-wrap;font-family:inherit">${linkify(m.text || '')}</div>`;
-  const z = (+SET.mailZoom || 100) / 100;
+  const z = (+SET.mailZoom || 100) / 100, flat = SET.mailbg === 'theme', inv = dark ? mailInv() : 1;
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="${csp}"><base target="_blank">${styles}
-<style>html{zoom:${z}}body{margin:0;padding:22px 26px;font:14px/1.6 ${uiFont()},Inter,"Segoe UI",Arial,sans-serif;color:#1d1d1f;background:${dark ? '#fff' : 'transparent'};word-wrap:break-word;overflow-wrap:anywhere;overflow-x:auto}
+<style>html{zoom:${z}}body{margin:0;padding:${flat ? '6px 2px 18px' : '22px 26px'};font:14px/1.6 ${uiFont()},Inter,"Segoe UI",Arial,sans-serif;color:#1d1d1f;background:${dark ? '#fff' : 'transparent'};word-wrap:break-word;overflow-wrap:anywhere;overflow-x:auto}
 img{max-width:100%;height:auto}pre{white-space:pre-wrap}a{color:#1a73e8}blockquote{margin:8px 0;padding-left:12px;border-left:3px solid #d0d4dc;color:#555}table{max-width:100%}
-${dark ? 'html{filter:invert(.9) hue-rotate(180deg)}img,video,picture,[style*="background-image"]{filter:invert(1) hue-rotate(180deg)}' : ''}</style></head><body>${body}</body></html>`;
+${dark ? `html{filter:invert(${inv}) hue-rotate(180deg)}img,video,picture,[style*="background-image"]{filter:invert(1) hue-rotate(180deg)}` : ''}</style></head><body>${body}</body></html>`;
 }
 function hasRemote(m){ return !!m.html && /<img[^>]+src\s*=\s*["']?\s*https?:|url\(\s*["']?https?:|<link[^>]+href\s*=\s*["']?https?:/i.test(m.html); }
 async function openMsg(key, { keepSel = false } = {}){
@@ -2030,6 +2061,45 @@ function composeMailto(url){
   } catch { openComposer({}); }
 }
 
+// Fenêtre « Nouveau message » déplaçable par sa barre de titre (position mémorisée)
+function composerPlace(el, x, y){
+  const r = el.getBoundingClientRect(), hh = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--hh')) || 0;
+  x = Math.max(8 - r.width + 120, Math.min(innerWidth - 120, x));          // garde au moins 120 px visibles
+  y = Math.max(hh, Math.min(innerHeight - 44, y));                          // barre de titre toujours atteignable
+  el.classList.add('moved'); el.style.left = x + 'px'; el.style.top = y + 'px'; el.style.right = 'auto'; el.style.bottom = 'auto';
+  return [x, y];
+}
+function composerDrag(el){
+  const small = () => document.documentElement.classList.contains('mobile') || document.documentElement.classList.contains('narrow');
+  try { const p = JSON.parse(store.get('hamama-compose-pos') || 'null'); if (p && !small()) requestAnimationFrame(() => composerPlace(el, p[0], p[1])); } catch {}
+  const head = el.querySelector('.chead');
+  head.addEventListener('pointerdown', e => {
+    if (e.button !== 0 || e.target.closest('button') || el.classList.contains('max') || small()) return;
+    const r = el.getBoundingClientRect(), dx = e.clientX - r.left, dy = e.clientY - r.top;
+    let moved = false, last = null;
+    head.setPointerCapture(e.pointerId);
+    const mv = ev => {
+      if (!moved && Math.hypot(ev.clientX - e.clientX, ev.clientY - e.clientY) < 4) return;
+      moved = true; el.classList.add('dragging');
+      last = composerPlace(el, ev.clientX - dx, ev.clientY - dy);
+    };
+    const up = () => {
+      head.removeEventListener('pointermove', mv); head.removeEventListener('pointerup', up); head.removeEventListener('pointercancel', up);
+      el.classList.remove('dragging');
+      if (last) try { store.set('hamama-compose-pos', JSON.stringify(last)); } catch {}
+    };
+    head.addEventListener('pointermove', mv); head.addEventListener('pointerup', up); head.addEventListener('pointercancel', up);
+  });
+  const onRs = () => {
+    if (!el.isConnected) return removeEventListener('resize', onRs);
+    if (small()){ el.classList.remove('moved'); el.style.left = el.style.top = el.style.right = el.style.bottom = ''; return; }
+    let p = null; try { p = JSON.parse(store.get('hamama-compose-pos') || 'null'); } catch {}
+    if (el.classList.contains('moved')){ const r = el.getBoundingClientRect(); composerPlace(el, r.left, r.top); }
+    else if (p) composerPlace(el, p[0], p[1]);
+  };
+  addEventListener('resize', onRs);
+}
+
 async function openComposer(o = {}){
   if (!ST.accounts.length) return openAddAccount();
   if (CMP && CMP.dirty){
@@ -2052,6 +2122,8 @@ async function openComposer(o = {}){
       <div class="cf${showCc ? '' : ' hidden'}" data-ccrow><label>Cci</label><div class="toks" data-f="bcc"><input autocomplete="off" spellcheck="false"></div></div>
       <div class="cf"><label>Objet</label><input class="plain" id="cSubj" value="${esc(o.subject || '')}" placeholder="Objet du message"></div>
       <div class="etools">
+        <button class="attb" id="cAttach" title="Joindre des fichiers">${ic('clip')}<span>Joindre</span></button>
+        <div class="sep"></div>
         <select id="eFont" title="Police">${Object.keys(FONTS).map(f => `<option${f === SET.font ? ' selected' : ''}>${f}</option>`).join('')}</select>
         <select id="eSize" title="Taille"><option value="2">Petit</option><option value="3" selected>Normal</option><option value="4">Grand</option><option value="5">Très grand</option></select>
         <div class="sep"></div>
@@ -2067,7 +2139,7 @@ async function openComposer(o = {}){
       <div class="catts" id="cAtts"></div>
     </div>
     <div class="cfoot"><button class="btn primary" id="cSend" title="Envoyer (Ctrl Entrée)">${ic('send')}Envoyer</button>
-      <button class="ibtn" id="cAttach" title="Joindre des fichiers">${ic('clip')}</button>
+
       <span class="st" id="cSt"></span>
       <button class="ibtn del" id="cDel" title="Supprimer le brouillon">${ic('trash')}</button></div>`;
   document.body.appendChild(el);
@@ -2089,6 +2161,7 @@ async function openComposer(o = {}){
   el.querySelector('[data-c=max]').onclick = () => { el.classList.toggle('max'); el.classList.remove('min'); };
   el.querySelector('[data-c=close]').onclick = () => closeComposer(CMP.dirty ? 'save' : 'discard');
   el.querySelector('.chead').ondblclick = e => { if (!e.target.closest('button')) el.classList.toggle('min'); };
+  composerDrag(el);
   $('#cDel').onclick = async () => { if (!CMP.dirty || await confirmBox('Supprimer ce brouillon ?', 'Le message en cours sera perdu.', 'Supprimer', true)) closeComposer('discard'); };
   $('#cAttach').onclick = async () => { try { const fs = await N.pickFiles(); fs.forEach(f => CMP.atts.push({ name: f.name, size: f.size, data: f.data })); renderAtts(); dirty(); } catch (e) { errToast(e); } };
   $('#cSend').onclick = () => sendNow();
@@ -2242,8 +2315,13 @@ async function sendNow(){
     }
   };
   if (delay){
-    toast(`Envoi dans ${delay / 1000} s`, { label: 'Annuler', fn: () => { cancelled = true; openComposer({ ...snap, atts: restoreAtts(snap.atts) }); toast('Envoi annulé'); } }, delay);
-    setTimeout(go, delay);
+    // décompte en temps réel ; l'envoi part exactement à 0
+    const end = Date.now() + delay;
+    const t = toast(T(`Envoi dans ${Math.ceil(delay / 1000)} s`), { label: 'Annuler', fn: () => { cancelled = true; clearInterval(tick); clearTimeout(timer); openComposer({ ...snap, atts: restoreAtts(snap.atts) }); toast('Envoi annulé'); } }, delay, true);
+    t.el.classList.add('count'); t.el.style.setProperty('--dur', delay + 'ms');
+    const sp = t.el.querySelector('span'); sp.setAttribute('data-notr', '');
+    const tick = setInterval(() => { const r = Math.max(1, Math.ceil((end - Date.now()) / 1000)); sp.textContent = T(`Envoi dans ${r} s`); }, 200);
+    const timer = setTimeout(() => { clearInterval(tick); t.close(); go(); }, delay);
   } else go();
 }
 const restoreAtts = l => (l || []).map(a => a.b64 ? { name: a.name, size: a.size, type: a.type, data: Uint8Array.from(atob(a.b64), c => c.charCodeAt(0)) } : a);

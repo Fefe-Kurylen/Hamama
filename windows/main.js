@@ -20,19 +20,22 @@ if (isMac) {
 nativeTheme.themeSource = 'dark';
 
 let win = null, ready = false, tray = null, quitting = false;
-let PREF = { notify: true, sound: true, tray: false, startMin: false };
+// Par défaut Hamama reste actif en arrière-plan (icône dans la zone de notification) et démarre avec Windows, discrètement
+let PREF = { notify: true, sound: true, tray: true, startup: true, startMin: true };
 const pending = [];
 const prefFile = () => path.join(app.getPath('userData'), 'prefs.json');
 try { Object.assign(PREF, JSON.parse(fs.readFileSync(prefFile(), 'utf8'))); } catch {}
+if (!PREF.bg2) { Object.assign(PREF, { tray: true, startup: true, startMin: true, bg2: 1 }); try { fs.mkdirSync(path.dirname(prefFile()), { recursive: true }); fs.writeFileSync(prefFile(), JSON.stringify(PREF)); } catch {} }
+const loginItem = () => { if (app.isPackaged && !process.env.HAMAMA_DATA) try { app.setLoginItemSettings({ openAtLogin: !!PREF.startup, args: ['--hidden'] }); } catch {} };
 // Textes du processus principal (menus, fenêtres) dans la langue de l’appli
 const MT = {
-  fr: { cut:'Couper', copy:'Copier', paste:'Coller', all:'Tout sélectionner', dict:'Ajouter au dictionnaire', link:'Copier le lien', open:'Ouvrir Hamama', compose:'Nouveau message', quit:'Quitter', saveAtt:'Enregistrer la pièce jointe', saveIn:'Enregistrer les pièces jointes dans…', attach:'Joindre des fichiers', risky:'Ce type de fichier peut être dangereux.', riskyD:'« {0} » est un programme ou un script. Hamama ne l’ouvre pas directement.', saveInstead:'Enregistrer plutôt', cancel:'Annuler', big:'« {0} » dépasse 35 Mo' },
-  en: { cut:'Cut', copy:'Copy', paste:'Paste', all:'Select all', dict:'Add to dictionary', link:'Copy link', open:'Open Hamama', compose:'New message', quit:'Quit', saveAtt:'Save attachment', saveIn:'Save attachments to…', attach:'Attach files', risky:'This type of file can be dangerous.', riskyD:'“{0}” is a program or script. Hamama won’t open it directly.', saveInstead:'Save instead', cancel:'Cancel', big:'“{0}” exceeds 35 MB' },
-  es: { cut:'Cortar', copy:'Copiar', paste:'Pegar', all:'Seleccionar todo', dict:'Añadir al diccionario', link:'Copiar enlace', open:'Abrir Hamama', compose:'Nuevo mensaje', quit:'Salir', saveAtt:'Guardar adjunto', saveIn:'Guardar adjuntos en…', attach:'Adjuntar archivos', risky:'Este tipo de archivo puede ser peligroso.', riskyD:'«{0}» es un programa o script. Hamama no lo abre directamente.', saveInstead:'Guardar en su lugar', cancel:'Cancelar', big:'«{0}» supera los 35 MB' },
-  de: { cut:'Ausschneiden', copy:'Kopieren', paste:'Einfügen', all:'Alles auswählen', dict:'Zum Wörterbuch hinzufügen', link:'Link kopieren', open:'Hamama öffnen', compose:'Neue Nachricht', quit:'Beenden', saveAtt:'Anhang speichern', saveIn:'Anhänge speichern in…', attach:'Dateien anhängen', risky:'Dieser Dateityp kann gefährlich sein.', riskyD:'„{0}“ ist ein Programm oder Skript. Hamama öffnet es nicht direkt.', saveInstead:'Stattdessen speichern', cancel:'Abbrechen', big:'„{0}“ überschreitet 35 MB' },
-  it: { cut:'Taglia', copy:'Copia', paste:'Incolla', all:'Seleziona tutto', dict:'Aggiungi al dizionario', link:'Copia link', open:'Apri Hamama', compose:'Nuovo messaggio', quit:'Esci', saveAtt:'Salva allegato', saveIn:'Salva allegati in…', attach:'Allega file', risky:'Questo tipo di file può essere pericoloso.', riskyD:'«{0}» è un programma o uno script. Hamama non lo apre direttamente.', saveInstead:'Salva invece', cancel:'Annulla', big:'«{0}» supera i 35 MB' },
-  pt: { cut:'Cortar', copy:'Copiar', paste:'Colar', all:'Selecionar tudo', dict:'Adicionar ao dicionário', link:'Copiar ligação', open:'Abrir o Hamama', compose:'Nova mensagem', quit:'Sair', saveAtt:'Guardar anexo', saveIn:'Guardar anexos em…', attach:'Anexar ficheiros', risky:'Este tipo de ficheiro pode ser perigoso.', riskyD:'«{0}» é um programa ou script. O Hamama não o abre diretamente.', saveInstead:'Guardar em vez disso', cancel:'Cancelar', big:'«{0}» excede 35 MB' },
-  ar: { cut:'قص', copy:'نسخ', paste:'لصق', all:'تحديد الكل', dict:'إضافة إلى القاموس', link:'نسخ الرابط', open:'فتح حمامة', compose:'رسالة جديدة', quit:'خروج', saveAtt:'حفظ المرفق', saveIn:'حفظ المرفقات في…', attach:'إرفاق ملفات', risky:'قد يكون هذا النوع من الملفات خطيرًا.', riskyD:'«{0}» برنامج أو نص برمجي. لا يفتحه حمامة مباشرة.', saveInstead:'الحفظ بدلًا من ذلك', cancel:'إلغاء', big:'«{0}» يتجاوز 35 ميغابايت' }
+  fr: { cut:'Couper', copy:'Copier', paste:'Coller', all:'Tout sélectionner', dict:'Ajouter au dictionnaire', link:'Copier le lien', open:'Ouvrir Hamama', compose:'Nouveau message', quit:'Quitter', saveAtt:'Enregistrer la pièce jointe', saveIn:'Enregistrer les pièces jointes dans…', attach:'Joindre des fichiers', risky:'Ce type de fichier peut être dangereux.', riskyD:'« {0} » est un programme ou un script. Hamama ne l’ouvre pas directement.', saveInstead:'Enregistrer plutôt', cancel:'Annuler', big:'« {0} » dépasse 35 Mo', bg:'Hamama continue en arrière-plan : les nouveaux messages arrivent toujours. Il est dans la zone de notification (près de l’horloge).' },
+  en: { cut:'Cut', copy:'Copy', paste:'Paste', all:'Select all', dict:'Add to dictionary', link:'Copy link', open:'Open Hamama', compose:'New message', quit:'Quit', saveAtt:'Save attachment', saveIn:'Save attachments to…', attach:'Attach files', risky:'This type of file can be dangerous.', riskyD:'“{0}” is a program or script. Hamama won’t open it directly.', saveInstead:'Save instead', cancel:'Cancel', big:'“{0}” exceeds 35 MB', bg:'Hamama keeps running in the background: new messages still arrive. It’s in the notification area (next to the clock).' },
+  es: { cut:'Cortar', copy:'Copiar', paste:'Pegar', all:'Seleccionar todo', dict:'Añadir al diccionario', link:'Copiar enlace', open:'Abrir Hamama', compose:'Nuevo mensaje', quit:'Salir', saveAtt:'Guardar adjunto', saveIn:'Guardar adjuntos en…', attach:'Adjuntar archivos', risky:'Este tipo de archivo puede ser peligroso.', riskyD:'«{0}» es un programa o script. Hamama no lo abre directamente.', saveInstead:'Guardar en su lugar', cancel:'Cancelar', big:'«{0}» supera los 35 MB', bg:'Hamama sigue funcionando en segundo plano: los mensajes nuevos siguen llegando. Está en el área de notificación (junto al reloj).' },
+  de: { cut:'Ausschneiden', copy:'Kopieren', paste:'Einfügen', all:'Alles auswählen', dict:'Zum Wörterbuch hinzufügen', link:'Link kopieren', open:'Hamama öffnen', compose:'Neue Nachricht', quit:'Beenden', saveAtt:'Anhang speichern', saveIn:'Anhänge speichern in…', attach:'Dateien anhängen', risky:'Dieser Dateityp kann gefährlich sein.', riskyD:'„{0}“ ist ein Programm oder Skript. Hamama öffnet es nicht direkt.', saveInstead:'Stattdessen speichern', cancel:'Abbrechen', big:'„{0}“ überschreitet 35 MB', bg:'Hamama läuft im Hintergrund weiter: Neue Nachrichten kommen weiterhin an. Es befindet sich im Infobereich (neben der Uhr).' },
+  it: { cut:'Taglia', copy:'Copia', paste:'Incolla', all:'Seleziona tutto', dict:'Aggiungi al dizionario', link:'Copia link', open:'Apri Hamama', compose:'Nuovo messaggio', quit:'Esci', saveAtt:'Salva allegato', saveIn:'Salva allegati in…', attach:'Allega file', risky:'Questo tipo di file può essere pericoloso.', riskyD:'«{0}» è un programma o uno script. Hamama non lo apre direttamente.', saveInstead:'Salva invece', cancel:'Annulla', big:'«{0}» supera i 35 MB', bg:'Hamama continua in background: i nuovi messaggi arrivano comunque. Si trova nell’area di notifica (vicino all’orologio).' },
+  pt: { cut:'Cortar', copy:'Copiar', paste:'Colar', all:'Selecionar tudo', dict:'Adicionar ao dicionário', link:'Copiar ligação', open:'Abrir o Hamama', compose:'Nova mensagem', quit:'Sair', saveAtt:'Guardar anexo', saveIn:'Guardar anexos em…', attach:'Anexar ficheiros', risky:'Este tipo de ficheiro pode ser perigoso.', riskyD:'«{0}» é um programa ou script. O Hamama não o abre diretamente.', saveInstead:'Guardar em vez disso', cancel:'Cancelar', big:'«{0}» excede 35 MB', bg:'O Hamama continua em segundo plano: as novas mensagens continuam a chegar. Está na área de notificação (junto ao relógio).' },
+  ar: { cut:'قص', copy:'نسخ', paste:'لصق', all:'تحديد الكل', dict:'إضافة إلى القاموس', link:'نسخ الرابط', open:'فتح حمامة', compose:'رسالة جديدة', quit:'خروج', saveAtt:'حفظ المرفق', saveIn:'حفظ المرفقات في…', attach:'إرفاق ملفات', risky:'قد يكون هذا النوع من الملفات خطيرًا.', riskyD:'«{0}» برنامج أو نص برمجي. لا يفتحه حمامة مباشرة.', saveInstead:'الحفظ بدلًا من ذلك', cancel:'إلغاء', big:'«{0}» يتجاوز 35 ميغابايت', bg:'يواصل Hamama العمل في الخلفية: تستمر الرسائل الجديدة في الوصول. ستجده في منطقة الإشعارات (بجانب الساعة).' }
 };
 const L = (k, a) => { const d = MT[PREF.lang] || MT[(app.getLocale() || 'fr').slice(0, 2)] || MT.en; return String(d[k] || MT.fr[k]).replace('{0}', a == null ? '' : a); };
 const mailtoArgs = argv => argv.filter(a => /^mailto:/i.test(a));
@@ -46,7 +49,7 @@ function createWindow() {
     icon: path.join(__dirname, 'app', 'icon.png'),
     titleBarStyle: isMac ? 'hiddenInset' : 'hidden',
     ...(isMac ? { trafficLightPosition: { x: 16, y: 19 } } : { titleBarOverlay: { color: '#262624', symbolColor: '#f2f1ec', height: 52 } }),
-    webPreferences: { preload: path.join(__dirname, 'preload.js'), contextIsolation: true, sandbox: true, spellcheck: true, v8CacheOptions: 'bypassHeatCheck', webviewTag: false }
+    webPreferences: { preload: path.join(__dirname, 'preload.js'), contextIsolation: true, sandbox: true, spellcheck: true, v8CacheOptions: 'bypassHeatCheck', webviewTag: false, backgroundThrottling: false }
   });
   try { win.webContents.session.setSpellCheckerLanguages(['fr', 'en-US']); } catch {}
   win.loadFile(path.join(__dirname, 'app', 'index.html'), process.env.HAMAMA_DEBUG ? { query: { debug: '1' } } : undefined);
@@ -75,7 +78,15 @@ function createWindow() {
     else if (p.selectionText) t.push({ role: 'copy', label: L('copy') });
     if (t.length) Menu.buildFromTemplate(t).popup({ window: win });
   });
-  win.on('close', e => { if (PREF.tray && !quitting) { e.preventDefault(); win.hide(); } });
+  win.on('close', e => {
+    if (!PREF.tray || quitting) return;
+    e.preventDefault(); win.hide();
+    if (!PREF.bgTold && Notification.isSupported()) {          // une seule fois : expliquer où est passée l'appli
+      PREF.bgTold = 1; try { fs.writeFileSync(prefFile(), JSON.stringify(PREF)); } catch {}
+      const n = new Notification({ title: 'Hamama', body: L('bg'), icon: path.join(__dirname, 'app', 'icon.png'), silent: true });
+      n.on('click', () => { if (win) { win.show(); win.focus(); } }); n.show();
+    }
+  });
   win.on('closed', () => { win = null; ready = false; });
   win.on('focus', () => { if (win) win.flashFrame(false); updater.onFocus(); });
 }
@@ -172,7 +183,7 @@ H('file:pick', async () => {
   for (const f of r.filePaths) { const st = fs.statSync(f); if (st.size > 35 * 1024 * 1024) throw new Error(L('big', path.basename(f))); out.push({ name: path.basename(f), size: st.size, data: new Uint8Array(fs.readFileSync(f)) }); }
   return out;
 });
-H('prefs', p => { if (p && typeof p === 'object') { const oldLang = PREF.lang; Object.assign(PREF, p); fs.writeFileSync(prefFile(), JSON.stringify(PREF)); if (PREF.lang !== oldLang && tray) { tray.destroy(); tray = null; } setupTray(); app.setLoginItemSettings({ openAtLogin: !!PREF.startup, args: ['--hidden'] }); } return PREF; });
+H('prefs', p => { if (p && typeof p === 'object') { const oldLang = PREF.lang; Object.assign(PREF, p); fs.writeFileSync(prefFile(), JSON.stringify(PREF)); if (PREF.lang !== oldLang && tray) { tray.destroy(); tray = null; } setupTray(); loginItem(); } return PREF; });
 H('notify', ({ title, body, key, silent }) => {
   if (!PREF.notify || !Notification.isSupported()) return false;
   const n = new Notification({ title: String(title || 'Hamama').slice(0, 120), body: String(body || '').slice(0, 240), silent: !PREF.sound || !!silent, icon: path.join(__dirname, 'app', 'icon.png') });
@@ -214,7 +225,7 @@ else {
   app.whenReady().then(() => {
     mail.init({ dir: app.getPath('userData'), safeStorage, netFetch: (u, o) => net.fetch(u, o), emit: send, oauth });
     oauth.init({ netFetch: (u, o) => net.fetch(u, o), openExternal: u => shell.openExternal(u), mail });
-    createWindow(); setupTray(); updater.init(send);
+    createWindow(); setupTray(); loginItem(); updater.init(send);
     for (const m of mailtoArgs(process.argv)) send('mailto', m);
   });
   app.on('before-quit', () => { quitting = true; mail.shutdown(); });
