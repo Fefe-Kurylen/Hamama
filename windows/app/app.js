@@ -177,6 +177,13 @@ const I18N = {
 "Désactivé":["Off","Desactivado","Aus","Disattivato","Desativado","معطّل"],
 "Automatique (langue de l’appli)":["Automatic (app language)","Automático (idioma de la app)","Automatisch (App-Sprache)","Automatico (lingua dell’app)","Automático (idioma da app)","تلقائي (لغة التطبيق)"],
 "Automatique":["Automatic","Automático","Automatisch","Automatico","Automático","تلقائي"],
+"Nuit bleue":["Midnight blue","Azul noche","Nachtblau","Blu notte","Azul noite","أزرق ليلي"],
+"Ardoise":["Slate","Pizarra","Schiefer","Ardesia","Ardósia","أردوازي"],
+"Forêt":["Forest","Bosque","Wald","Foresta","Floresta","غابة"],
+"Prune":["Plum","Ciruela","Pflaume","Prugna","Ameixa","برقوقي"],
+"Ciel":["Sky","Cielo","Himmel","Cielo","Céu","سماوي"],
+"Menthe":["Mint","Menta","Minze","Menta","Menta","نعناعي"],
+"Rose poudré":["Powder pink","Rosa empolvado","Puderrosa","Rosa cipria","Rosa pó","وردي فاتح"],
 "Joindre":["Attach","Adjuntar","Anhängen","Allega","Anexar","إرفاق"],
 "Joindre des fichiers":["Attach files","Adjuntar archivos","Dateien anhängen","Allega file","Anexar ficheiros","إرفاق ملفات"],
 "Supprimer le brouillon":["Discard draft","Descartar borrador","Entwurf verwerfen","Elimina bozza","Eliminar rascunho","حذف المسودة"],
@@ -590,6 +597,7 @@ document.querySelectorAll('[data-ic]').forEach(el => el.insertAdjacentHTML('afte
 const $ = s => document.querySelector(s);
 const N = window.native || null;
 const MOBILE = !!N && (N.platform === 'android' || N.platform === 'ios');
+const LIGHT_THEMES = ['clair','ciel','menthe','rose'];
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
 const store = { get(k){ try{ return localStorage.getItem(k); }catch{ return null; } }, set(k,v){ try{ localStorage.setItem(k,v); }catch{} }, del(k){ try{ localStorage.removeItem(k); }catch{} } };
 const J = (k, d) => { try { const v = JSON.parse(store.get(k)); return v == null ? d : v; } catch { return d; } };
@@ -726,7 +734,7 @@ function setAccent(hex){
 const spellLang = () => SET.spell && !['auto','off'].includes(SET.spell) ? SET.spell : LANG;
 function applySettings(save = true){
   const r = document.documentElement, d = r.dataset;
-  d.theme = SET.theme; d.layout = SET.layout; d.density = SET.density; d.radius = SET.radius; d.side = SET.side;
+  d.theme = SET.theme; d.tone = LIGHT_THEMES.includes(SET.theme) ? 'light' : 'dark'; d.layout = SET.layout; d.density = SET.density; d.radius = SET.radius; d.side = SET.side;
   d.preview = SET.preview; d.avatars = SET.avatars; d.labels = SET.labels; d.mailbg = SET.mailbg; d.weight = SET.weight; d.unreadb = SET.unreadBold;
   r.style.setProperty('--uif', uiFont());
   if (MOBILE && SET.labels === 'on') d.labels = 'off';
@@ -1198,7 +1206,7 @@ function showMultiView(n){
     <div class="row" style="justify-content:center;margin-top:18px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost" data-m="read">${ic('mail-open')}Lu</button><button class="btn ghost" data-m="archive">${ic('archive')}Archiver</button><button class="btn ghost" data-m="trash">${ic('trash')}Supprimer</button></div></div></div>`;
   $('#view').querySelectorAll('[data-m]').forEach(b => b.onclick = () => act(b.dataset.m, [...ST.sel]));
 }
-const mailIsDark = () => SET.mailbg === 'theme' && SET.theme !== 'clair';
+const mailIsDark = () => SET.mailbg === 'theme' && !LIGHT_THEMES.includes(SET.theme);
 // Messages en thème sombre : le blanc du message devient exactement le fond de l'appli (v)
 // et le texte noir devient un blanc presque pur (t) → contraste maximal.
 // invert(1) puis contrast(c) brightness(b) : y → b·(c·y + ½ − ½c) ; b = v + t, c = (t − v) / (v + t)
@@ -1915,8 +1923,10 @@ async function reloadAccounts(){
 }
 
 /* ================= Réglages ================= */
-const THEMES = [['graphite','Graphite'],['sombre','Sombre'],['noir','Noir OLED'],['clair','Clair']];
-const THEME_PREV = { graphite:['#262624','#2e2e2b','#3a3a37'], sombre:['#0c0c0f','#141418','#1b1b21'], noir:['#000','#0a0a0a','#151515'], clair:['#f4f3ee','#eeede7','#e1dfd7'] };
+const THEMES = [['graphite','Graphite'],['sombre','Sombre'],['noir','Noir OLED'],['nuit','Nuit bleue'],['ardoise','Ardoise'],['foret','Forêt'],['prune','Prune'],['clair','Clair'],['ciel','Ciel'],['menthe','Menthe'],['rose','Rose poudré']];
+// couleur d'accent assortie, appliquée quand on choisit le thème (modifiable ensuite)
+const THEME_ACCENT = { graphite:'#c8703f', sombre:'#5d6bc9', noir:'#c8703f', nuit:'#5b8def', ardoise:'#5e81ac', foret:'#4caf7d', prune:'#e0679a', clair:'#c8703f', ciel:'#3b74d6', menthe:'#2f9b68', rose:'#d0567f' };
+const THEME_PREV = { graphite:['#262624','#2e2e2b','#3a3a37'], sombre:['#0c0c0f','#141418','#1b1b21'], noir:['#000','#0a0a0a','#151515'], clair:['#f4f3ee','#eeede7','#e1dfd7'], nuit:['#1a2130','#202838','#2c364a'], ardoise:['#2e3440','#343b48','#414a5a'], foret:['#1a221e','#202a25','#2d3832'], prune:['#261d24','#2e232c','#3b2e38'], ciel:['#eef3f9','#e6edf6','#d6e0ec'], menthe:['#eef6f1','#e5efe9','#d3e2d9'], rose:['#f9eff2','#f3e5ea','#e8d5dc'] };
 async function openSettings(tab = 'look'){
   let prefs = { notify: true, sound: true, tray: false, startup: false };
   try { prefs = await N.prefs(); } catch {}
@@ -1989,7 +1999,7 @@ async function openSettings(tab = 'look'){
     const show = t => {
       tab = t; card.querySelectorAll('[data-tab]').forEach(b => b.classList.toggle('on', b.dataset.tab === t));
       body.innerHTML = TABS[t][1]();
-      body.querySelectorAll('[data-th]').forEach(b => b.onclick = () => { SET.theme = b.dataset.th; changed(); });
+      body.querySelectorAll('[data-th]').forEach(b => b.onclick = () => { SET.theme = b.dataset.th; if (THEME_ACCENT[SET.theme]) SET.accent = THEME_ACCENT[SET.theme]; changed(); });
       body.querySelectorAll('[data-font]').forEach(b => b.onclick = () => { SET.uifont = b.dataset.font; changed(); });
       body.querySelectorAll('[data-lang]').forEach(b => b.onclick = async () => { if ((SET.lang || 'auto') === b.dataset.lang) return; SET.lang = b.dataset.lang; applySettings(); try { await N.prefs({ lang: SET.lang === 'auto' ? (navigator.language || 'fr').slice(0, 2) : SET.lang }); } catch {} location.reload(); });
       body.querySelectorAll('[data-a]').forEach(b => b.onclick = () => { SET.accent = b.dataset.a; changed(); });

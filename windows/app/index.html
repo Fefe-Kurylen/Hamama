@@ -275,7 +275,7 @@ textarea.field{height:auto;padding:10px 12px;resize:vertical;min-height:80px}
 .note{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.5}
 .note a,.lnk{color:var(--accent);cursor:pointer;text-decoration:none;font-weight:500}
 .err-box{background:rgba(239,68,68,.12);color:#f87171;border-radius:var(--rbx);padding:10px 12px;font-size:12.5px;margin-top:12px;line-height:1.5}
-[data-theme=clair] .err-box{color:#c62828}
+[data-tone=light] .err-box{color:#c62828}
 .ok-box{background:rgba(61,149,121,.14);color:#4fbf97;border-radius:var(--rbx);padding:10px 12px;font-size:12.5px;margin-top:12px}
 .g2{display:grid;grid-template-columns:1fr 110px 110px;gap:8px;align-items:end}
 .g2 .lbl{margin-top:8px}
@@ -401,7 +401,7 @@ html:not(.mobile):not(.narrow) #composer:not(.max) .chead{cursor:move}
 #toasts{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:95;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none}
 .toast{display:flex;align-items:center;gap:14px;background:var(--text);color:var(--bg);padding:10px 12px 10px 16px;border-radius:12px;font-size:13px;font-weight:500;box-shadow:0 10px 30px var(--shade);pointer-events:auto;animation:up .2s;max-width:min(560px,90vw)}
 .toast button{color:var(--accent);font-weight:700;font-size:13px;padding:3px 8px;border-radius:6px;filter:brightness(1.15)}
-[data-theme=clair] .toast button{filter:none}
+[data-tone=light] .toast button{filter:none}
 .toast button:hover{background:rgba(var(--accent-rgb),.15)}
 .toast.count{position:relative;overflow:hidden}
 .toast.count::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:100%;background:var(--accent);transform-origin:left;animation:cnt var(--dur) linear forwards}
@@ -412,8 +412,16 @@ html:not(.mobile):not(.narrow) #composer:not(.max) .chead{cursor:move}
 
 /* ================= Style épuré (sobre, une seule surface, accent discret) ================= */
 [data-theme=clair]{--bg:#f4f3ee;--panel:#eeede7;--panel2:#e7e5de;--line:#e1dfd7;--line2:#d2cfc5;--text:#161513;--muted:#57544e;--float:rgba(244,243,238,.95);--shade:rgba(40,35,25,.14);--card:#efeee8}
-[data-theme=clair] .mbody{background:#fbfaf7}
-[data-theme=clair] .btn.primary{color:#fff}
+[data-tone=light] .mbody{background:color-mix(in srgb,var(--bg) 40%,#fff)}
+[data-tone=light] .btn.primary{color:#fff}
+/* thèmes de couleur (inspirés de Mailbird) */
+[data-theme=nuit]{--bg:#1a2130;--panel:#202838;--panel2:#283246;--line:#2c364a;--line2:#3b475e;--text:#eef2f8;--muted:#a8b3c6;--float:rgba(32,40,56,.94);--shade:rgba(0,0,0,.45);--card:#1e2636}
+[data-theme=ardoise]{--bg:#2e3440;--panel:#343b48;--panel2:#3b4252;--line:#414a5a;--line2:#4f596d;--text:#eceff4;--muted:#b6bfcd;--float:rgba(52,59,72,.94);--shade:rgba(0,0,0,.4);--card:#323845}
+[data-theme=foret]{--bg:#1a221e;--panel:#202a25;--panel2:#28342e;--line:#2d3832;--line2:#3c4a42;--text:#eef4f0;--muted:#a9baaf;--float:rgba(32,42,37,.94);--shade:rgba(0,0,0,.45);--card:#1e2722}
+[data-theme=prune]{--bg:#261d24;--panel:#2e232c;--panel2:#382b35;--line:#3b2e38;--line2:#4d3d49;--text:#f8eff5;--muted:#c6afbd;--float:rgba(46,35,44,.94);--shade:rgba(0,0,0,.45);--card:#2a2029}
+[data-theme=ciel]{--bg:#eef3f9;--panel:#e6edf6;--panel2:#dce5f1;--line:#d6e0ec;--line2:#c3cfde;--text:#142033;--muted:#4f5d72;--float:rgba(238,243,249,.95);--shade:rgba(20,40,70,.14);--card:#e9eff7}
+[data-theme=menthe]{--bg:#eef6f1;--panel:#e5efe9;--panel2:#d9e8df;--line:#d3e2d9;--line2:#bfd2c6;--text:#13241b;--muted:#4c6355;--float:rgba(238,246,241,.95);--shade:rgba(20,50,35,.14);--card:#e8f1ec}
+[data-theme=rose]{--bg:#f9eff2;--panel:#f3e5ea;--panel2:#ecd9e0;--line:#e8d5dc;--line2:#d9bfc9;--text:#2a1820;--muted:#6e5560;--float:rgba(249,239,242,.95);--shade:rgba(60,25,40,.14);--card:#f5e9ed}
 header{background:var(--bg);border-bottom-color:var(--line)}
 #side{background:var(--bg)}
 #side .sfoot{border-top:0}
@@ -502,9 +510,9 @@ html[data-mailbg=theme] .mbody{background:transparent;border:0;box-shadow:none;b
 #composer .rz[data-d=sw]{left:-3px;bottom:-3px;width:14px;height:14px;cursor:nesw-resize}
 #composer:is(.max,.min) .rz,:is(.mobile,.narrow) #composer .rz{display:none}
 /* citations dans l'éditeur (réponse / transfert) en thème sombre : rendu identique à la lecture */
-html:not([data-theme=clair]) #ed > blockquote,html:not([data-theme=clair]) #ed > .fwd{background:#fff;color:#000;filter:var(--mailf,invert(.85) hue-rotate(180deg));border-left-color:#bbb;padding:4px 10px 4px 12px;border-radius:2px}
-html:not([data-theme=clair]) #ed > blockquote img,html:not([data-theme=clair]) #ed > .fwd img{filter:invert(1) hue-rotate(180deg)}
-html:not([data-theme=clair]) #ed > blockquote a,html:not([data-theme=clair]) #ed > .fwd a{color:#1a73e8}
+html:not([data-tone=light]) #ed > blockquote,html:not([data-tone=light]) #ed > .fwd{background:#fff;color:#000;filter:var(--mailf,invert(.85) hue-rotate(180deg));border-left-color:#bbb;padding:4px 10px 4px 12px;border-radius:2px}
+html:not([data-tone=light]) #ed > blockquote img,html:not([data-tone=light]) #ed > .fwd img{filter:invert(1) hue-rotate(180deg)}
+html:not([data-tone=light]) #ed > blockquote a,html:not([data-tone=light]) #ed > .fwd a{color:#1a73e8}
 /* lu / non lu bien distincts (messages et dossiers) */
 .it:not(.unread) .fr,.it:not(.unread) .sb .s{color:color-mix(in srgb,var(--text) 80%,var(--bg))}
 .it:not(.unread) .pv{color:var(--muted)}
