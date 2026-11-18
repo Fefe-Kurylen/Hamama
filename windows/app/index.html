@@ -12,9 +12,9 @@
   --hh:52px; --ib:32px; --is:17px; --rb:9px; --rc:13px;
   --sidew:232px; --listw:400px; --sat:max(env(safe-area-inset-top), var(--safe-area-inset-top, 0px)); --sab:max(env(safe-area-inset-bottom), var(--safe-area-inset-bottom, 0px));
 }
-:root,[data-theme=graphite]{--bg:#262624;--panel:#2e2e2b;--panel2:#363633;--line:#3a3a37;--line2:#4a4a46;--text:#f2f1ec;--muted:#a3a19a;--float:rgba(48,48,45,.94);--shade:rgba(0,0,0,.4);--card:#2b2b29}
-[data-theme=sombre]{--bg:#0c0c0f;--panel:#141418;--panel2:#1b1b21;--line:#26262e;--line2:#33333d;--text:#ececf1;--muted:#8b8b98;--float:rgba(27,27,33,.9);--shade:rgba(0,0,0,.5);--card:#17171c}
-[data-theme=noir]{--bg:#000;--panel:#0a0a0a;--panel2:#151515;--line:#1f1f1f;--line2:#2c2c2c;--text:#f2f2f2;--muted:#7d7d7d;--float:rgba(18,18,18,.94);--shade:rgba(0,0,0,.6);--card:#0d0d0d}
+:root,[data-theme=graphite]{--bg:#262624;--panel:#2e2e2b;--panel2:#363633;--line:#3a3a37;--line2:#4a4a46;--text:#f7f6f2;--muted:#bab8b0;--float:rgba(48,48,45,.94);--shade:rgba(0,0,0,.4);--card:#2b2b29}
+[data-theme=sombre]{--bg:#0c0c0f;--panel:#141418;--panel2:#1b1b21;--line:#26262e;--line2:#33333d;--text:#f3f3f7;--muted:#a6a6b2;--float:rgba(27,27,33,.9);--shade:rgba(0,0,0,.5);--card:#17171c}
+[data-theme=noir]{--bg:#000;--panel:#0a0a0a;--panel2:#151515;--line:#1f1f1f;--line2:#2c2c2c;--text:#f7f7f7;--muted:#a0a0a0;--float:rgba(18,18,18,.94);--shade:rgba(0,0,0,.6);--card:#0d0d0d}
 [data-theme=clair]{--bg:#eceef2;--panel:#ffffff;--panel2:#f2f3f6;--line:#e1e4ea;--line2:#d0d4dc;--text:#15161a;--muted:#6b7080;--float:rgba(255,255,255,.94);--shade:rgba(30,35,50,.16);--card:#f7f8fa}
 [data-density=compact]{--hh:42px;--ib:27px;--is:15px}
 [data-radius=carre]{--rb:3px;--rc:5px}
@@ -416,7 +416,7 @@ html:not(.mobile):not(.narrow) #composer:not(.max) .chead{cursor:move}
 @media (max-width:640px){ #side,#gripSide{display:none} .srch kbd,#compose span,.logo span{display:none} #compose{width:var(--ib);padding:0;justify-content:center} }
 
 /* ================= Style épuré (sobre, une seule surface, accent discret) ================= */
-[data-theme=clair]{--bg:#f4f3ee;--panel:#eeede7;--panel2:#e7e5de;--line:#e1dfd7;--line2:#d2cfc5;--text:#22211f;--muted:#6f6c65;--float:rgba(244,243,238,.95);--shade:rgba(40,35,25,.14);--card:#efeee8}
+[data-theme=clair]{--bg:#f4f3ee;--panel:#eeede7;--panel2:#e7e5de;--line:#e1dfd7;--line2:#d2cfc5;--text:#161513;--muted:#57544e;--float:rgba(244,243,238,.95);--shade:rgba(40,35,25,.14);--card:#efeee8}
 [data-theme=clair] .mbody{background:#fbfaf7}
 [data-theme=clair] .btn.primary{color:#fff}
 header{background:var(--bg);border-bottom-color:var(--line)}
@@ -507,22 +507,27 @@ html[data-mailbg=theme] .mbody{background:transparent;border:0;box-shadow:none;b
 #composer .rz[data-d=sw]{left:-3px;bottom:-3px;width:14px;height:14px;cursor:nesw-resize}
 #composer:is(.max,.min) .rz,:is(.mobile,.narrow) #composer .rz{display:none}
 /* citations dans l'éditeur (réponse / transfert) en thème sombre : rendu identique à la lecture */
-html:not([data-theme=clair]) #ed > blockquote,html:not([data-theme=clair]) #ed > .fwd{background:#fff;color:#1d1d1f;filter:invert(var(--inv,.85)) hue-rotate(180deg);border-left-color:#bbb;padding:4px 10px 4px 12px;border-radius:2px}
+html:not([data-theme=clair]) #ed > blockquote,html:not([data-theme=clair]) #ed > .fwd{background:#fff;color:#000;filter:var(--mailf,invert(.85) hue-rotate(180deg));border-left-color:#bbb;padding:4px 10px 4px 12px;border-radius:2px}
 html:not([data-theme=clair]) #ed > blockquote img,html:not([data-theme=clair]) #ed > .fwd img{filter:invert(1) hue-rotate(180deg)}
 html:not([data-theme=clair]) #ed > blockquote a,html:not([data-theme=clair]) #ed > .fwd a{color:#1a73e8}
 /* lu / non lu bien distincts (messages et dossiers) */
-.it:not(.unread) .fr,.it:not(.unread) .sb .s{color:color-mix(in srgb,var(--text) 64%,var(--bg))}
-.it:not(.unread) .pv{color:color-mix(in srgb,var(--muted) 85%,var(--bg))}
+.it:not(.unread) .fr,.it:not(.unread) .sb .s{color:color-mix(in srgb,var(--text) 80%,var(--bg))}
+.it:not(.unread) .pv{color:var(--muted)}
 .it:not(.unread) .dt{color:var(--muted)}
 .it.unread .fr{font-weight:700;color:var(--text)}
 .it.unread .sb .s{font-weight:650;color:var(--text)}
-.it.unread .pv{color:color-mix(in srgb,var(--text) 72%,var(--bg))}
+.it.unread .pv{color:color-mix(in srgb,var(--text) 86%,var(--bg))}
 .it.unread::before{width:7px;height:7px;margin-top:-3.5px;left:2px}
-.fold:not(.unread):not(.on) .t{color:color-mix(in srgb,var(--text) 68%,var(--bg))}
+.fold:not(.unread):not(.on) .t{color:color-mix(in srgb,var(--text) 84%,var(--bg))}
 .fold:not(.unread):not(.on) svg{color:var(--muted)}
 .fold.unread .t{font-weight:700;color:var(--text)}
 .fold.unread .n{font-weight:700;color:var(--text)}
 .fold:not(.unread) .n{font-weight:500}
+/* titres de section bien distincts des messages */
+.grp{color:var(--text);font-weight:700;font-size:12.5px;padding:16px 10px 6px;letter-spacing:.01em}
+.lhead h2{font-weight:700;font-size:17px}
+.acct > .ah{color:var(--text);font-weight:600}
+.vin h1{font-weight:700}
 /* séparation des colonnes bien visible */
 #side,#listCol{border-right-color:var(--line2)}
 [data-layout=large] #listCol{border-bottom-color:var(--line2)}

@@ -733,7 +733,7 @@ function applySettings(save = true){
   r.style.setProperty('--readw', { normal:'980px', large:'1240px', plein:'100%' }[SET.readw] || '980px');
   document.body.style.zoom = ZOOMS[SET.zoom] || 1;
   setAccent(SET.accent);
-  try { r.style.setProperty('--inv', mailInv()); } catch {}
+  try { r.style.setProperty('--mailf', mailInv()); } catch {}
   if (save) store.set('hamama-settings', JSON.stringify(SET));
   if (N && N.prefs && applySettings.spell !== SET.spell && document.readyState !== 'loading'){ applySettings.spell = SET.spell; N.prefs({ spell: SET.spell }).catch(() => {}); }
   const ed = document.getElementById('ed'); if (ed){ ed.spellcheck = SET.spell !== 'off'; ed.lang = spellLang(); }
@@ -1199,12 +1199,15 @@ function showMultiView(n){
   $('#view').querySelectorAll('[data-m]').forEach(b => b.onclick = () => act(b.dataset.m, [...ST.sel]));
 }
 const mailIsDark = () => SET.mailbg === 'theme' && SET.theme !== 'clair';
-// intensité d'inversion pour que le blanc du message devienne exactement le fond de l'appli
+// Messages en thème sombre : le blanc du message devient exactement le fond de l'appli (v)
+// et le texte noir devient un blanc presque pur (t) → contraste maximal.
+// invert(1) puis contrast(c) brightness(b) : y → b·(c·y + ½ − ½c) ; b = v + t, c = (t − v) / (v + t)
 function mailInv(){
   const c = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim().replace('#', '');
   const h = c.length === 3 ? c.split('').map(x => x + x).join('') : c;
   const v = h.length === 6 ? (parseInt(h.slice(0, 2), 16) + parseInt(h.slice(2, 4), 16) + parseInt(h.slice(4, 6), 16)) / 765 : .15;
-  return (1 - v).toFixed(3);
+  const t = .965;
+  return `invert(1) hue-rotate(180deg) contrast(${((t - v) / (v + t)).toFixed(3)}) brightness(${(v + t).toFixed(3)})`;
 }
 function sanitizeMailHtml(html){
   const d = new DOMParser().parseFromString(html, 'text/html');
@@ -1223,11 +1226,11 @@ function mailDoc(m, allowImg){
   let styles = '', body = '';
   if (m.html){ const s = sanitizeMailHtml(m.html); styles = s.styles; body = s.body; }
   else body = `<div style="white-space:pre-wrap;font-family:inherit">${linkify(m.text || '')}</div>`;
-  const z = (+SET.mailZoom || 100) / 100, flat = SET.mailbg === 'theme', inv = dark ? mailInv() : 1;
+  const z = (+SET.mailZoom || 100) / 100, flat = SET.mailbg === 'theme', inv = dark ? mailInv() : '';
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="${csp}"><base target="_blank">${styles}
-<style>html{zoom:${z}}body{margin:0;padding:${flat ? '6px 2px 18px' : '22px 26px'};font:14px/1.6 ${uiFont()},Inter,"Segoe UI",Arial,sans-serif;color:#1d1d1f;background:${dark ? '#fff' : 'transparent'};word-wrap:break-word;overflow-wrap:anywhere;overflow-x:auto}
+<style>html{zoom:${z}}body{margin:0;padding:${flat ? '6px 2px 18px' : '22px 26px'};font:14px/1.6 ${uiFont()},Inter,"Segoe UI",Arial,sans-serif;color:${dark ? '#000' : '#1d1d1f'};background:${dark ? '#fff' : 'transparent'};word-wrap:break-word;overflow-wrap:anywhere;overflow-x:auto}
 img{max-width:100%;height:auto}pre{white-space:pre-wrap}a{color:#1a73e8}blockquote{margin:8px 0;padding-left:12px;border-left:3px solid #d0d4dc;color:#555}table{max-width:100%}
-${dark ? `html{filter:invert(${inv}) hue-rotate(180deg)}img,video,picture,[style*="background-image"]{filter:invert(1) hue-rotate(180deg)}` : ''}</style></head><body>${body}</body></html>`;
+${dark ? `html{filter:${inv}}img,video,picture,[style*="background-image"]{filter:invert(1) hue-rotate(180deg)}` : ''}</style></head><body>${body}</body></html>`;
 }
 function hasRemote(m){ return !!m.html && /<img[^>]+src\s*=\s*["']?\s*https?:|url\(\s*["']?https?:|<link[^>]+href\s*=\s*["']?https?:/i.test(m.html); }
 async function openMsg(key, { keepSel = false } = {}){
