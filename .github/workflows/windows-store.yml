@@ -20,14 +20,9 @@ jobs:
       - run: npm ci
       - name: Interface (web/index.html → windows/app)
         run: python make-app.py
-      - name: Numéro de version (identique à la dernière mise à jour publiée, format Store X.Y.Z.0)
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Numéro de version (windows/package.json, format Store X.Y.Z.0)
         run: |
-          $base = node -p "require('./package.json').version"
-          $tag = (gh release view --repo ${{ github.repository }} --json tagName -q .tagName 2>$null)
-          if ($tag) { $v = $tag.TrimStart('v') } else { $p = $base.Split('.'); $v = "$($p[0]).$($p[1]).$([int]$p[2] + ${{ github.run_number }})" }
-          npm version $v --no-git-tag-version --allow-same-version | Out-Null
+          $v = node -p "require('./package.json').version"
           "Version du paquet Store : $v.0" | Tee-Object -FilePath $env:GITHUB_STEP_SUMMARY -Append
       - name: Fabrication du paquet Store
         run: npx electron-builder --win appx --x64 --publish never

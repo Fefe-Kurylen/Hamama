@@ -54,7 +54,7 @@ cd android && ./gradlew assembleRelease         # → app/build/outputs/apk/rele
 
 ## 🔄 Mises à jour = par les stores (décision de Félix, 18/11/2026)
 - **Plus de bouton « Mettre à jour » ni d'electron-updater** dans l'appli : les mises à jour passent par le **Microsoft Store** (Windows), et plus tard Google Play / App Store / Mac App Store.
-- Nouvelle version Windows : pousser sur `main` → le workflow `windows-store.yml` fabrique et teste le `.appx` (artifact `hamama-store`) → nouvelle soumission dans l'Espace partenaires (produit **9NB60JPQ44R5**, identité `Kurylen.Hamama`, éditeur `CN=B85CD3FF-A422-425E-9A54-A6E74180E94E`) → le Store met à jour les PC.
+- Nouvelle version Windows : **augmenter `version` dans `windows/package.json`** (le Store refuse un numéro déjà envoyé ; 1.0.12 le 18/11/2026), pousser sur `main` → le workflow `windows-store.yml` fabrique et teste le `.appx` (artifact `hamama-store`) → nouvelle soumission dans l'Espace partenaires (produit **9NB60JPQ44R5**, identité `Kurylen.Hamama`, éditeur `CN=B85CD3FF-A422-425E-9A54-A6E74180E94E`) → le Store met à jour les PC.
 - Envoi du paquet dans l'Espace partenaires depuis le navigateur intégré : le fichier est découpé (< 100 Mo), poussé sur une branche temporaire, reconstitué dans la page via `raw.githubusercontent.com` puis donné au champ `input[type=file].fileuploader` (UN seul événement, sinon envois en double). Les captures (`store/captures/*.png`, faites avec `store/demo-server.js` + `store/captures.js`) passent de la même façon, une par une.
 - Accepter les conditions (IARC) et cliquer « Soumettre pour certification » : à faire par Félix.
 
