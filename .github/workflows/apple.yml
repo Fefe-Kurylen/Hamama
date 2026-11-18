@@ -14,13 +14,17 @@ concurrency:
   cancel-in-progress: false
 jobs:
   iphone:
-    runs-on: macos-15
+    runs-on: macos-26
     env:
       ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
       ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
       TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
     steps:
       - uses: actions/checkout@v4
+      - name: Xcode le plus récent (SDK iOS 26 ou plus exigé par Apple)
+        run: |
+          X=$(ls -d /Applications/Xcode_*.app | grep -v -i beta | sort -V | tail -1)
+          sudo xcode-select -s "$X" && xcodebuild -version
       - name: Secrets présents ?
         id: ok
         run: |
