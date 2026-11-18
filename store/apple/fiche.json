@@ -1,12 +1,12 @@
 {
   "name": "Hamama : Mail",
-  "subtitle": "Tous vos mails, au même endroit",
+  "subtitle": "Tous vos mails au même endroit",
   "promotionalText": "Une boîte mail sobre et rapide pour tous vos comptes : Gmail, Outlook, iCloud et n'importe quelle adresse IMAP. Aucune publicité, aucun pistage.",
   "description": "Hamama est une application mail simple, sobre et entièrement personnalisable pour tous vos comptes.\n\nHamama (حمامة) signifie « colombe » en arabe : la colombe voyageuse qui porte les messages.\n\nTOUS VOS COMPTES DANS UNE SEULE BOÎTE\n• Gmail, Outlook, Hotmail, iCloud, Yahoo, Free, Orange, SFR et n'importe quelle adresse IMAP / SMTP\n• Réglages des serveurs détectés automatiquement\n• Boîte de réception unifiée ou compte par compte\n• Nouveaux messages reçus en temps réel\n\nVOS DONNÉES RESTENT CHEZ VOUS\n• Aucun compte Hamama, aucun serveur intermédiaire : l'appli parle directement à votre fournisseur de mail\n• Mots de passe chiffrés sur votre appareil uniquement\n• Images distantes et pixels espions bloqués par défaut\n• Aucune publicité, aucune statistique, aucune donnée collectée\n\nLIRE ET TRIER SANS EFFORT\n• Balayez pour archiver ou marquer comme lu\n• Appui long pour toutes les actions\n• Recherche dans un dossier ou dans tous les comptes\n• Expéditeurs bloqués envoyés directement dans les indésirables\n• Lien de désabonnement mis en avant\n\nÉCRIRE CONFORTABLEMENT\n• Destinataires en pastilles avec saisie automatique\n• Mise en forme, pièces jointes, photos\n• Signature par compte\n• Annulation de l'envoi pendant quelques secondes\n• Brouillons enregistrés automatiquement\n\nÀ VOTRE GOÛT\n• 11 thèmes clairs et sombres, couleur d'accent au choix\n• Taille du texte, densité, avatars, aperçu des messages\n• Disponible en français, anglais, espagnol, allemand, italien, portugais et arabe\n\nSur iPad, Hamama affiche les dossiers, la liste et le message côte à côte.\n\nHamama existe aussi sur Windows (Microsoft Store) et Android.",
   "keywords": "mail,email,courriel,boîte mail,gmail,outlook,icloud,imap,messagerie,unifiée,vie privée",
-  "supportUrl": "https://github.com/Fefe-Kurylen/Hamama/issues",
-  "marketingUrl": "https://github.com/Fefe-Kurylen/Hamama",
-  "privacyPolicyUrl": "https://github.com/Fefe-Kurylen/Hamama/blob/main/PRIVACY.md",
+  "supportUrl": "https://fefe-kurylen.github.io/Hamama/",
+  "marketingUrl": "https://fefe-kurylen.github.io/Hamama/",
+  "privacyPolicyUrl": "https://fefe-kurylen.github.io/Hamama/confidentialite.html",
   "copyright": "2026 Kurylen",
   "notes": "Hamama is an email client (IMAP/SMTP). There is no Hamama account or server: the user adds his own email account (Gmail with an app password, Outlook, iCloud with an app-specific password, or any IMAP provider) from the welcome screen, and the app detects the server settings automatically. Passwords are stored encrypted on the device only. To test, please use any personal or test email account on the welcome screen (\"Autre adresse\" lets you enter IMAP/SMTP servers manually)."
 }
