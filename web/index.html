@@ -889,6 +889,8 @@ const I18N = {
 "Autre…":["Other…","Otro…","Andere…","Altro…","Outro…","آخر…"],
 "Autre messagerie":["Other email","Otro correo","Anderer Anbieter","Altra posta","Outro email","بريد آخر"],
 "Saisis ton adresse : Hamama trouve tout seul les réglages des serveurs.":["Enter your address: Hamama finds the server settings by itself.","Escribe tu dirección: Hamama encuentra solo los ajustes del servidor.","Gib deine Adresse ein: Hamama findet die Servereinstellungen selbst.","Inserisci il tuo indirizzo: Hamama trova da solo le impostazioni del server.","Escreve o teu endereço: o Hamama encontra sozinho as definições do servidor.","أدخل عنوانك: يعثر حمامة على إعدادات الخادم تلقائيًا."],
+"{0} refuse le mot de passe habituel : il faut un mot de passe d’application.":["{0} rejects your usual password: you need an app password.","{0} rechaza la contraseña habitual: necesitas una contraseña de aplicación.","{0} lehnt das normale Passwort ab: Du brauchst ein App-Passwort.","{0} rifiuta la password abituale: serve una password per le app.","{0} recusa a palavra-passe habitual: precisas de uma palavra-passe de aplicação.","يرفض {0} كلمة المرور المعتادة: تحتاج إلى كلمة مرور تطبيق."],
+"Créer le mot de passe d’application ↗":["Create the app password ↗","Crear la contraseña de aplicación ↗","App-Passwort erstellen ↗","Crea la password per le app ↗","Criar a palavra-passe de aplicação ↗","إنشاء كلمة مرور التطبيق ↗"],
 "Ouvrir la page ↗":["Open page ↗","Abrir la página ↗","Seite öffnen ↗","Apri la pagina ↗","Abrir a página ↗","فتح الصفحة ↗"],
 "Ton nom (affiché aux destinataires)":["Your name (shown to recipients)","Tu nombre (visible para los destinatarios)","Dein Name (für Empfänger sichtbar)","Il tuo nome (visibile ai destinatari)","O teu nome (visível para os destinatários)","اسمك (يظهر للمستلمين)"],
 "Adresse e-mail":["Email address","Dirección de correo","E-Mail-Adresse","Indirizzo email","Endereço de email","عنوان البريد الإلكتروني"],
@@ -2543,7 +2545,17 @@ function accountForm(prov){
       try {
         const cfg = cfgOf();
         const t = await N.acc.test(cfg);
-        if (!t.ok){ msg.innerHTML = `<div class="err-box"><b>${t.step === 'imap' ? 'Réception (IMAP)' : 'Envoi (SMTP)'} :</b> ${esc(t.err)}</div>`; if (!/mot de passe/.test(t.err)) c.querySelector('details').open = true; return; }
+        if (!t.ok){
+          const pv = cfg.provider, PP = ST.providers[pv], step = `<b>${t.step === 'imap' ? 'Réception (IMAP)' : 'Envoi (SMTP)'} :</b> `;
+          if (/mot de passe/.test(t.err) && PP && PP.appPassword){
+            const lbl = (PROV_UI.find(x => x[0] === pv) || [])[1] || PP.label;
+            msg.innerHTML = `<div class="err-box">${step}<span>${esc(lbl)} refuse le mot de passe habituel : il faut un mot de passe d’application.</span><br><span>${HELP[pv] || ''}</span><br><a class="lnk" data-open="${esc(PP.appPassword)}">Créer le mot de passe d’application ↗</a></div>`;
+            msg.querySelectorAll('[data-open]').forEach(a => a.onclick = () => window.open(a.dataset.open));
+            F('pass').value = ''; F('pass').focus();
+            return;
+          }
+          msg.innerHTML = `<div class="err-box">${step}${esc(t.err)}</div>`; if (!/mot de passe/.test(t.err)) c.querySelector('details').open = true; return;
+        }
         await finish(cfg);
       } catch (e) { msg.innerHTML = `<div class="err-box">${esc(cleanErr(e))}</div>`; }
       finally { ok.disabled = false; ok.innerHTML = `${ic('check')}Se connecter`; }
