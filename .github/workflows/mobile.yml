@@ -64,7 +64,7 @@ jobs:
           npm ci
           python3 make-mobile.py
           npx cap sync ios
-      - name: Compilation pour le simulateur iPhone (arm64 : le Node.js embarqué n'existe pas en x86_64)
+      - name: Compilation pour le simulateur iPhone (arm64, le Node.js embarqué n'existe pas en x86_64)
         working-directory: mobile
         run: |
           xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Debug \
