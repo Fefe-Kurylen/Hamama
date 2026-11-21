@@ -19,7 +19,7 @@ const ok = (c, m) => { console.log((c ? '✅ ' : '❌ ') + m); if (!c) process.e
   await win.fill('[data-k=name]', 'Félix');
   await win.fill('[data-k=email]', 'felix@test.local');
   await win.fill('[data-k=pass]', 'secret');
-  await win.click('details.adv summary');
+  await win.$eval('details.adv', d => { d.open = true; });
   await win.fill('[data-k=ih]', '127.0.0.1'); await win.fill('[data-k=ip]', '1143'); await win.selectOption('[data-k=is]', '0');
   await win.fill('[data-k=sh]', '127.0.0.1'); await win.fill('[data-k=sp]', '1025'); await win.selectOption('[data-k=ss]', '0');
   await win.check('[data-k=insecure]');
@@ -153,7 +153,7 @@ const ok = (c, m) => { console.log((c ? '✅ ' : '❌ ') + m); if (!c) process.e
   // Deuxième compte → boîte unifiée
   await win.click('#addAccBtn'); await win.click('.modal [data-p=autre]');
   await win.fill('[data-k=name]', 'Test'); await win.fill('[data-k=email]', 'testuser@autre.local'); await win.fill('[data-k=pass]', 'testpass');
-  await win.click('details.adv summary'); await win.fill('[data-k=user]', 'testuser');
+  await win.$eval('details.adv', d => { d.open = true; }); await win.fill('[data-k=user]', 'testuser');
   await win.fill('[data-k=ih]', '127.0.0.1'); await win.fill('[data-k=ip]', '1143'); await win.selectOption('[data-k=is]', '0');
   await win.fill('[data-k=sh]', '127.0.0.1'); await win.fill('[data-k=sp]', '1025'); await win.selectOption('[data-k=ss]', '0');
   await win.check('[data-k=insecure]'); await win.click('[data-ok]');

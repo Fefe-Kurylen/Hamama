@@ -403,8 +403,11 @@ html:not(.mobile):not(.narrow) #composer:not(.max) .chead{cursor:move}
 .toast button{color:var(--accent);font-weight:700;font-size:13px;padding:3px 8px;border-radius:6px;filter:brightness(1.15)}
 [data-tone=light] .toast button{filter:none}
 .toast button:hover{background:rgba(var(--accent-rgb),.15)}
-.toast.count{position:relative;overflow:hidden}
-.toast.count::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:100%;background:var(--accent);transform-origin:left;animation:cnt var(--dur) linear forwards}
+.toast.count{position:relative;flex-wrap:wrap;gap:10px 14px;min-width:min(380px,92vw);padding:14px 14px 14px 18px;font-size:15px;font-weight:600;border-radius:16px}
+.toast.count>span{flex:1;font-variant-numeric:tabular-nums}
+.toast.count button{font-size:14px;padding:7px 14px;border-radius:999px;background:rgba(var(--accent-rgb),.16)}
+.toast.count .cbar{flex-basis:100%;height:7px;border-radius:999px;background:rgba(128,128,128,.28);overflow:hidden}
+.toast.count .cbar i{display:block;height:100%;width:100%;border-radius:inherit;background:var(--accent);transform-origin:left;animation:cnt var(--dur) linear forwards}
 @keyframes cnt{to{transform:scaleX(0)}}
 @media (max-width:1000px){ .lbl-t{display:none} .vbar .btn{padding:0;width:var(--ib);justify-content:center} }
 @media (max-width:900px){ [data-layout=trois] #viewCol{display:none} [data-layout=trois].reading #listCol{display:none} [data-layout=trois].reading #viewCol{display:flex} [data-layout=trois] .backBtn{display:grid!important} [data-layout=trois] #listCol{flex:1;width:auto} [data-layout=trois] #gripList{display:none} }
@@ -647,6 +650,58 @@ html[data-unreadb=off] .it.unread .fr,html[data-unreadb=off] .it.unread .sb .s,h
 .hmid .srch{margin:0;flex:1;max-width:560px}
 .hmid #compose{flex:none}
 .noacc .hmid #compose{display:none!important}
+
+/* ===== Téléphone : liste des boîtes en plein écran + barre du haut à la taille de la recherche (21/11) ===== */
+:is(.mobile,.narrow).boxes #side{transform:none!important;top:calc(var(--hh) + var(--sat));left:0;right:0;width:auto;box-shadow:none;border-right:0;padding-top:0;z-index:30;transition:none}
+:is(.mobile,.narrow).boxes #listCol,:is(.mobile,.narrow).boxes #viewCol{display:none!important}
+:is(.mobile,.narrow).boxes #sideBtn{display:none}
+:is(.mobile,.narrow).boxes #drawerBack{display:none!important}
+:is(.mobile,.narrow) header{--ib:42px;--is:22px}
+:is(.mobile,.narrow){--hh:58px}
+:is(.mobile,.narrow) header .logo,:is(.mobile,.narrow) header .logo .mark,:is(.mobile,.narrow) header .ibtn,:is(.mobile,.narrow) #compose{flex:none}
+:is(.mobile,.narrow) header .logo .mark{width:calc(var(--ib) - 2px);height:calc(var(--ib) - 2px);border-radius:min(12px,var(--rb))}
+:is(.mobile,.narrow) header .logo .mark svg{width:calc(var(--is) + 2px);height:calc(var(--is) + 2px)}
+:is(.mobile,.narrow) header .ibtn{width:calc(var(--ib) - 2px);height:calc(var(--ib) - 2px)}
+:is(.mobile,.narrow) header .ibtn svg{width:var(--is);height:var(--is)}
+:is(.mobile,.narrow) #compose{width:calc(var(--ib) - 2px)!important;height:calc(var(--ib) - 2px);min-width:0;padding:0;justify-content:center;border-radius:min(12px,var(--rb))}
+:is(.mobile,.narrow) #compose svg{width:var(--is);height:var(--is)}
+:is(.mobile,.narrow) .srch{min-width:0;height:calc(var(--ib) - 2px)}
+:is(.mobile,.narrow) .hmid{gap:6px}
+
+/* ===== Téléphone : style moderne, minimaliste et fluide (21/11) ===== */
+:is(.mobile,.narrow) header{border-bottom:0;--ib:44px;--is:22px;padding-left:10px;padding-right:10px;gap:6px}
+:is(.mobile,.narrow):not(.boxes) header .logo{display:none}
+/* icônes aux bords fondus : fond teinté doux, sans arête nette */
+:is(.mobile,.narrow) header .logo .mark{border-radius:50%;background:radial-gradient(circle at 50% 40%,rgba(var(--accent-rgb),.30),rgba(var(--accent-rgb),.10) 70%,rgba(var(--accent-rgb),0));color:var(--accent);box-shadow:none}
+:is(.mobile,.narrow) header .ibtn{border-radius:50%;color:var(--text)}
+:is(.mobile,.narrow) header .ibtn:active{background:rgba(128,128,128,.16)}
+:is(.mobile,.narrow) #compose{border-radius:50%!important;border:0;background:radial-gradient(circle at 50% 35%,rgba(var(--accent-rgb),1),rgba(var(--accent-rgb),.85));box-shadow:0 0 0 4px rgba(var(--accent-rgb),.10),0 6px 18px rgba(var(--accent-rgb),.32)}
+:is(.mobile,.narrow) #compose:active{transform:scale(.94)}
+:is(.mobile,.narrow) .srch{border-radius:999px;border:0;background:rgba(128,128,128,.13);padding:0 16px;gap:10px;font-size:15px}
+:is(.mobile,.narrow) .srch:focus-within{background:rgba(128,128,128,.18);box-shadow:0 0 0 2px rgba(var(--accent-rgb),.35)}
+:is(.mobile,.narrow) .srch input::placeholder{color:var(--muted);opacity:.8}
+/* liste */
+.mobile .lhead{padding:10px 16px 6px 20px}
+.mobile .lhead h2{font-size:27px;font-weight:700;letter-spacing:-.02em}
+.mobile .chips{padding:2px 16px 8px 20px;gap:8px}
+.mobile .chips button{height:32px;padding:0 14px;font-size:13.5px;border:0;background:rgba(128,128,128,.12)}
+.mobile .chips button.on{background:rgba(var(--accent-rgb),.18)}
+.mobile .grp{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);opacity:.85;padding:18px 12px 6px}
+.mobile .it{padding:12px 12px 12px 14px;gap:13px;border-radius:18px;transition:background .15s,transform .15s}
+.mobile .it:active{background:rgba(128,128,128,.10)}
+.mobile .it .av{width:44px;height:44px;flex:none}
+/* boîtes */
+.mobile #side .acct > .ah{font-size:13px;padding:14px 12px 8px}
+.mobile .fold{height:50px;padding:0 14px;border-radius:16px;font-size:16px;gap:14px;--is:20px}
+.mobile .fold:active{background:rgba(128,128,128,.10)}
+.mobile #side .sfoot{border-top:0}
+/* fenêtres et messages éphémères */
+.mobile .toast{border-radius:18px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.mobile .modal .card{border-radius:24px 24px 18px 18px}
+/* fluidité : pas de délai au toucher, rendu des lignes hors écran différé */
+.mobile button,.mobile a,.mobile .it,.mobile .fold,.mobile label{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.mobile .it{touch-action:pan-y;content-visibility:auto;contain-intrinsic-size:auto 86px}
+.mobile #list,.mobile #side .fl,.mobile #view{-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 </style>
 </head>
 <body>
@@ -852,6 +907,7 @@ const I18N = {
 "Cc":["Cc","Cc","Cc","Cc","Cc","نسخة"],
 "Cci":["Bcc","Cco","Bcc","Ccn","Bcc","نسخة مخفية"],
 "Adresse invalide (pas d’accents dans une adresse mail) : {0}":["Invalid address (no accents allowed in an email address): {0}","Dirección no válida (sin acentos en una dirección de correo): {0}","Ungültige Adresse (keine Akzente in einer E-Mail-Adresse): {0}","Indirizzo non valido (niente accenti in un indirizzo email): {0}","Endereço inválido (sem acentos num endereço de e-mail): {0}","عنوان غير صالح (لا أحرف معلَّمة في عنوان البريد): {0}"],
+"Retour aux boîtes":["Back to mailboxes","Volver a los buzones","Zurück zu den Postfächern","Torna alle caselle","Voltar às caixas","العودة إلى الصناديق"],
 "Cc / Cci":["Cc / Bcc","Cc / Cco","Cc / Bcc","Cc / Ccn","Cc / Bcc","نسخة / مخفية"],
 "Réduire":["Minimize","Minimizar","Minimieren","Riduci","Minimizar","تصغير"],
 "Agrandir":["Maximize","Maximizar","Maximieren","Ingrandisci","Maximizar","تكبير"],
@@ -1053,6 +1109,8 @@ const I18N = {
 "Bloquer (recommandé)":["Block (recommended)","Bloquear (recomendado)","Blockieren (empfohlen)","Blocca (consigliato)","Bloquear (recomendado)","حظر (موصى به)"],
 "Toujours afficher":["Always show","Mostrar siempre","Immer anzeigen","Mostra sempre","Mostrar sempre","العرض دائمًا"],
 "Les images distantes peuvent servir à savoir quand tu ouvres un mail.":["Remote images can be used to know when you open an email.","Las imágenes remotas pueden servir para saber cuándo abres un correo.","Externe Bilder können verraten, wann du eine E-Mail öffnest.","Le immagini remote possono rivelare quando apri una email.","As imagens remotas podem servir para saber quando abres um email.","قد تُستخدم الصور البعيدة لمعرفة متى تفتح رسالة."],
+"Recevoir les mails en arrière-plan":["Receive mail in the background","Recibir correo en segundo plano","E-Mails im Hintergrund empfangen","Ricevi la posta in background","Receber e-mails em segundo plano","استلام البريد في الخلفية"],
+"Hamama reste prêt quand l’appli est fermée : les nouveaux mails sont notifiés en temps réel. Android affiche une petite notification discrète « Réception des mails en temps réel », que tu peux masquer.":["Hamama stays ready when the app is closed: new mail is notified in real time. Android shows a small discreet notification “Real-time mail reception”, which you can hide.","Hamama sigue listo con la app cerrada: los correos nuevos se notifican en tiempo real. Android muestra una pequeña notificación discreta, que puedes ocultar.","Hamama bleibt bereit, wenn die App geschlossen ist: Neue E-Mails werden sofort gemeldet. Android zeigt eine kleine, unauffällige Benachrichtigung, die du ausblenden kannst.","Hamama resta pronto ad app chiusa: le nuove email vengono notificate in tempo reale. Android mostra una piccola notifica discreta, che puoi nascondere.","O Hamama fica pronto com a app fechada: os novos e-mails são notificados em tempo real. O Android mostra uma pequena notificação discreta, que pode ocultar.","يبقى Hamama جاهزًا عند إغلاق التطبيق: يتم إشعارك بالرسائل الجديدة فورًا. يعرض Android إشعارًا صغيرًا يمكنك إخفاؤه."],
 "Fond des messages":["Message background","Fondo de los mensajes","Nachrichtenhintergrund","Sfondo dei messaggi","Fundo das mensagens","خلفية الرسائل"],
 "Blanc (fidèle)":["White (faithful)","Blanco (fiel)","Weiß (originalgetreu)","Bianco (fedele)","Branco (fiel)","أبيض (مطابق)"],
 "Suivre le thème (sombre)":["Follow the theme (dark)","Seguir el tema (oscuro)","Design folgen (dunkel)","Segui il tema (scuro)","Seguir o tema (escuro)","اتباع السمة (داكن)"],
@@ -1440,10 +1498,11 @@ const DEF_SET = {
   theme:'graphite', accent:'#c8703f', layout:'trois', density:'confort', zoom:'m', radius:'doux', side:'shown',
   preview:'1', avatars:'on', groups:'on', unified:'on', qa:['star','archive','reply','trash'], after:'next',
   uifont:'Inter', weight:'normal', unreadBold:'on', markRead:'delay', images:'ask', mailbg:'theme', spell:'auto', mailZoom:'100', labels:'off', readw:'normal',
-  font:'Inter', fsize:'14', undoSend:'5', lang:'auto', compWin:'float', noSubjWarn:'on', keys:'on', counts:'unread'
+  font:'Inter', fsize:'14', undoSend:'10', lang:'auto', compWin:'float', noSubjWarn:'on', keys:'on', counts:'unread'
 };
 let SET = { ...DEF_SET, ...J('hamama-settings', {}) };
 if (!SET.qa2){ SET.qa = ['star','archive','reply','trash']; SET.qa2 = 1; }   // 18/11 : favoris, archiver, répondre, poubelle
+if (!SET.us10){ if (SET.undoSend === '5') SET.undoSend = '10'; SET.us10 = 1; }   // 21/11 : délai d’annulation 10 s par défaut
 if (!SET.mb2){ SET.mailbg = 'theme'; SET.mb2 = 1; }   // 18/11 : messages affichés sur le fond de l’appli (comme Mailbird)
 const ZOOMS = { s:.9, m:1, l:1.1, xl:1.25 };
 const UI_FONTS = ['Inter','Segoe UI','Arial','Calibri','Verdana','Tahoma','Trebuchet MS','Georgia'];
@@ -1477,6 +1536,17 @@ const narrowCheck = () => document.documentElement.classList.toggle('narrow', (!
 narrowCheck(); addEventListener('resize', narrowCheck);
 const isSmall = () => (MOBILE && !TABLET) || innerWidth < 640;
 const setDrawer = on => document.documentElement.classList.toggle('drawer', !!on);
+// Téléphone : l'appli s'ouvre sur la liste des boîtes ; dans une boîte, le bouton de gauche devient « Retour » (demande de Félix, 21/11)
+const setBoxes = on => { const r = document.documentElement; r.classList.toggle('boxes', !!on); if (on){ r.classList.remove('reading', 'drawer'); } updSideBtn(); };
+function updSideBtn(){
+  const b = document.getElementById('sideBtn'); if (!b) return;
+  const want = isSmall() ? 'left' : 'sidebar';
+  if (b.dataset.cur !== want){ b.innerHTML = ic(want); b.dataset.cur = want; }
+  b.title = isSmall() ? 'Retour aux boîtes' : 'Afficher / masquer les dossiers';
+}
+if (MOBILE && !TABLET){ document.documentElement.classList.add('boxes'); const q = document.getElementById('q'); if (q) q.placeholder = 'Rechercher'; }
+addEventListener('resize', () => updSideBtn());
+setTimeout(updSideBtn, 0);
 
 /* ================= État ================= */
 const ST = {
@@ -1536,8 +1606,8 @@ function renderSide(){
   if (N) N.badge(n).catch(() => {});
 }
 $('#folders').addEventListener('click', e => {
-  const u = e.target.closest('[data-uni]'); if (u){ setDrawer(false); return openView({ uni: true }); }
-  const f = e.target.closest('.fold[data-box]'); if (f){ setDrawer(false); return openView({ acc: f.dataset.acc, box: f.dataset.box }); }
+  const u = e.target.closest('[data-uni]'); if (u){ setDrawer(false); setBoxes(false); return openView({ uni: true }); }
+  const f = e.target.closest('.fold[data-box]'); if (f){ setDrawer(false); setBoxes(false); return openView({ acc: f.dataset.acc, box: f.dataset.box }); }
   const ah = e.target.closest('[data-ah]');
   if (ah){ const id = ah.dataset.ah; collapsed.has(id) ? collapsed.delete(id) : collapsed.add(id); store.set('hamama-collapsed', JSON.stringify([...collapsed])); ah.parentNode.classList.toggle('closed'); return; }
   const fx = e.target.closest('[data-fix]'); if (fx) return openAccount(fx.dataset.fix);
@@ -2484,7 +2554,7 @@ async function sendNow(){
     // décompte en temps réel ; l'envoi part exactement à 0
     const end = Date.now() + delay;
     const t = toast(T(`Envoi dans ${Math.ceil(delay / 1000)} s`), { label: 'Annuler', fn: () => { cancelled = true; clearInterval(tick); clearTimeout(timer); openComposer({ ...snap, atts: restoreAtts(snap.atts) }); toast('Envoi annulé'); } }, delay, true);
-    t.el.classList.add('count'); t.el.style.setProperty('--dur', delay + 'ms');
+    t.el.classList.add('count'); t.el.style.setProperty('--dur', delay + 'ms'); t.el.insertAdjacentHTML('beforeend', '<div class="cbar"><i></i></div>');
     const sp = t.el.querySelector('span'); sp.setAttribute('data-notr', '');
     const tick = setInterval(() => { const r = Math.max(1, Math.ceil((end - Date.now()) / 1000)); sp.textContent = T(`Envoi dans ${r} s`); }, 200);
     const timer = setTimeout(() => { clearInterval(tick); t.close(); go(); }, delay);
@@ -2714,6 +2784,7 @@ async function openSettings(tab = 'look'){
       R('Expéditeurs bloqués', `<div style="display:flex;gap:8px"><input class="field" data-newblock placeholder="Adresse ou @domaine" spellcheck="false"><button class="btn primary" data-addblock>Ajouter</button></div><div data-blist style="margin-top:12px"></div>`, 'Les messages des expéditeurs bloqués vont directement dans Indésirables, sans notification. Pour bloquer tout un domaine, écris @domaine.fr.')],
     notif: ['Notifications', () =>
       R('Notifications des nouveaux messages', pseg('notify', pyn)) +
+      (N.platform === 'android' ? R('Recevoir les mails en arrière-plan', pseg('bg', pyn), 'Hamama reste prêt quand l’appli est fermée : les nouveaux mails sont notifiés en temps réel. Android affiche une petite notification discrète « Réception des mails en temps réel », que tu peux masquer.') : '') +
       (MOBILE ? '' : R('Son', pseg('sound', pyn)) +
       R('Garder Hamama dans la zone de notification à la fermeture', pseg('tray', pyn), 'Hamama continue de recevoir les messages quand la fenêtre est fermée.') +
       R('Lancer Hamama au démarrage de Windows', pseg('startup', pyn)) +
@@ -2868,6 +2939,7 @@ addEventListener('hamama-back', e => {
   if (document.documentElement.classList.contains('drawer')){ setDrawer(false); e.preventDefault(); return; }
   if (ST.search){ clearSearch(); e.preventDefault(); return; }
   if (document.documentElement.classList.contains('reading')){ viewAction('back'); e.preventDefault(); return; }
+  if (isSmall() && !document.documentElement.classList.contains('boxes')){ setBoxes(true); e.preventDefault(); return; }
   if (ST.sel.size > 1 || ST.selMode){ ST.sel.clear(); ST.selMode = false; renderList(); e.preventDefault(); }
 });
 
@@ -2902,7 +2974,7 @@ $('#compose').onclick = () => openComposer();
 $('#setBtn').onclick = () => openSettings();
 $('#heartBtn').onclick = () => openSupport();
 $('#addAccBtn').onclick = () => { setDrawer(false); openAddAccount(); };
-$('#sideBtn').onclick = () => { if (isSmall()) return setDrawer(!document.documentElement.classList.contains('drawer')); SET.side = SET.side === 'hidden' ? 'shown' : 'hidden'; applySettings(); };
+$('#sideBtn').onclick = () => { if (isSmall()) return setBoxes(true); SET.side = SET.side === 'hidden' ? 'shown' : 'hidden'; applySettings(); };
 $('#drawerBack').onclick = () => setDrawer(false);
 $('#refreshBtn').onclick = () => refreshAll();
 async function refreshAll(){
@@ -2917,7 +2989,7 @@ if (N){
     refreshFoldersSoon(acc, 300);
     const v = ST.view;
     if (v && !ST.search && (v.uni || (v.acc === acc && v.box === 'INBOX'))) refreshList();
-    if (!document.hasFocus() && items && items.length){
+    if ((document.hidden || !document.hasFocus()) && items && items.length){
       if (items.length > 2) N.notify({ title: T(`${items.length} nouveaux messages`), body: items.slice(0, 3).map(i => nameOf(i.from && i.from[0])).join(', '), key: items[0].key });
       else items.forEach(i => N.notify({ title: nameOf(i.from && i.from[0]) || T('Nouveau message'), body: i.subject || T('(sans objet)'), key: i.key }));
     }

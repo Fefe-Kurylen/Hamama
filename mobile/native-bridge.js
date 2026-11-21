@@ -99,6 +99,21 @@
     P.App.addListener('appUrlOpen', function (e) { if (e && /^mailto:/i.test(e.url)) (listeners['mailto'] || []).forEach(function (cb) { cb(e.url); }); });
   } catch (e) {}
 
+  /* ---- Android : réception en arrière-plan (service de premier plan, aucun serveur) ---- */
+  var BG = plat !== 'android' ? null : (P.HamamaBg || (C.registerPlugin ? C.registerPlugin('HamamaBg') : null));
+  var readPrefs = function () { var cur = JSON.parse(localStorage.getItem('hamama-prefs') || '{"notify":true,"sound":true}'); if (cur.bg === undefined) cur.bg = true; return cur; };
+  var applyBg = async function (cur) {
+    if (!BG) return;
+    try {
+      if (cur.bg && cur.notify !== false){
+        if (notifOk === null) { try { var p = await P.LocalNotifications.requestPermissions(); notifOk = p.display === 'granted'; } catch (e) {} }
+        await BG.start();
+        if (!localStorage.getItem('hamama-bat')) { localStorage.setItem('hamama-bat', '1'); await BG.battery({ ask: true }); }
+      } else await BG.stop();
+    } catch (e) { console.warn('arrière-plan', e); }
+  };
+  setTimeout(function () { applyBg(readPrefs()); }, 1500);
+
   window.native = {
     platform: plat,
     acc: { list: I('acc:list'), detect: I('acc:detect'), test: I('acc:test'), add: I('acc:add'), update: I('acc:update'), remove: I('acc:remove'), oauth: I('acc:oauth') },
@@ -110,7 +125,7 @@
     block: { list: I('block:list'), add: I('block:add'), remove: I('block:remove') },
     att: { save: function (keys) { return shareAtts([].concat(keys)); }, open: function (key) { return shareAtts([key]); } },
     pickFiles: pickFiles,
-    prefs: async function (p) { var cur = JSON.parse(localStorage.getItem('hamama-prefs') || '{"notify":true,"sound":true}'); if (p && typeof p === 'object') { for (var k in p) cur[k] = p[k]; localStorage.setItem('hamama-prefs', JSON.stringify(cur)); } return cur; },
+    prefs: async function (p) { var cur = readPrefs(); if (p && typeof p === 'object') { var was = cur.bg + '|' + cur.notify; for (var k in p) cur[k] = p[k]; localStorage.setItem('hamama-prefs', JSON.stringify(cur)); if (was !== cur.bg + '|' + cur.notify) applyBg(cur); } return cur; },
     notify: notify,
     badge: async function () { return true; },
     defaultMail: async function () { return false; },

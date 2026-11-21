@@ -61,6 +61,12 @@ const check = (c, m) => { if (c) { ok++; console.log('✅', m); } else { ko++; c
   await page.check('[data-k=insecure]');
   await page.screenshot({ path: path.join(__dirname, 'shots', 'mob-2-compte.png') });
   await page.tap('[data-ok]');
+  // l'appli s'ouvre sur la liste des boîtes, puis on entre dans la boîte de réception
+  await page.waitForSelector('#side .fold[data-box]', { timeout: 30000 });
+  await page.waitForTimeout(600);
+  check(await page.evaluate(() => document.documentElement.classList.contains('boxes') && document.getElementById('side').getBoundingClientRect().width >= 380), 'ouverture sur la liste des boîtes (plein écran)');
+  await page.screenshot({ path: path.join(__dirname, 'shots', 'mob-3a-boites.png') });
+  await page.locator('#side [data-uni], #side .fold[data-box]').first().tap();
   await page.waitForSelector('#app:not(.hidden) #list .it', { timeout: 30000 });
   await page.waitForTimeout(800);
   const n = await page.locator('#list .it').count();
@@ -70,13 +76,16 @@ const check = (c, m) => { if (c) { ok++; console.log('✅', m); } else { ko++; c
   check(w[0] >= 380, `liste en plein écran (${Math.round(w[0])} px)`);
   await page.screenshot({ path: path.join(__dirname, 'shots', 'mob-3-liste.png') });
 
-  // --- tiroir des dossiers ---
+  // --- bouton Retour → liste des boîtes, puis on y retourne ---
   await page.tap('#sideBtn');
   await page.waitForTimeout(400);
-  check(await page.evaluate(() => document.documentElement.classList.contains('drawer')), 'tiroir des dossiers ouvert');
+  check(await page.evaluate(() => document.documentElement.classList.contains('boxes')), 'bouton Retour → liste des boîtes');
   await page.screenshot({ path: path.join(__dirname, 'shots', 'mob-4-dossiers.png') });
-  check(await page.evaluate(() => window.__back() === false), 'bouton retour ferme le tiroir');
-  await page.waitForTimeout(300);
+  await page.locator('#side [data-uni], #side .fold[data-box]').first().tap();
+  await page.waitForTimeout(600);
+  check(await page.evaluate(() => !document.documentElement.classList.contains('boxes') && window.__back() === false && document.documentElement.classList.contains('boxes')), 'retour Android dans une boîte → liste des boîtes');
+  await page.locator('#side [data-uni], #side .fold[data-box]').first().tap();
+  await page.waitForTimeout(600);
 
   // --- lecture d'un message ---
   await page.locator('#list .it').first().tap();
@@ -115,8 +124,12 @@ const check = (c, m) => { if (c) { ok++; console.log('✅', m); } else { ko++; c
   await page.evaluate(() => { try { const s = JSON.parse(localStorage.getItem('hamama-settings') || '{}'); } catch (e) {} });
   await page.screenshot({ path: path.join(__dirname, 'shots', 'mob-7-redaction.png') });
   await page.tap('#cSend');
+  await page.waitForSelector('.toast.count .cbar', { timeout: 3000 }).catch(() => {});
+  await page.waitForTimeout(2500);
+  check(await page.locator('.toast.count .cbar').count() > 0, 'décompte d’envoi avec barre de temps (10 s)');
+  await page.screenshot({ path: path.join(__dirname, 'shots', 'mob-8-decompte.png') });
   let got = false;
-  for (let i = 0; i < 40 && !got; i++) { await page.waitForTimeout(500); got = await page.locator('#list .it', { hasText: 'Envoyé du téléphone' }).count() > 0; }
+  for (let i = 0; i < 50 && !got; i++) { await page.waitForTimeout(500); got = await page.locator('#list .it', { hasText: 'Envoyé du téléphone' }).count() > 0; }
   check(got, 'message envoyé puis reçu en temps réel (IDLE)');
 
   console.log(`\n${ok} ✅  ${ko} ❌`);

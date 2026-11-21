@@ -232,8 +232,15 @@ function decodePart(buf, node) {
   try { return iconv.encodingExists(cs) ? iconv.decode(b, cs) : b.toString('utf8'); } catch { return b.toString('utf8'); }
 }
 const htmlToText = h => h.replace(/<(style|script|head)[\s\S]*?<\/\1>/gi, ' ').replace(/<br\s*\/?>|<\/p>|<\/div>|<\/tr>/gi, ' ').replace(/<[^>]+>/g, ' ')
-  .replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'").replace(/&#(\d+);/g, (m, n) => String.fromCodePoint(+n));
-const clean = s => s.replace(/‌|​|͏|­|﻿/g, '').replace(/\s+/g, ' ').trim().slice(0, 220);
+  .replace(/&nbsp;/g, ' ');
+// Entités HTML (« d&egrave;s » → « dès ») : numériques, hexadécimales et noms courants
+const ENT = { amp:'&', lt:'<', gt:'>', quot:'"', apos:"'", nbsp:' ', laquo:'«', raquo:'»', lsquo:'‘', rsquo:'’', ldquo:'“', rdquo:'”', hellip:'…', ndash:'–', mdash:'—', euro:'€', copy:'©', reg:'®', trade:'™', deg:'°', middot:'·', bull:'•', times:'×', shy:'',
+  agrave:'à', aacute:'á', acirc:'â', auml:'ä', atilde:'ã', aring:'å', aelig:'æ', ccedil:'ç', egrave:'è', eacute:'é', ecirc:'ê', euml:'ë', igrave:'ì', iacute:'í', icirc:'î', iuml:'ï', ntilde:'ñ', ograve:'ò', oacute:'ó', ocirc:'ô', ouml:'ö', otilde:'õ', oslash:'ø', oelig:'œ', ugrave:'ù', uacute:'ú', ucirc:'û', uuml:'ü', yacute:'ý', yuml:'ÿ', szlig:'ß',
+  Agrave:'À', Aacute:'Á', Acirc:'Â', Auml:'Ä', Ccedil:'Ç', Egrave:'È', Eacute:'É', Ecirc:'Ê', Euml:'Ë', Icirc:'Î', Iuml:'Ï', Ocirc:'Ô', Ouml:'Ö', OElig:'Œ', Ugrave:'Ù', Ucirc:'Û', Uuml:'Ü', Ntilde:'Ñ' };
+const decodeEnt = s => s.replace(/&#x([0-9a-f]+);/gi, (m, h) => { try { return String.fromCodePoint(parseInt(h, 16)); } catch { return m; } })
+  .replace(/&#(\d+);/g, (m, n) => { try { return String.fromCodePoint(+n); } catch { return m; } })
+  .replace(/&([a-zA-Z]+);/g, (m, k) => ENT[k] ?? m);
+const clean = s => decodeEnt(s).replace(/‌|​|͏|­|﻿/g, '').replace(/\s+/g, ' ').trim().slice(0, 220);
 
 /* ---------------- Liste des messages ---------------- */
 const addr = l => (l || []).map(x => ({ name: x.name || '', address: x.address || '' }));
