@@ -444,7 +444,7 @@ function writeCache(id, patch) {
   writeCache[id] = setTimeout(() => { try { fs.mkdirSync(path.join(DIR, 'cache'), { recursive: true }); fs.writeFileSync(path.join(DIR, 'cache', id + '.json'), JSON.stringify(c)); } catch {} }, 800);
 }
 function writeList(id, box, items) { const c = readCache(id); const lists = c.lists || {}; lists[box] = items.slice(0, 60); writeCache(id, { lists }); }
-function cached(id, box) { const c = readCache(id); return { folders: c.folders || null, items: box && c.lists ? c.lists[box] || null : null }; }
+function cached(id, box) { const c = readCache(id); let items = box && c.lists ? c.lists[box] || null : null; if (items) items = items.map(m => m.preview && m.preview.includes('&') ? { ...m, preview: decodeEnt(m.preview) } : m); return { folders: c.folders || null, items }; }
 
 /* ---------------- Expéditeurs bloqués → Indésirables ---------------- */
 let BLOCKED = [];   // 'adresse@domaine.fr' ou '@domaine.fr' (tout le domaine)

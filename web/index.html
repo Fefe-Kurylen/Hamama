@@ -702,6 +702,12 @@ html[data-unreadb=off] .it.unread .fr,html[data-unreadb=off] .it.unread .sb .s,h
 .mobile button,.mobile a,.mobile .it,.mobile .fold,.mobile label{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 .mobile .it{touch-action:pan-y;content-visibility:auto;contain-intrinsic-size:auto 86px}
 .mobile #list,.mobile #side .fl,.mobile #view{-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+
+/* bandeau « images bloquées » sur téléphone : texte sur toute la largeur, boutons dessous */
+:is(.mobile,.narrow) .banner{flex-wrap:wrap;gap:6px 10px;padding:12px 14px;font-size:13px;line-height:1.4}
+:is(.mobile,.narrow) .banner span{flex:1 1 calc(100% - 30px);min-width:0}
+:is(.mobile,.narrow) .banner button{font-size:13px;padding:6px 12px;border-radius:999px;background:rgba(var(--accent-rgb),.12)}
+:is(.mobile,.narrow) .banner button:first-of-type{margin-left:26px}
 </style>
 </head>
 <body>
