@@ -18,7 +18,7 @@ Dossier du projet sur le PC : `C:\Users\felix\Desktop\Claude\Hamama` · GitHub :
   - `afterPack.js` — icône + infos de version dans l'exe (resedit)
   - `build/icon.svg|png|ico`, `build/appx/` (logos Store)
 - `mobile/` — **appli iPhone / Android** (Capacitor 8, appId `fr.kurylen.hamama`)
-  - `make-mobile.py` — `windows/app` → `www/` (+ `native-bridge.js`, CSP avec `'unsafe-inline'` pour le script de Capacitor) et **moteur mail regroupé** par esbuild (`node/main.js` + `windows/mail.js` + dépendances) → `www/nodejs/main.js`
+  - `make-mobile.py` — **relance d'abord `windows/make-app.py`** (sinon l'appli reprenait l'ancien `windows/app` enregistré dans GitHub : builds iPhone 107-110 = interface du 18/11), puis `windows/app` → `www/` (+ `native-bridge.js`, CSP avec `'unsafe-inline'` pour le script de Capacitor) et **moteur mail regroupé** par esbuild (`node/main.js` + `windows/mail.js` + dépendances) → `www/nodejs/main.js`
   - `node/main.js` — moteur sur téléphone : tourne dans le **Node.js embarqué** (`@capawesome/capacitor-nodejs`, Node 24) → aucun serveur ; mots de passe chiffrés AES-256-GCM (clé `.cle` dans le dossier privé de l'appli) ; module `bridge` (`channel.on('call')` → `channel.post('reply' / 'event')`), `app.on('resume')` → `mail.wake()`
   - `native-bridge.js` — définit `window.native` (même API que `preload.js`) : appels vers Node, pièces jointes → fichier + feuille de partage, notifications locales, bouton retour Android (`hamama-back`), liens `mailto:`
   - `make-icons.py` — icônes Android (adaptatives) + iPhone + écrans de démarrage depuis `windows/build/icon.svg`
