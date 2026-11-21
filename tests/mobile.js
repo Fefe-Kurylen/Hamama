@@ -2,7 +2,8 @@
 // Node (www/nodejs/main.js) branché via un faux plugin Capacitor, contre le serveur de test.
 // Prérequis : node server.js & ; cd ../mobile && python make-mobile.py
 const path = require('path'), fs = require('fs'), os = require('os'), Module = require('module');
-const { chromium } = require('playwright');
+const PW = require('playwright');
+const ENGINE = process.env.BROWSER || 'chromium', PLAT = process.env.PLAT || 'android';   // BROWSER=webkit PLAT=ios = comme sur iPhone
 const WWW = path.join(__dirname, '..', 'mobile', 'www');
 
 // --- faux module « bridge » (celui du Node.js embarqué) ---
@@ -20,17 +21,18 @@ let ok = 0, ko = 0;
 const check = (c, m) => { if (c) { ok++; console.log('✅', m); } else { ko++; console.log('❌', m); } };
 
 (async () => {
-  const browser = await chromium.launch();
+  const browser = await PW[ENGINE].launch();
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, locale: 'fr-FR' });
   const page = await ctx.newPage();
   page.on('pageerror', e => console.log('ERREUR PAGE', e.message));
   await page.exposeBinding('__nodeSend', (_s, m) => { channel.emit(m.eventName, ...m.args); });
   toPage = msg => page.evaluate(m => window.__nodeMsg && window.__nodeMsg(m), msg).catch(() => {});
+  await page.addInitScript(p => { window.__plat = p; }, PLAT);
   await page.addInitScript(() => {
     const L = {};
     window.__nodeMsg = m => (L.message || []).forEach(f => f(m));
     window.__back = () => { const ev = new CustomEvent('hamama-back', { cancelable: true }); return window.dispatchEvent(ev); };
-    window.Capacitor = { isNativePlatform: () => true, getPlatform: () => 'android', Plugins: {
+    window.Capacitor = { isNativePlatform: () => true, getPlatform: () => window.__plat, Plugins: {
       Nodejs: { addListener: (n, f) => { (L[n] = L[n] || []).push(f); }, isReady: async () => ({ ready: true }), send: async m => window.__nodeSend(m) },
       Filesystem: { writeFile: async o => { window.__written = o; return { uri: 'file:///cache/' + o.path }; } },
       Share: { share: async o => { window.__shared = o; } },

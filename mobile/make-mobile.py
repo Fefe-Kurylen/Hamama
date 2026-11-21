@@ -5,6 +5,9 @@
 import os, shutil, subprocess, json
 H = os.path.dirname(os.path.abspath(__file__))
 APP = os.path.join(H, '..', 'windows', 'app')
+# Toujours repartir de la dernière interface (web/index.html → windows/app) : sans ça, l'appli téléphone
+# reprenait l'ancienne copie de windows/app enregistrée dans GitHub.
+subprocess.run(['python3' if shutil.which('python3') else 'python', os.path.join(H, '..', 'windows', 'make-app.py')], check=True)
 WWW = os.path.join(H, 'www')
 shutil.rmtree(WWW, ignore_errors=True)
 shutil.copytree(APP, WWW)

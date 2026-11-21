@@ -143,6 +143,8 @@ const I18N = {
 "À":["To","Para","An","A","Para","إلى"],
 "Cc":["Cc","Cc","Cc","Cc","Cc","نسخة"],
 "Cci":["Bcc","Cco","Bcc","Ccn","Bcc","نسخة مخفية"],
+"Adresse invalide (pas d’accents dans une adresse mail) : {0}":["Invalid address (no accents allowed in an email address): {0}","Dirección no válida (sin acentos en una dirección de correo): {0}","Ungültige Adresse (keine Akzente in einer E-Mail-Adresse): {0}","Indirizzo non valido (niente accenti in un indirizzo email): {0}","Endereço inválido (sem acentos num endereço de e-mail): {0}","عنوان غير صالح (لا أحرف معلَّمة في عنوان البريد): {0}"],
+"Retour aux boîtes":["Back to mailboxes","Volver a los buzones","Zurück zu den Postfächern","Torna alle caselle","Voltar às caixas","العودة إلى الصناديق"],
 "Cc / Cci":["Cc / Bcc","Cc / Cco","Cc / Bcc","Cc / Ccn","Cc / Bcc","نسخة / مخفية"],
 "Réduire":["Minimize","Minimizar","Minimieren","Riduci","Minimizar","تصغير"],
 "Agrandir":["Maximize","Maximizar","Maximieren","Ingrandisci","Maximizar","تكبير"],
@@ -214,6 +216,8 @@ const I18N = {
 "Autre…":["Other…","Otro…","Andere…","Altro…","Outro…","آخر…"],
 "Autre messagerie":["Other email","Otro correo","Anderer Anbieter","Altra posta","Outro email","بريد آخر"],
 "Saisis ton adresse : Hamama trouve tout seul les réglages des serveurs.":["Enter your address: Hamama finds the server settings by itself.","Escribe tu dirección: Hamama encuentra solo los ajustes del servidor.","Gib deine Adresse ein: Hamama findet die Servereinstellungen selbst.","Inserisci il tuo indirizzo: Hamama trova da solo le impostazioni del server.","Escreve o teu endereço: o Hamama encontra sozinho as definições do servidor.","أدخل عنوانك: يعثر حمامة على إعدادات الخادم تلقائيًا."],
+"{0} refuse le mot de passe habituel : il faut un mot de passe d’application.":["{0} rejects your usual password: you need an app password.","{0} rechaza la contraseña habitual: necesitas una contraseña de aplicación.","{0} lehnt das normale Passwort ab: Du brauchst ein App-Passwort.","{0} rifiuta la password abituale: serve una password per le app.","{0} recusa a palavra-passe habitual: precisas de uma palavra-passe de aplicação.","يرفض {0} كلمة المرور المعتادة: تحتاج إلى كلمة مرور تطبيق."],
+"Créer le mot de passe d’application ↗":["Create the app password ↗","Crear la contraseña de aplicación ↗","App-Passwort erstellen ↗","Crea la password per le app ↗","Criar a palavra-passe de aplicação ↗","إنشاء كلمة مرور التطبيق ↗"],
 "Ouvrir la page ↗":["Open page ↗","Abrir la página ↗","Seite öffnen ↗","Apri la pagina ↗","Abrir a página ↗","فتح الصفحة ↗"],
 "Ton nom (affiché aux destinataires)":["Your name (shown to recipients)","Tu nombre (visible para los destinatarios)","Dein Name (für Empfänger sichtbar)","Il tuo nome (visibile ai destinatari)","O teu nome (visível para os destinatários)","اسمك (يظهر للمستلمين)"],
 "Adresse e-mail":["Email address","Dirección de correo","E-Mail-Adresse","Indirizzo email","Endereço de email","عنوان البريد الإلكتروني"],
@@ -342,6 +346,8 @@ const I18N = {
 "Bloquer (recommandé)":["Block (recommended)","Bloquear (recomendado)","Blockieren (empfohlen)","Blocca (consigliato)","Bloquear (recomendado)","حظر (موصى به)"],
 "Toujours afficher":["Always show","Mostrar siempre","Immer anzeigen","Mostra sempre","Mostrar sempre","العرض دائمًا"],
 "Les images distantes peuvent servir à savoir quand tu ouvres un mail.":["Remote images can be used to know when you open an email.","Las imágenes remotas pueden servir para saber cuándo abres un correo.","Externe Bilder können verraten, wann du eine E-Mail öffnest.","Le immagini remote possono rivelare quando apri una email.","As imagens remotas podem servir para saber quando abres um email.","قد تُستخدم الصور البعيدة لمعرفة متى تفتح رسالة."],
+"Recevoir les mails en arrière-plan":["Receive mail in the background","Recibir correo en segundo plano","E-Mails im Hintergrund empfangen","Ricevi la posta in background","Receber e-mails em segundo plano","استلام البريد في الخلفية"],
+"Hamama reste prêt quand l’appli est fermée : les nouveaux mails sont notifiés en temps réel. Android affiche une petite notification discrète « Réception des mails en temps réel », que tu peux masquer.":["Hamama stays ready when the app is closed: new mail is notified in real time. Android shows a small discreet notification “Real-time mail reception”, which you can hide.","Hamama sigue listo con la app cerrada: los correos nuevos se notifican en tiempo real. Android muestra una pequeña notificación discreta, que puedes ocultar.","Hamama bleibt bereit, wenn die App geschlossen ist: Neue E-Mails werden sofort gemeldet. Android zeigt eine kleine, unauffällige Benachrichtigung, die du ausblenden kannst.","Hamama resta pronto ad app chiusa: le nuove email vengono notificate in tempo reale. Android mostra una piccola notifica discreta, che puoi nascondere.","O Hamama fica pronto com a app fechada: os novos e-mails são notificados em tempo real. O Android mostra uma pequena notificação discreta, que pode ocultar.","يبقى Hamama جاهزًا عند إغلاق التطبيق: يتم إشعارك بالرسائل الجديدة فورًا. يعرض Android إشعارًا صغيرًا يمكنك إخفاؤه."],
 "Fond des messages":["Message background","Fondo de los mensajes","Nachrichtenhintergrund","Sfondo dei messaggi","Fundo das mensagens","خلفية الرسائل"],
 "Blanc (fidèle)":["White (faithful)","Blanco (fiel)","Weiß (originalgetreu)","Bianco (fedele)","Branco (fiel)","أبيض (مطابق)"],
 "Suivre le thème (sombre)":["Follow the theme (dark)","Seguir el tema (oscuro)","Design folgen (dunkel)","Segui il tema (scuro)","Seguir o tema (escuro)","اتباع السمة (داكن)"],
@@ -590,6 +596,13 @@ const ICON = {
   ext:'<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
   open:'<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
 };
+// Icônes des actions au survol (dessin plus doux, 18/11)
+Object.assign(ICON, {
+  qstar:'<path d="M12 3.6l2.5 5.1 5.6.8-4 3.9.9 5.6L12 16.4 7 19l.9-5.6-4-3.9 5.6-.8z" class="fillable"/>',
+  qarchive:'<path d="M4 7.5h16"/><path d="M5.5 7.5v10.2c0 1 .8 1.8 1.8 1.8h9.4c1 0 1.8-.8 1.8-1.8V7.5"/><path d="M3.8 4.5h16.4c.4 0 .7.3.7.7v1.6c0 .4-.3.7-.7.7H3.8c-.4 0-.7-.3-.7-.7V5.2c0-.4.3-.7.7-.7z"/><path d="M12 10.8v5.4M9.6 13.8 12 16.2l2.4-2.4"/>',
+  qreply:'<path d="M10 5.5 4.5 11 10 16.5"/><path d="M4.8 11H14a6 6 0 0 1 6 6v1.5"/>',
+  qtrash:'<path d="M4 6.8h16"/><path d="M9.2 6.8V5.2c0-.7.6-1.2 1.2-1.2h3.2c.7 0 1.2.5 1.2 1.2v1.6"/><path d="M6.2 6.8l.9 11.6c.1 1 .9 1.6 1.8 1.6h6.2c1 0 1.8-.7 1.8-1.6l.9-11.6"/><path d="M10.2 10.6v5.6M13.8 10.6v5.6"/>'
+});
 const ic = n => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${ICON[n] || ''}</svg>`;
 document.querySelectorAll('[data-ic]').forEach(el => el.insertAdjacentHTML('afterbegin', ic(el.dataset.ic)));
 
@@ -720,11 +733,13 @@ const menuBelow = (btn, items) => { const r = btn.getBoundingClientRect(); menu(
 const ACCENTS = ['#c8703f','#c2524a','#bf5a82','#8a6cc4','#5d6bc9','#4a84c4','#3a98a8','#3d9579','#5c9a4b','#c0962e'];
 const DEF_SET = {
   theme:'graphite', accent:'#c8703f', layout:'trois', density:'confort', zoom:'m', radius:'doux', side:'shown',
-  preview:'1', avatars:'on', groups:'on', unified:'on', qa:['archive','trash','read','star'], after:'next',
+  preview:'1', avatars:'on', groups:'on', unified:'on', qa:['star','archive','reply','trash'], after:'next',
   uifont:'Inter', weight:'normal', unreadBold:'on', markRead:'delay', images:'ask', mailbg:'theme', spell:'auto', mailZoom:'100', labels:'off', readw:'normal',
-  font:'Inter', fsize:'14', undoSend:'5', lang:'auto', compWin:'float', noSubjWarn:'on', keys:'on', counts:'unread'
+  font:'Inter', fsize:'14', undoSend:'10', lang:'auto', compWin:'float', noSubjWarn:'on', keys:'on', counts:'unread'
 };
 let SET = { ...DEF_SET, ...J('hamama-settings', {}) };
+if (!SET.qa2){ SET.qa = ['star','archive','reply','trash']; SET.qa2 = 1; }   // 18/11 : favoris, archiver, répondre, poubelle
+if (!SET.us10){ if (SET.undoSend === '5') SET.undoSend = '10'; SET.us10 = 1; }   // 21/11 : délai d’annulation 10 s par défaut
 if (!SET.mb2){ SET.mailbg = 'theme'; SET.mb2 = 1; }   // 18/11 : messages affichés sur le fond de l’appli (comme Mailbird)
 const ZOOMS = { s:.9, m:1, l:1.1, xl:1.25 };
 const UI_FONTS = ['Inter','Segoe UI','Arial','Calibri','Verdana','Tahoma','Trebuchet MS','Georgia'];
@@ -758,6 +773,17 @@ const narrowCheck = () => document.documentElement.classList.toggle('narrow', (!
 narrowCheck(); addEventListener('resize', narrowCheck);
 const isSmall = () => (MOBILE && !TABLET) || innerWidth < 640;
 const setDrawer = on => document.documentElement.classList.toggle('drawer', !!on);
+// Téléphone : l'appli s'ouvre sur la liste des boîtes ; dans une boîte, le bouton de gauche devient « Retour » (demande de Félix, 21/11)
+const setBoxes = on => { const r = document.documentElement; r.classList.toggle('boxes', !!on); if (on){ r.classList.remove('reading', 'drawer'); } updSideBtn(); };
+function updSideBtn(){
+  const b = document.getElementById('sideBtn'); if (!b) return;
+  const want = isSmall() ? 'left' : 'sidebar';
+  if (b.dataset.cur !== want){ b.innerHTML = ic(want); b.dataset.cur = want; }
+  b.title = isSmall() ? 'Retour aux boîtes' : 'Afficher / masquer les dossiers';
+}
+if (MOBILE && !TABLET){ document.documentElement.classList.add('boxes'); const q = document.getElementById('q'); if (q) q.placeholder = 'Rechercher'; }
+addEventListener('resize', () => updSideBtn());
+setTimeout(updSideBtn, 0);
 
 /* ================= État ================= */
 const ST = {
@@ -817,8 +843,8 @@ function renderSide(){
   if (N) N.badge(n).catch(() => {});
 }
 $('#folders').addEventListener('click', e => {
-  const u = e.target.closest('[data-uni]'); if (u){ setDrawer(false); return openView({ uni: true }); }
-  const f = e.target.closest('.fold[data-box]'); if (f){ setDrawer(false); return openView({ acc: f.dataset.acc, box: f.dataset.box }); }
+  const u = e.target.closest('[data-uni]'); if (u){ setDrawer(false); setBoxes(false); return openView({ uni: true }); }
+  const f = e.target.closest('.fold[data-box]'); if (f){ setDrawer(false); setBoxes(false); return openView({ acc: f.dataset.acc, box: f.dataset.box }); }
   const ah = e.target.closest('[data-ah]');
   if (ah){ const id = ah.dataset.ah; collapsed.has(id) ? collapsed.delete(id) : collapsed.add(id); store.set('hamama-collapsed', JSON.stringify([...collapsed])); ah.parentNode.classList.toggle('closed'); return; }
   const fx = e.target.closest('[data-fix]'); if (fx) return openAccount(fx.dataset.fix);
@@ -958,12 +984,14 @@ function itemHTML(i){
   const whoA = (role === 'sent' || role === 'drafts') ? (i.to || [])[0] : (i.from || [])[0];
   const cls = ['it', i.seen ? '' : 'unread', ST.open === i.key ? 'on' : '', ST.sel.has(i.key) && ST.sel.size > 0 && (ST.sel.size > 1 || ST.selMode) ? 'sel' : ''].join(' ');
   const a = accOf(i.acc);
-  const qa = SET.qa.map(q => ({
-    archive: `<button class="ibtn" data-q="archive" title="Archiver (E)">${ic('archive')}</button>`,
-    trash: `<button class="ibtn del" data-q="trash" title="Supprimer (Suppr)">${ic('trash')}</button>`,
+  const QA_ORDER = ['star','archive','reply','read','trash'];
+  const qa = QA_ORDER.filter(q => SET.qa.includes(q)).map((q, n) => ({
+    star: `<button class="ibtn qstar${i.flagged ? ' on' : ''}" data-q="${i.flagged ? 'unstar' : 'star'}" title="${i.flagged ? 'Ne plus suivre (S)' : 'Suivre (S)'}">${ic('qstar')}</button>`,
+    archive: `<button class="ibtn qarch" data-q="archive" title="Archiver (E)">${ic('qarchive')}</button>`,
+    reply: `<button class="ibtn qrep" data-q="reply" title="Répondre (R)">${ic('qreply')}</button>`,
     read: `<button class="ibtn" data-q="${i.seen ? 'unread' : 'read'}" title="${i.seen ? 'Marquer comme non lu (U)' : 'Marquer comme lu (U)'}">${ic(i.seen ? 'mail' : 'mail-open')}</button>`,
-    star: `<button class="ibtn" data-q="${i.flagged ? 'unstar' : 'star'}" title="${i.flagged ? 'Ne plus suivre (S)' : 'Suivre (S)'}">${ic('star')}</button>`
-  }[q] || '')).join('');
+    trash: `<button class="ibtn del qdel" data-q="trash" title="Supprimer (Suppr)">${ic('qtrash')}</button>`
+  }[q] || '').replace('<button ', `<button style="--n:${n}" `)).join('');
   return `<div class="${cls}" data-k="${esc(i.key)}" draggable="true">
     ${avatar(whoA || { name: who }).replace('</div>', `<span class="ck">${ic('check')}</span></div>`)}
     <div class="bd"><div class="r1"><span class="fr">${i.draft || role === 'drafts' ? '<span style="color:#f87171">Brouillon</span> · ' : ''}<span data-notr>${esc(who)}</span></span><span class="dt">${ST.view && ST.view.uni || ST.search ? `<span class="adot" style="background:${accColor(a)}" title="${esc(accLabel(a))}"></span>` : ''}${fmtDate(i.date)}</span></div>
@@ -1006,7 +1034,11 @@ $('#list').addEventListener('click', e => {
   const it = e.target.closest('.it'); if (!it) return;
   const key = it.dataset.k;
   const q = e.target.closest('[data-q]');
-  if (q){ e.stopPropagation(); return act(q.dataset.q, [key]); }
+  if (q){
+    e.stopPropagation(); q.classList.remove('pop'); void q.offsetWidth; q.classList.add('pop');
+    if (q.dataset.q === 'reply') return replyTo(key, 'reply');
+    return act(q.dataset.q, [key]);
+  }
   if (e.target.closest('.av') && SET.avatars === 'on' || ST.selMode){ toggleSel(key); return; }
   if (e.shiftKey && ST.anchor){
     const vis = visible().map(i => i.key), a = vis.indexOf(ST.anchor), b = vis.indexOf(key);
@@ -1386,7 +1418,7 @@ let CMP = null;           // état du message en cours
 let saveLocalT = null;
 const FONTS = { 'Inter':'Inter, Segoe UI, Arial, sans-serif', 'Arial':'Arial, Helvetica, sans-serif', 'Segoe UI':'"Segoe UI", Arial, sans-serif', 'Verdana':'Verdana, Geneva, sans-serif', 'Georgia':'Georgia, serif', 'Times New Roman':'"Times New Roman", serif', 'Courier New':'"Courier New", monospace' };
 const parseAddrs = s => String(s || '').split(/[,;]+/).map(x => x.trim()).filter(Boolean).map(x => { const m = x.match(/^"?([^"<]*?)"?\s*<([^>]+)>$/); return m ? { name: m[1].trim(), address: m[2].trim() } : { name: '', address: x }; });
-const validAddr = a => /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(a.address);
+const validAddr = a => /^[^\s@<>\u0080-\uffff]+@[^\s@<>\u0080-\uffff]+\.[^\s@<>\u0080-\uffff]+$/.test(a.address);   // ASCII seulement : les serveurs SMTP refusent les accents (« 500 5.5.2 bad chars »)
 const sigHTML = acc => { const a = accOf(acc); return a && a.signature ? `<div class="sig" data-sig="1"><br>${a.signature}</div>` : ''; };
 const reSubj = (p, s) => { if (new RegExp('^(re|rép|réf|aw|r|tr|fwd?|wg|rv|enc|i)\\s*:', 'i').test(s || '')) return s; const pre = p === 'Re' ? (LANG === 'de' ? 'AW' : 'Re') : ({ fr:'Tr', en:'Fwd', es:'RV', de:'WG', it:'I', pt:'Enc', ar:'Fwd' }[LANG]); return LANG === 'fr' ? `${pre} : ${s || ''}` : `${pre}: ${s || ''}`; };
 
@@ -1559,9 +1591,9 @@ async function openComposer(o = {}){
       <button class="ibtn" data-c="min" title="Réduire">${ic('min')}</button><button class="ibtn" data-c="max" title="Agrandir">${ic('max')}</button><button class="ibtn" data-c="close" title="Fermer (le brouillon est enregistré)">${ic('x')}</button></div>
     <div class="cbody">
       ${ST.accounts.length > 1 ? `<div class="cf"><label>De</label><select id="cFrom" data-notr>${ST.accounts.map(a => `<option value="${a.id}"${a.id === acc ? ' selected' : ''}>${esc(a.name ? `${a.name} <${a.email}>` : a.email)}</option>`).join('')}</select></div>` : ''}
-      <div class="cf"><label>À</label><div class="toks" data-f="to"><input autocomplete="off" spellcheck="false"></div>${showCc ? '' : '<button class="ccb" data-cc>Cc / Cci</button>'}</div>
-      <div class="cf${showCc ? '' : ' hidden'}" data-ccrow><label>Cc</label><div class="toks" data-f="cc"><input autocomplete="off" spellcheck="false"></div></div>
-      <div class="cf${showCc ? '' : ' hidden'}" data-ccrow><label>Cci</label><div class="toks" data-f="bcc"><input autocomplete="off" spellcheck="false"></div></div>
+      <div class="cf"><label>À</label><div class="toks" data-f="to"><input autocomplete="off" spellcheck="false" autocapitalize="off" autocorrect="off" inputmode="email"></div>${showCc ? '' : '<button class="ccb" data-cc>Cc / Cci</button>'}</div>
+      <div class="cf${showCc ? '' : ' hidden'}" data-ccrow><label>Cc</label><div class="toks" data-f="cc"><input autocomplete="off" spellcheck="false" autocapitalize="off" autocorrect="off" inputmode="email"></div></div>
+      <div class="cf${showCc ? '' : ' hidden'}" data-ccrow><label>Cci</label><div class="toks" data-f="bcc"><input autocomplete="off" spellcheck="false" autocapitalize="off" autocorrect="off" inputmode="email"></div></div>
       <div class="cf"><label>Objet</label><input class="plain" id="cSubj" value="${esc(o.subject || '')}" placeholder="Objet du message"></div>
       <div class="etools">
         <button class="attb" id="cAttach" title="Joindre des fichiers">${ic('clip')}<span>Joindre</span></button>
@@ -1733,7 +1765,7 @@ async function sendNow(){
   if (!CMP) return;
   ['to','cc','bcc'].forEach(f => { const i = document.querySelector(`#composer .toks[data-f=${f}] input`); if (i && i.value.trim()){ parseAddrs(i.value).forEach(a => CMP[f].push(a)); i.value = ''; renderToks(f); } });
   const bad = [...CMP.to, ...CMP.cc, ...CMP.bcc].filter(a => !validAddr(a));
-  if (bad.length) return toast(`Adresse invalide : ${bad[0].address}`);
+  if (bad.length) return toast(/[^\x00-\x7f]/.test(bad[0].address) ? `Adresse invalide (pas d’accents dans une adresse mail) : ${bad[0].address}` : `Adresse invalide : ${bad[0].address}`);
   if (!CMP.to.length && !CMP.cc.length && !CMP.bcc.length){ toast('Ajoute au moins un destinataire'); document.querySelector('#composer [data-f=to] input').focus(); return; }
   if (!$('#cSubj').value.trim() && SET.noSubjWarn === 'on' && !await confirmBox('Envoyer sans objet ?', 'Ton message n’a pas d’objet.', 'Envoyer quand même')) return;
   const txt = ($('#ed').innerText || '') + ' ' + $('#cSubj').value;
@@ -1759,7 +1791,7 @@ async function sendNow(){
     // décompte en temps réel ; l'envoi part exactement à 0
     const end = Date.now() + delay;
     const t = toast(T(`Envoi dans ${Math.ceil(delay / 1000)} s`), { label: 'Annuler', fn: () => { cancelled = true; clearInterval(tick); clearTimeout(timer); openComposer({ ...snap, atts: restoreAtts(snap.atts) }); toast('Envoi annulé'); } }, delay, true);
-    t.el.classList.add('count'); t.el.style.setProperty('--dur', delay + 'ms');
+    t.el.classList.add('count'); t.el.style.setProperty('--dur', delay + 'ms'); t.el.insertAdjacentHTML('beforeend', '<div class="cbar"><i></i></div>');
     const sp = t.el.querySelector('span'); sp.setAttribute('data-notr', '');
     const tick = setInterval(() => { const r = Math.max(1, Math.ceil((end - Date.now()) / 1000)); sp.textContent = T(`Envoi dans ${r} s`); }, 200);
     const timer = setTimeout(() => { clearInterval(tick); t.close(); go(); }, delay);
@@ -1808,12 +1840,12 @@ function accountForm(prov){
     ${oauthOk ? `<button class="btn primary paybtn" data-oauth style="margin:0 0 6px">${ic('key')} Se connecter avec ${prov === 'outlook' ? 'Microsoft' : 'Google'}</button><div class="note" style="text-align:center;margin-bottom:6px">ou avec un mot de passe d’application :</div>` : ''}
     ${prov === 'outlook' && !oauthOk ? `<div class="err-box" style="margin:0 0 6px">La connexion Microsoft n’est pas encore activée dans cette version de Hamama. Les comptes Outlook.com / Hotmail ne peuvent pas encore être ajoutés (les comptes Microsoft 365 d’entreprise avec IMAP autorisé peuvent fonctionner).</div>` : ''}
     <label class="lbl">Ton nom (affiché aux destinataires)</label><input class="field" data-k="name" placeholder="Félix" autofocus>
-    <label class="lbl">Adresse e-mail</label><input class="field" data-k="email" type="email" placeholder="prenom@exemple.fr" spellcheck="false">
+    <label class="lbl">Adresse e-mail</label><input class="field" data-k="email" type="email" placeholder="prenom@exemple.fr" spellcheck="false" autocapitalize="off" autocorrect="off">
     <label class="lbl">${P && P.appPassword ? 'Mot de passe d’application' : 'Mot de passe'}</label><input class="field" data-k="pass" type="password">
     <details class="adv"${prov === 'autre' ? '' : ''}><summary>Réglages avancés (serveurs)</summary>
-      <label class="lbl">Identifiant (si différent de l’adresse)</label><input class="field" data-k="user" spellcheck="false">
-      <div class="g2"><div><label class="lbl">Serveur de réception IMAP</label><input class="field" data-k="ih"></div><div><label class="lbl">Port</label><input class="field" data-k="ip" type="number"></div><div><label class="lbl">Sécurité</label><select class="field" data-k="is"><option value="1">SSL/TLS</option><option value="0">STARTTLS</option></select></div></div>
-      <div class="g2"><div><label class="lbl">Serveur d’envoi SMTP</label><input class="field" data-k="sh"></div><div><label class="lbl">Port</label><input class="field" data-k="sp" type="number"></div><div><label class="lbl">Sécurité</label><select class="field" data-k="ss"><option value="1">SSL/TLS</option><option value="0">STARTTLS</option></select></div></div>
+      <label class="lbl">Identifiant (si différent de l’adresse)</label><input class="field" data-k="user" spellcheck="false" autocapitalize="off" autocorrect="off">
+      <div class="g2"><div><label class="lbl">Serveur de réception IMAP</label><input class="field" data-k="ih" autocapitalize="off" autocorrect="off" spellcheck="false"></div><div><label class="lbl">Port</label><input class="field" data-k="ip" type="number"></div><div><label class="lbl">Sécurité</label><select class="field" data-k="is"><option value="1">SSL/TLS</option><option value="0">STARTTLS</option></select></div></div>
+      <div class="g2"><div><label class="lbl">Serveur d’envoi SMTP</label><input class="field" data-k="sh" autocapitalize="off" autocorrect="off" spellcheck="false"></div><div><label class="lbl">Port</label><input class="field" data-k="sp" type="number"></div><div><label class="lbl">Sécurité</label><select class="field" data-k="ss"><option value="1">SSL/TLS</option><option value="0">STARTTLS</option></select></div></div>
       <label class="chk"><input type="checkbox" data-k="insecure"> Accepter un certificat non vérifié (serveur local uniquement)</label>
       <div class="note" data-src></div>
     </details>
@@ -1868,7 +1900,17 @@ function accountForm(prov){
       try {
         const cfg = cfgOf();
         const t = await N.acc.test(cfg);
-        if (!t.ok){ msg.innerHTML = `<div class="err-box"><b>${t.step === 'imap' ? 'Réception (IMAP)' : 'Envoi (SMTP)'} :</b> ${esc(t.err)}</div>`; if (!/mot de passe/.test(t.err)) c.querySelector('details').open = true; return; }
+        if (!t.ok){
+          const pv = cfg.provider, PP = ST.providers[pv], step = `<b>${t.step === 'imap' ? 'Réception (IMAP)' : 'Envoi (SMTP)'} :</b> `;
+          if (/mot de passe/.test(t.err) && PP && PP.appPassword){
+            const lbl = (PROV_UI.find(x => x[0] === pv) || [])[1] || PP.label;
+            msg.innerHTML = `<div class="err-box">${step}<span>${esc(lbl)} refuse le mot de passe habituel : il faut un mot de passe d’application.</span><br><span>${HELP[pv] || ''}</span><br><a class="lnk" data-open="${esc(PP.appPassword)}">Créer le mot de passe d’application ↗</a></div>`;
+            msg.querySelectorAll('[data-open]').forEach(a => a.onclick = () => window.open(a.dataset.open));
+            F('pass').value = ''; F('pass').focus();
+            return;
+          }
+          msg.innerHTML = `<div class="err-box">${step}${esc(t.err)}</div>`; if (!/mot de passe/.test(t.err)) c.querySelector('details').open = true; return;
+        }
         await finish(cfg);
       } catch (e) { msg.innerHTML = `<div class="err-box">${esc(cleanErr(e))}</div>`; }
       finally { ok.disabled = false; ok.innerHTML = `${ic('check')}Se connecter`; }
@@ -1887,8 +1929,8 @@ function openAccount(id){
     <label class="chk"><input type="checkbox" data-k="saveSent"${a.saveSent ? ' checked' : ''}> Copier les messages envoyés dans « Envoyés » (à décocher pour Gmail / Outlook)</label>
     ${a.oauth ? '' : `<details class="adv"><summary>Mot de passe et serveurs</summary>
       <label class="lbl">Nouveau mot de passe</label><input class="field" data-k="pass" type="password" placeholder="Laisser vide pour ne pas changer">
-      <div class="g2"><div><label class="lbl">IMAP</label><input class="field" data-k="ih" value="${esc(a.imap.host)}"></div><div><label class="lbl">Port</label><input class="field" data-k="ip" type="number" value="${a.imap.port}"></div><div><label class="lbl">Sécurité</label><select class="field" data-k="is"><option value="1"${a.imap.secure ? ' selected' : ''}>SSL/TLS</option><option value="0"${a.imap.secure ? '' : ' selected'}>STARTTLS</option></select></div></div>
-      <div class="g2"><div><label class="lbl">SMTP</label><input class="field" data-k="sh" value="${esc(a.smtp.host)}"></div><div><label class="lbl">Port</label><input class="field" data-k="sp" type="number" value="${a.smtp.port}"></div><div><label class="lbl">Sécurité</label><select class="field" data-k="ss"><option value="1"${a.smtp.secure ? ' selected' : ''}>SSL/TLS</option><option value="0"${a.smtp.secure ? '' : ' selected'}>STARTTLS</option></select></div></div>
+      <div class="g2"><div><label class="lbl">IMAP</label><input class="field" data-k="ih" autocapitalize="off" autocorrect="off" spellcheck="false" value="${esc(a.imap.host)}"></div><div><label class="lbl">Port</label><input class="field" data-k="ip" type="number" value="${a.imap.port}"></div><div><label class="lbl">Sécurité</label><select class="field" data-k="is"><option value="1"${a.imap.secure ? ' selected' : ''}>SSL/TLS</option><option value="0"${a.imap.secure ? '' : ' selected'}>STARTTLS</option></select></div></div>
+      <div class="g2"><div><label class="lbl">SMTP</label><input class="field" data-k="sh" autocapitalize="off" autocorrect="off" spellcheck="false" value="${esc(a.smtp.host)}"></div><div><label class="lbl">Port</label><input class="field" data-k="sp" type="number" value="${a.smtp.port}"></div><div><label class="lbl">Sécurité</label><select class="field" data-k="ss"><option value="1"${a.smtp.secure ? ' selected' : ''}>SSL/TLS</option><option value="0"${a.smtp.secure ? '' : ' selected'}>STARTTLS</option></select></div></div>
     </details>`}
     <div data-msg></div>
     <div class="row"><button class="btn ghost" data-del style="color:#f87171">${ic('trash')}Retirer le compte</button><span class="spacer"></span><button class="btn ghost" data-x>Annuler</button><button class="btn primary" data-ok>${ic('check')}Enregistrer</button></div>`,
@@ -1955,7 +1997,7 @@ async function openSettings(tab = 'look'){
       R('Grouper par date', seg('groups', yn)) +
       R('Boîte unifiée (tous les comptes)', seg('unified', yn)) +
       R('Compteurs des dossiers', seg('counts', [['unread','Non lus'],['total','Total'],['none','Aucun']])) +
-      R('Actions au survol', `<div class="toggles">${[['archive','Archiver'],['trash','Supprimer'],['read','Lu / non lu'],['star','Suivre']].map(([v, l]) => `<label class="chk"><input type="checkbox" data-qa="${v}"${SET.qa.includes(v) ? ' checked' : ''}> ${l}</label>`).join('')}</div>`) +
+      R('Actions au survol', `<div class="toggles">${[['star','Suivre'],['archive','Archiver'],['reply','Répondre'],['read','Lu / non lu'],['trash','Supprimer']].map(([v, l]) => `<label class="chk"><input type="checkbox" data-qa="${v}"${SET.qa.includes(v) ? ' checked' : ''}> ${l}</label>`).join('')}</div>`) +
       R('Après archivage ou suppression', seg('after', [['next','Message suivant'],['prev','Précédent'],['list','Revenir à la liste']]))],
     read: ['Lecture', () =>
       R('Marquer comme lu', seg('markRead', [['now','Tout de suite'],['delay','Après 2 s'],['never','Manuellement']])) +
@@ -1979,6 +2021,7 @@ async function openSettings(tab = 'look'){
       R('Expéditeurs bloqués', `<div style="display:flex;gap:8px"><input class="field" data-newblock placeholder="Adresse ou @domaine" spellcheck="false"><button class="btn primary" data-addblock>Ajouter</button></div><div data-blist style="margin-top:12px"></div>`, 'Les messages des expéditeurs bloqués vont directement dans Indésirables, sans notification. Pour bloquer tout un domaine, écris @domaine.fr.')],
     notif: ['Notifications', () =>
       R('Notifications des nouveaux messages', pseg('notify', pyn)) +
+      (N.platform === 'android' ? R('Recevoir les mails en arrière-plan', pseg('bg', pyn), 'Hamama reste prêt quand l’appli est fermée : les nouveaux mails sont notifiés en temps réel. Android affiche une petite notification discrète « Réception des mails en temps réel », que tu peux masquer.') : '') +
       (MOBILE ? '' : R('Son', pseg('sound', pyn)) +
       R('Garder Hamama dans la zone de notification à la fermeture', pseg('tray', pyn), 'Hamama continue de recevoir les messages quand la fenêtre est fermée.') +
       R('Lancer Hamama au démarrage de Windows', pseg('startup', pyn)) +
@@ -2133,6 +2176,7 @@ addEventListener('hamama-back', e => {
   if (document.documentElement.classList.contains('drawer')){ setDrawer(false); e.preventDefault(); return; }
   if (ST.search){ clearSearch(); e.preventDefault(); return; }
   if (document.documentElement.classList.contains('reading')){ viewAction('back'); e.preventDefault(); return; }
+  if (isSmall() && !document.documentElement.classList.contains('boxes')){ setBoxes(true); e.preventDefault(); return; }
   if (ST.sel.size > 1 || ST.selMode){ ST.sel.clear(); ST.selMode = false; renderList(); e.preventDefault(); }
 });
 
@@ -2167,7 +2211,7 @@ $('#compose').onclick = () => openComposer();
 $('#setBtn').onclick = () => openSettings();
 $('#heartBtn').onclick = () => openSupport();
 $('#addAccBtn').onclick = () => { setDrawer(false); openAddAccount(); };
-$('#sideBtn').onclick = () => { if (isSmall()) return setDrawer(!document.documentElement.classList.contains('drawer')); SET.side = SET.side === 'hidden' ? 'shown' : 'hidden'; applySettings(); };
+$('#sideBtn').onclick = () => { if (isSmall()) return setBoxes(true); SET.side = SET.side === 'hidden' ? 'shown' : 'hidden'; applySettings(); };
 $('#drawerBack').onclick = () => setDrawer(false);
 $('#refreshBtn').onclick = () => refreshAll();
 async function refreshAll(){
@@ -2182,7 +2226,7 @@ if (N){
     refreshFoldersSoon(acc, 300);
     const v = ST.view;
     if (v && !ST.search && (v.uni || (v.acc === acc && v.box === 'INBOX'))) refreshList();
-    if (!document.hasFocus() && items && items.length){
+    if ((document.hidden || !document.hasFocus()) && items && items.length){
       if (items.length > 2) N.notify({ title: T(`${items.length} nouveaux messages`), body: items.slice(0, 3).map(i => nameOf(i.from && i.from[0])).join(', '), key: items[0].key });
       else items.forEach(i => N.notify({ title: nameOf(i.from && i.from[0]) || T('Nouveau message'), body: i.subject || T('(sans objet)'), key: i.key }));
     }
