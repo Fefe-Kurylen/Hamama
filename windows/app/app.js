@@ -144,6 +144,7 @@ const I18N = {
 "Cc":["Cc","Cc","Cc","Cc","Cc","نسخة"],
 "Cci":["Bcc","Cco","Bcc","Ccn","Bcc","نسخة مخفية"],
 "Adresse invalide (pas d’accents dans une adresse mail) : {0}":["Invalid address (no accents allowed in an email address): {0}","Dirección no válida (sin acentos en una dirección de correo): {0}","Ungültige Adresse (keine Akzente in einer E-Mail-Adresse): {0}","Indirizzo non valido (niente accenti in un indirizzo email): {0}","Endereço inválido (sem acentos num endereço de e-mail): {0}","عنوان غير صالح (لا أحرف معلَّمة في عنوان البريد): {0}"],
+"Écrire":["Compose","Redactar","Verfassen","Scrivi","Escrever","إنشاء"],
 "Retour aux boîtes":["Back to mailboxes","Volver a los buzones","Zurück zu den Postfächern","Torna alle caselle","Voltar às caixas","العودة إلى الصناديق"],
 "Cc / Cci":["Cc / Bcc","Cc / Cco","Cc / Bcc","Cc / Ccn","Cc / Bcc","نسخة / مخفية"],
 "Réduire":["Minimize","Minimizar","Minimieren","Riduci","Minimizar","تصغير"],
@@ -781,7 +782,7 @@ function updSideBtn(){
   if (b.dataset.cur !== want){ b.innerHTML = ic(want); b.dataset.cur = want; }
   b.title = isSmall() ? 'Retour aux boîtes' : 'Afficher / masquer les dossiers';
 }
-if (MOBILE && !TABLET){ document.documentElement.classList.add('boxes'); const q = document.getElementById('q'); if (q) q.placeholder = 'Rechercher'; }
+if (MOBILE && !TABLET){ document.documentElement.classList.add('boxes'); const q = document.getElementById('q'); if (q) q.placeholder = 'Rechercher'; const cs = document.querySelector('#compose span'); if (cs) cs.textContent = 'Écrire'; }
 addEventListener('resize', () => updSideBtn());
 setTimeout(updSideBtn, 0);
 
@@ -1313,7 +1314,24 @@ function renderView(m){
   const allowImg = SET.images === 'always' || IMG_OK.has((from.address || '').toLowerCase()) || m._imgs;
   const blocked = !m.loading && !allowImg && hasRemote(m);
   const atts = (m.attachments || []);
-  $('#view').innerHTML = `
+  const SMALL = isSmall();
+  // Téléphone (comme Mail d'Apple / Gmail) : en haut Retour + suivi + plus ; actions principales en grosse barre en bas
+  const vbot = SMALL ? `<div class="vbot">
+    <button data-v="archive" title="Archiver">${ic('archive')}</button>
+    <button data-v="trash" title="Supprimer">${ic('trash')}</button>
+    <button data-v="move" title="Déplacer vers…">${ic('folder-in')}</button>
+    <button data-v="reply" title="Répondre">${ic('reply')}</button>
+    <button data-v="all" title="Répondre à tous">${ic('reply-all')}</button>
+    <button data-v="fwd" title="Transférer">${ic('forward')}</button>
+  </div>` : '';
+  const vtop = SMALL ? `<div class="vbar vtop">
+    <button class="ibtn backBtn" data-v="back" title="Retour à la liste">${ic('left')}</button>
+    <div class="spacer"></div>
+    <button class="ibtn${m.flagged ? ' starred' : ''}" data-v="star" title="${m.flagged ? 'Ne plus suivre' : 'Suivre'}">${ic('star')}</button>
+    <button class="ibtn" data-v="unread" title="Marquer comme non lu">${ic('mail')}</button>
+    <button class="ibtn" data-v="more" title="Plus d’actions">${ic('dots')}</button>
+  </div>` : '';
+  $('#view').innerHTML = SMALL ? vtop + VIEWBODY() + vbot : `
   <div class="vbar">
     <button class="ibtn backBtn" data-v="back" title="Retour à la liste (Échap)">${ic('left')}</button>
     <button class="btn" data-v="reply" title="Répondre (R)">${ic('reply')}<span class="lbl-t">Répondre</span></button>
@@ -1327,7 +1345,8 @@ function renderView(m){
     <button class="ibtn${m.flagged ? ' starred' : ''}" data-v="star" title="${m.flagged ? 'Ne plus suivre' : 'Suivre'} (S)">${ic('star')}</button>
     <button class="ibtn" data-v="unread" title="Marquer comme non lu (U)">${ic('mail')}</button>
     <button class="ibtn" data-v="more" title="Plus d’actions">${ic('dots')}</button>
-  </div>
+  </div>` + VIEWBODY();
+  function VIEWBODY(){ return `
   <div id="vscroll" style="flex:1;overflow:auto">
   <div class="vin">
     <h1><span${m.subject ? ' data-notr' : ''}>${esc(m.subject || '(sans objet)')}</span>${ST.view && ST.view.uni && a ? `<span class="tag" style="border-color:${accColor(a)};color:${accColor(a)}">${esc(accLabel(a))}</span>` : ''}</h1>
@@ -1339,7 +1358,7 @@ function renderView(m){
     ${atts.length ? `<div class="atts">${atts.map(x => `<div class="att" data-att="${esc(x.key)}" title="Ouvrir"><div class="ai">${esc((x.filename.split('.').pop() || '').slice(0, 4))}</div><div class="an"><b data-notr>${esc(x.filename)}</b><small>${fmtSize(x.size)}</small></div><button class="ibtn" data-save="${esc(x.key)}" title="Enregistrer">${ic('download')}</button></div>`).join('')}${atts.length > 1 ? `<button class="btn ghost" data-saveall style="height:48px">${ic('download')}Tout enregistrer</button>` : ''}</div>` : ''}
     <div class="mbody">${m.loading ? `<div style="padding:22px">${'<div class="skel" style="height:14px;margin-bottom:10px"></div>'.repeat(5)}</div>` : '<iframe id="mframe" sandbox="allow-same-origin allow-popups allow-popups-to-escape-sandbox" aria-label="Contenu du message"></iframe>'}</div>
     ${!m.loading && role !== 'sent' ? `<div class="qreply"><button data-v="reply">${ic('reply')}Répondre à ${esc(nameOf(from).split(' ')[0] || 'l’expéditeur')}…</button><button class="sm" data-v="fwd">${ic('forward')}Transférer</button></div>` : ''}
-  </div></div>`;
+  </div></div>`; }
   $('#view').style.display = 'flex'; $('#view').style.flexDirection = 'column';
   if (!m.loading){
     const f = $('#mframe');
