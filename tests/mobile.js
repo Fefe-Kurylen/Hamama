@@ -100,7 +100,7 @@ const check = (c, m) => { if (c) { ok++; console.log('✅', m); } else { ko++; c
   const listVis = await page.evaluate(() => document.getElementById('list').getBoundingClientRect().width);
   check(listVis >= 380, 'liste réaffichée');
 
-  // --- balayage vers la gauche = archiver ---
+  // --- balayage vers la gauche = supprimer (réglage par défaut) ---
   const before = await page.locator('#list .it').count();
   const box = await page.locator('#list .it').first().boundingBox();
   const sw = async (x0, x1) => {
@@ -112,7 +112,7 @@ const check = (c, m) => { if (c) { ok++; console.log('✅', m); } else { ko++; c
   await sw(box.x + box.width - 20, box.x + 40);
   await page.waitForTimeout(1200);
   const after = await page.locator('#list .it').count();
-  check(after === before - 1, `balayage gauche → archivé (${before} → ${after})`);
+  check(after === before - 1, `balayage gauche → supprimé (${before} → ${after})`);
   await page.screenshot({ path: path.join(__dirname, 'shots', 'mob-6-archive.png') });
 
   // --- rédaction plein écran + envoi ---

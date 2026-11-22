@@ -848,6 +848,23 @@ html.mobile,html.mobile body{overflow:hidden;overscroll-behavior:none}
 .mobile .bulk #bulkN{white-space:nowrap}
 .mobile .vin .who{display:grid;grid-template-columns:46px 1fr;column-gap:12px;row-gap:2px}
 .mobile .vin .who .wd{grid-column:2;text-align:left}
+
+/* ===== iPhone : icônes d'action un peu plus grandes et plus épaisses (23/11) ===== */
+.mobile .ibtn svg,.mobile .vbot svg,.mobile .bxbtn svg,.mobile #compose svg,.mobile .bulk svg,.mobile .menu svg,.mobile .lhead svg,.mobile .chead svg,.mobile .etools svg,.mobile .qmore svg,.mobile .swipebg svg,.mobile .bxcard .fold svg{stroke-width:2.25}
+.mobile header{--is:27px}
+.mobile .vtop{--is:27px}
+.mobile .vtop .backBtn{--is:30px}
+.mobile .vbot button svg{width:29px;height:29px}
+.mobile .lhead{--ib:44px;--is:24px}
+.mobile .bulk{--is:24px}
+.mobile .bxbtn{--is:25px}
+.mobile .menu button{--is:24px}
+.mobile.boxes .bxcard .fold{--is:27px}
+.mobile .chead{--is:26px}
+.mobile .swipebg{font-size:15px;--is:24px}
+.mobile .seg.wrap{flex-wrap:wrap;gap:6px;background:none;padding:0}
+.mobile .seg.wrap button{flex:1 1 30%;border-radius:12px;background:rgba(128,128,128,.12)}
+.mobile .seg.wrap button.on{background:rgba(var(--accent-rgb),.2);color:var(--text)}
 </style>
 </head>
 <body>

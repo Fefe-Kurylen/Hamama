@@ -154,6 +154,10 @@ const I18N = {
 "Nouveau":["New","Nuevo","Neu","Nuovo","Novo","جديد"],
 "Les mots de passe sont chiffrés sur ce téléphone et ne sont jamais envoyés ailleurs qu’à ton fournisseur.":["Passwords are encrypted on this phone and are never sent anywhere except to your provider.","Las contraseñas se cifran en este teléfono y solo se envían a tu proveedor.","Passwörter werden auf diesem Telefon verschlüsselt und nur an deinen Anbieter gesendet.","Le password sono cifrate su questo telefono e vengono inviate solo al tuo provider.","As palavras-passe são encriptadas neste telemóvel e só são enviadas ao teu fornecedor.","تُشفَّر كلمات المرور على هذا الهاتف ولا تُرسل إلا إلى مزوّدك."],
 "Automatique (langue du téléphone)":["Automatic (phone language)","Automático (idioma del teléfono)","Automatisch (Telefonsprache)","Automatica (lingua del telefono)","Automático (idioma do telemóvel)","تلقائي (لغة الهاتف)"],
+"Glisser un message vers la gauche":["Swipe a message left","Deslizar un mensaje a la izquierda","Nachricht nach links wischen","Scorri un messaggio a sinistra","Deslizar uma mensagem para a esquerda","سحب الرسالة إلى اليسار"],
+"Glisser un message vers la droite":["Swipe a message right","Deslizar un mensaje a la derecha","Nachricht nach rechts wischen","Scorri un messaggio a destra","Deslizar uma mensagem para a direita","سحب الرسالة إلى اليمين"],
+"Rien":["Nothing","Nada","Nichts","Niente","Nada","لا شيء"],
+"Non lu":["Unread","No leído","Ungelesen","Non letto","Não lido","غير مقروء"],
 "Retour aux boîtes":["Back to mailboxes","Volver a los buzones","Zurück zu den Postfächern","Torna alle caselle","Voltar às caixas","العودة إلى الصناديق"],
 "Cc / Cci":["Cc / Bcc","Cc / Cco","Cc / Bcc","Cc / Ccn","Cc / Bcc","نسخة / مخفية"],
 "Réduire":["Minimize","Minimizar","Minimieren","Riduci","Minimizar","تصغير"],
@@ -746,7 +750,7 @@ const DEF_SET = {
   theme:'graphite', accent:'#c8703f', layout:'trois', density:'confort', zoom:'m', radius:'doux', side:'shown',
   preview:'1', avatars:'on', groups:'on', unified:'on', qa:['star','archive','reply','trash'], after:'next',
   uifont:'Inter', weight:'normal', unreadBold:'on', markRead:'delay', images:'ask', mailbg:'theme', spell:'auto', mailZoom:'100', labels:'off', readw:'normal',
-  font:'Inter', fsize:'14', undoSend:'10', lang:'auto', compWin:'float', noSubjWarn:'on', keys:'on', counts:'unread'
+  font:'Inter', fsize:'14', undoSend:'10', swipeL:'trash', swipeR:'move', lang:'auto', compWin:'float', noSubjWarn:'on', keys:'on', counts:'unread'
 };
 let SET = { ...DEF_SET, ...J('hamama-settings', {}) };
 if (!SET.qa2){ SET.qa = ['star','archive','reply','trash']; SET.qa2 = 1; }   // 18/11 : favoris, archiver, répondre, poubelle
@@ -839,10 +843,6 @@ function renderSide(){
   if (ST.accounts.length > 1 && SET.unified === 'on'){
     const n = unseenTotal();
     h += `${PH ? '<div class="bxcard">' : ''}<button class="fold uni${vk === 'uni' ? ' on' : ''}${n ? ' unread' : ''}" data-uni="1">${ic(PH ? 'inbox' : 'layers')}<span class="t">${PH ? 'Réception' : 'Toutes les boîtes'}</span>${n ? `<span class="n">${n}</span>` : ''}${CH}</button>${PH ? '</div>' : ''}`;
-  } else if (PH && ST.accounts.length === 1){
-    const a = ST.accounts[0], f = (ST.folders[a.id] || []).find(x => x.role === 'inbox');
-    if (f){ topInbox = f.path; const n = SET.counts === 'none' ? 0 : f.unseen;
-      h += `<div class="bxcard"><button class="fold${vk === a.id + '|' + f.path ? ' on' : ''}${f.unseen ? ' unread' : ''}" data-acc="${a.id}" data-box="${esc(f.path)}">${ic('inbox')}<span class="t">Réception</span>${n ? `<span class="n">${n}</span>` : ''}${CH}</button></div>`; }
   }
   for (const a of ST.accounts){
     const fl = ST.folders[a.id] || [];
@@ -1085,7 +1085,19 @@ $('#bulk').addEventListener('click', e => {
   if (b.dataset.b === 'move') return pickFolder(keys, b);
   act(b.dataset.b, keys);
 });
-/* Toucher : glisser à gauche = archiver, à droite = lu / non lu ; appui long = menu */
+/* Toucher : glisser à gauche = supprimer, à droite = déplacer (réglable : Réglages → Liste) ; appui long = menu */
+const SWIPES = [['trash','Supprimer'],['archive','Archiver'],['move','Déplacer'],['read','Lu / non lu'],['star','Suivre'],['none','Rien']];
+function swipeInfo(a, i){
+  return { trash:{ ic:'trash', l:'Supprimer', c:'#d9534f' }, archive:{ ic:'archive', l:'Archiver', c:'#3d9579' }, move:{ ic:'folder-in', l:'Déplacer', c:'#4a8fe0' },
+    read:{ ic: i && i.seen ? 'mail' : 'mail-open', l: i && i.seen ? 'Non lu' : 'Lu', c:'var(--accent)' }, star:{ ic:'star', l: i && i.flagged ? 'Ne plus suivre' : 'Suivre', c:'#d4a017' },
+    none:{ ic:'x', l:'', c:'transparent' } }[a] || { ic:'x', l:'', c:'transparent' };
+}
+function doSwipe(a, key){
+  const i = itemOf(key); if (!i) return;
+  if (a === 'move') return pickFolder([key]);
+  if (a === 'read') return act(i.seen ? 'unread' : 'read', [key]);
+  if (a === 'star') return act(i.flagged ? 'unstar' : 'star', [key]);
+}
 (() => {
   let st = null, lp = null;
   const L = $('#list');
@@ -1099,7 +1111,8 @@ $('#bulk').addEventListener('click', e => {
     if (!st.on){ if (Math.abs(dy) > 10 && Math.abs(dy) > Math.abs(dx)){ clearTimeout(lp); st = null; return; } if (Math.abs(dx) < 12) return;
       clearTimeout(lp); st.on = true; const i = itemOf(st.it.dataset.k);
       const w = document.createElement('div'); w.className = 'swipewrap'; st.it.before(w); w.appendChild(st.it);
-      w.insertAdjacentHTML('afterbegin', `<div class="swipebg l">${ic('archive')}<span>${T('Archiver')}</span></div><div class="swipebg r">${ic(i && i.seen ? 'mail' : 'mail-open')}<span>${T(i && i.seen ? 'Non lus' : 'Lu')}</span></div>`);
+      const sl = swipeInfo(SET.swipeL, i), sr = swipeInfo(SET.swipeR, i);
+      w.insertAdjacentHTML('afterbegin', `<div class="swipebg l" style="background:${sl.c}">${ic(sl.ic)}<span>${T(sl.l)}</span></div><div class="swipebg r" style="background:${sr.c}">${ic(sr.ic)}<span>${T(sr.l)}</span></div>`);
       st.wrap = w; st.it.classList.add('swiping'); }
     st.wrap.querySelector('.l').style.opacity = dx < 0 ? 1 : 0; st.wrap.querySelector('.r').style.opacity = dx > 0 ? 1 : 0;
     st.it.style.transform = `translateX(${dx}px)`;
@@ -1110,8 +1123,9 @@ $('#bulk').addEventListener('click', e => {
     const key = s0.it.dataset.k, dx = s0.dx, wrap = s0.wrap, it = s0.it;
     it.classList.remove('swiping'); it.style.transition = 'transform .2s';
     const done = () => { if (wrap.isConnected){ wrap.before(it); wrap.remove(); } it.style.transform = ''; it.style.transition = ''; };
-    if (dx < -90){ it.style.transform = 'translateX(-110%)'; setTimeout(() => { done(); act('archive', [key]); }, 180); }
-    else if (dx > 90){ const i = itemOf(key); it.style.transform = 'translateX(0)'; setTimeout(() => { done(); act(i && i.seen ? 'unread' : 'read', [key]); }, 200); }
+    const a = dx < -90 ? SET.swipeL : dx > 90 ? SET.swipeR : 'none';
+    if (a === 'trash' || a === 'archive'){ it.style.transform = `translateX(${dx < 0 ? -110 : 110}%)`; setTimeout(() => { done(); act(a, [key]); }, 180); }
+    else if (a !== 'none'){ it.style.transform = 'translateX(0)'; setTimeout(() => { done(); doSwipe(a, key); }, 200); }
     else { it.style.transform = 'translateX(0)'; setTimeout(done, 210); }
   };
   L.addEventListener('touchend', end); L.addEventListener('touchcancel', end);
@@ -2072,6 +2086,7 @@ async function openSettings(tab = 'look'){
       R('Coins', seg('radius', [['carre','Carrés'],['doux','Doux'],['rond','Ronds']])) +
       R('Barre des dossiers', seg('side', [['shown','Visible'],['hidden','Masquée']]))],
     list: ['Liste', () =>
+      (MOBILE ? R('Glisser un message vers la gauche', seg('swipeL', SWIPES).replace('class="seg"', 'class="seg wrap"')) + R('Glisser un message vers la droite', seg('swipeR', SWIPES).replace('class="seg"', 'class="seg wrap"')) : '') +
       R('Aperçu du texte', seg('preview', [['0','Aucun'],['1','1 ligne'],['2','2 lignes']])) +
       R('Avatars', seg('avatars', yn)) +
       R('Grouper par date', seg('groups', yn)) +
