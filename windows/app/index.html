@@ -811,6 +811,43 @@ html.mobile,html.mobile body{overflow:hidden;overscroll-behavior:none}
 .mobile #composer.phone #eFont,.mobile #composer.phone #eSize,.mobile #composer.phone .etools .sep:first-of-type{display:none}
 .mobile #composer.phone .chead b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 :is(.mobile,.narrow) .vin .qreply{display:none}
+
+/* ===== iPhone : menus en feuille du bas, réglages plein écran, lecture plus lisible (23/11) ===== */
+.mobile .menu,.mobile .fpick{position:fixed!important;left:10px!important;right:10px!important;top:auto!important;bottom:calc(10px + var(--sab))!important;width:auto!important;min-width:0;max-height:72vh;overflow:auto;border-radius:24px;padding:8px;z-index:200;box-shadow:0 0 0 100vmax rgba(0,0,0,.45),0 10px 40px rgba(0,0,0,.4);animation:up .18s cubic-bezier(.2,.9,.3,1)}
+.mobile .menu button{min-height:52px;padding:0 14px;font-size:16.5px;gap:14px;border-radius:14px;--is:22px}
+.mobile .menu kbd{display:none}
+.mobile .menu .msep{margin:6px 10px}
+.mobile .fpick{display:flex;flex-direction:column;height:62vh}
+.mobile .fpick .field{height:48px;font-size:16px;margin:4px 4px 8px;border-radius:14px}
+.mobile .fpick .fold{height:52px;font-size:16.5px;gap:14px;--is:22px}
+.mobile .bulk{min-height:54px;font-size:15px;--ib:44px;--is:22px}
+/* lecture : expéditeur en clair */
+.mobile .vin .who .av{width:46px;height:46px;font-size:16px}
+.mobile .vin .who .wn > span:first-child{font-size:17px;font-weight:650;color:var(--text)}
+.mobile .vin .who .wn .addr{font-size:13.5px;word-break:normal;overflow-wrap:anywhere;color:var(--muted)}
+.mobile .vin .who .wt{font-size:14px}
+.mobile .vin .who .wd{font-size:13.5px}
+/* réglages : feuille plein écran, textes plus grands */
+.mobile .modal .card.set{width:100%;height:100%;max-height:none;display:flex;flex-direction:column;border-radius:24px;padding:20px 16px calc(12px + var(--sab))}
+.mobile .modal .card.set h2{font-size:22px}
+.mobile .card.set .sub{font-size:14px}
+.mobile .card.set .tabs.v{gap:4px;scrollbar-width:none;flex:none;margin:0 -4px}
+.mobile .card.set .tabs.v::-webkit-scrollbar{display:none}
+.mobile .card.set .tabs.v button{font-size:15px;height:40px;padding:0 14px;flex:none;border-radius:20px}
+.mobile .card.set [data-body]{overflow-y:auto;min-height:0}
+.mobile .card.set .setrow .lbl{font-size:14.5px}
+.mobile .card.set .seg button{font-size:15px;min-height:42px}
+.mobile .card.set .note{font-size:13.5px;line-height:1.45}
+.mobile .card.set select,.mobile .card.set .field{height:46px;font-size:16px;background:var(--panel2);color:var(--text);border:1px solid var(--line2);border-radius:12px;-webkit-appearance:none;appearance:none;padding:0 14px}
+.mobile .card.set select[size],.mobile .card.set select[multiple]{height:auto;padding:6px}
+.mobile .card.set .row .btn{height:46px;font-size:15.5px}
+.mobile #composer.phone #ed{min-height:24vh}
+
+.mobile .card.set .setwrap{flex:1;min-height:0;display:flex;flex-direction:column;gap:14px}
+.mobile .card.set [data-body]{flex:1;display:block}
+.mobile .bulk #bulkN{white-space:nowrap}
+.mobile .vin .who{display:grid;grid-template-columns:46px 1fr;column-gap:12px;row-gap:2px}
+.mobile .vin .who .wd{grid-column:2;text-align:left}
 </style>
 </head>
 <body>

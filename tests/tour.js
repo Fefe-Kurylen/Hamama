@@ -73,21 +73,40 @@ const check = (c, m) => { if (c) { ok++; console.log('✅', m); } else { ko++; c
   await page.waitForSelector('#app:not(.hidden) #list .it', { timeout: 30000 });
   await page.waitForTimeout(800);
 
-  const D = path.join(__dirname, 'tour'); const shot = async n => { await page.waitForTimeout(500); await page.screenshot({ path: path.join(D, n + '.png') }); };
-  await shot('03-liste');
-  // lecture : mail large (lettre d'information 640 px)
-  await page.locator('#list .it', { hasText: 'Paddle' }).first().tap(); await page.waitForTimeout(1200); await shot('04-lecture-large');
-  const fitInfo = await page.evaluate(() => { const f = document.getElementById('mframe'); const b = f.contentDocument.body; return { iframe: f.clientWidth, body: b.style.width, tr: b.style.transform, h: f.style.height }; });
-  console.log('FIT', JSON.stringify(fitInfo));
-  await page.tap('.vtop [data-v=back]'); await page.waitForTimeout(500);
-  await page.locator('#list .it', { hasText: 'Planning' }).first().tap(); await page.waitForTimeout(1200); await shot('05-lecture-tableau');
-  await page.tap('.vtop [data-v=more]'); await shot('06-menu-plus'); await page.keyboard.press('Escape'); await page.mouse.click(5, 400); await page.waitForTimeout(300);
-  await page.tap('.vbot [data-v=reply]'); await page.waitForSelector('#composer'); await shot('07-reponse'); console.log('PAD', JSON.stringify(await page.evaluate(() => ({ sat: getComputedStyle(document.documentElement).getPropertyValue('--sat'), satv: getComputedStyle(document.querySelector('#composer .chead')).paddingTop, kb: document.getElementById('composer').className, sh: screen.height, vv: visualViewport.height, top: document.getElementById('composer').style.top }))));
-  await page.tap('#composer [data-c=close]'); await page.waitForTimeout(800);
-  await page.tap('.vtop [data-v=back]'); await page.waitForTimeout(500);
-  await page.tap('#compose'); await page.waitForSelector('#composer'); await shot('08-nouveau');
-  await page.tap('#composer [data-c=close]'); await page.waitForTimeout(800);
-  await page.tap('#sideBtn'); await page.waitForTimeout(500); await shot('09-boites'); console.log('BX', JSON.stringify(await page.evaluate(() => ['main','#side','#folders','#side .sfoot','#compose','header'].map(q => { const e = document.querySelector(q); const r = e.getBoundingClientRect(); const cs = getComputedStyle(e); return q + ' ' + Math.round(r.top) + '-' + Math.round(r.bottom) + ' pos=' + cs.position + ' disp=' + cs.display; }))));
-  await page.tap('.bxbtn'); await page.waitForTimeout(700); await shot('10-reglages');
+
+  const D = path.join(__dirname, 'tour'); let si = 10;
+  const shot = async n => { await page.waitForTimeout(450); await page.screenshot({ path: path.join(D, String(si++) + '-' + n + '.png') }); };
+  const back = async () => { const b = page.locator('.vtop [data-v=back]'); if (await b.count()) await b.tap(); await page.waitForTimeout(400); };
+  const esc = async () => { await page.evaluate(() => document.body.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))); await page.waitForTimeout(300); };
+  await shot('liste');
+  await page.tap('#selModeBtn'); await page.locator('#list .it').nth(1).tap(); await shot('selection'); await page.tap('#selModeBtn').catch(() => {}); await esc();
+  await page.locator('#list .it').nth(2).dispatchEvent('contextmenu'); await shot('menu-appui-long'); await esc();
+  await page.tap('#chips [data-f=unread]'); await shot('filtre-non-lus'); await page.tap('#chips [data-f=all]');
+  await page.tap('#q'); await page.keyboard.type('planning'); await page.keyboard.press('Enter'); await page.waitForTimeout(1500); await shot('recherche');
+  await page.fill('#q', ''); await page.keyboard.press('Enter'); await page.waitForTimeout(800); await page.locator('#q').blur();
+  for (const [t, n] of [['Sabrine', 'lecture-texte'], ['Planning', 'lecture-tableau-pj'], ['Leboncoin', 'lecture-images-bloquees'], ['Paddle', 'lecture-newsletter'], ['Stripe', 'lecture-stripe'], ['Agence', 'lecture-image-jointe']]){
+    await page.locator('#list .it', { hasText: t }).first().tap(); await page.waitForTimeout(1300); await shot(n);
+    if (n === 'lecture-texte'){ await page.evaluate(() => document.getElementById('vscroll').scrollTo(0, 9999)); await shot('lecture-texte-bas'); }
+    await back();
+  }
+  await page.locator('#list .it', { hasText: 'Planning' }).first().tap(); await page.waitForTimeout(1000);
+  await page.tap('.vtop [data-v=more]'); await shot('lecture-menu-plus'); await esc();
+  await page.tap('.vbot [data-v=move]'); await shot('deplacer'); await esc();
+  await page.tap('.vbot [data-v=reply]'); await page.waitForSelector('#composer'); await shot('reponse');
+  await page.tap('.qmore').catch(() => {}); await shot('reponse-citation');
+  await page.tap('#composer [data-c=close]'); await page.waitForTimeout(700);
+  await page.tap('.vbot [data-v=all]'); await page.waitForSelector('#composer'); await shot('reponse-tous'); await page.tap('#composer [data-c=close]'); await page.waitForTimeout(700);
+  await page.tap('.vbot [data-v=fwd]'); await page.waitForSelector('#composer'); await shot('transfert'); await page.tap('#composer [data-c=close]'); await page.waitForTimeout(700);
+  await back();
+  await page.tap('#compose'); await page.waitForSelector('#composer'); await page.tap('#composer [data-cc]').catch(() => {});
+  await page.locator('[data-f=to] input').fill('sab'); await page.waitForTimeout(600); await shot('nouveau-autocompletion');
+  await page.locator('[data-f=to] input').fill('test@exemple.fr'); await page.keyboard.press('Enter'); await page.tap('#cSubj'); await page.keyboard.type('Essai'); await page.tap('#ed'); await page.keyboard.type('Bonjour, voici un essai.'); await shot('nouveau-rempli');
+  await page.tap('#composer [data-c=close]'); await page.waitForTimeout(900);
+  await page.tap('#sideBtn'); await page.waitForTimeout(500); await shot('boites');
+  await page.tap('.bxbtn'); await page.waitForTimeout(700);
+  for (const t of ['look', 'list', 'read', 'write', 'accounts', 'blocked', 'notif', 'lang', 'about']){ await page.tap(`[data-tab=${t}]`).catch(() => {}); await shot('reglages-' + t); }
+  await page.tap(`[data-tab=look]`); await page.tap('[data-th=clair]').catch(() => {}); await page.waitForTimeout(400); await esc(); await page.locator('.modal [data-close], .modal .btn.primary').last().tap().catch(() => {}); await page.waitForTimeout(400); await shot('boites-clair');
+  await page.locator('#side .fold[data-box]').first().tap(); await page.waitForTimeout(800); await shot('liste-clair');
+  await page.locator('#list .it', { hasText: 'Planning' }).first().tap(); await page.waitForTimeout(1200); await shot('lecture-clair');
   await browser.close(); process.exit(0);
-})().catch(e => { console.error(e); process.exit(1); });
+})().catch(async e => { console.error(e); process.exit(1); });

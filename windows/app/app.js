@@ -152,6 +152,8 @@ const I18N = {
 "Mise à jour…":["Updating…","Actualizando…","Aktualisierung…","Aggiornamento…","Atualizando…","جارٍ التحديث…"],
 "Afficher le message d’origine":["Show original message","Mostrar mensaje original","Ursprüngliche Nachricht anzeigen","Mostra messaggio originale","Mostrar mensagem original","عرض الرسالة الأصلية"],
 "Nouveau":["New","Nuevo","Neu","Nuovo","Novo","جديد"],
+"Les mots de passe sont chiffrés sur ce téléphone et ne sont jamais envoyés ailleurs qu’à ton fournisseur.":["Passwords are encrypted on this phone and are never sent anywhere except to your provider.","Las contraseñas se cifran en este teléfono y solo se envían a tu proveedor.","Passwörter werden auf diesem Telefon verschlüsselt und nur an deinen Anbieter gesendet.","Le password sono cifrate su questo telefono e vengono inviate solo al tuo provider.","As palavras-passe são encriptadas neste telemóvel e só são enviadas ao teu fornecedor.","تُشفَّر كلمات المرور على هذا الهاتف ولا تُرسل إلا إلى مزوّدك."],
+"Automatique (langue du téléphone)":["Automatic (phone language)","Automático (idioma del teléfono)","Automatisch (Telefonsprache)","Automatica (lingua del telefono)","Automático (idioma do telemóvel)","تلقائي (لغة الهاتف)"],
 "Retour aux boîtes":["Back to mailboxes","Volver a los buzones","Zurück zu den Postfächern","Torna alle caselle","Voltar às caixas","العودة إلى الصناديق"],
 "Cc / Cci":["Cc / Bcc","Cc / Cco","Cc / Bcc","Cc / Ccn","Cc / Bcc","نسخة / مخفية"],
 "Réduire":["Minimize","Minimizar","Minimieren","Riduci","Minimizar","تصغير"],
@@ -712,7 +714,7 @@ function promptBox(title, label, value = '', okLabel = 'OK'){
 }
 
 let menuEl = null;
-function closeMenu(){ if (menuEl){ menuEl.remove(); menuEl = null; document.removeEventListener('mousedown', menuOut, true); } }
+function closeMenu(){ if (menuEl){ menuEl.remove(); menuEl = null; document.removeEventListener('mousedown', menuOut, true); document.removeEventListener('pointerdown', menuOut, true); } }
 const menuOut = e => { if (menuEl && !menuEl.contains(e.target)) closeMenu(); };
 function popAt(el, x, y){
   document.body.appendChild(el);
@@ -734,7 +736,7 @@ function menu(items, x, y){
     el.appendChild(b);
   }
   menuEl = el; popAt(el, x, y);
-  setTimeout(() => document.addEventListener('mousedown', menuOut, true), 0);
+  setTimeout(() => { document.addEventListener('mousedown', menuOut, true); document.addEventListener('pointerdown', menuOut, true); }, 0);
 }
 const menuBelow = (btn, items) => { const r = btn.getBoundingClientRect(); menu(items, r.left, r.bottom + 4); };
 
@@ -1161,7 +1163,7 @@ function pickFolder(keys, btn, x, y){
   inp.oninput = () => { const q = inp.value.toLowerCase(); el.querySelectorAll('[data-p]').forEach(b => b.style.display = b.textContent.toLowerCase().includes(q) ? '' : 'none'); };
   inp.onkeydown = e => { e.stopPropagation(); if (e.key === 'Escape') closeMenu(); if (e.key === 'Enter'){ const b = [...el.querySelectorAll('[data-p]')].find(b => b.style.display !== 'none'); b && b.click(); } };
   el.querySelectorAll('[data-p]').forEach(b => b.onclick = () => { closeMenu(); act('move', keys, b.dataset.p); });
-  setTimeout(() => { document.addEventListener('mousedown', menuOut, true); inp.focus(); }, 0);
+  setTimeout(() => { document.addEventListener('mousedown', menuOut, true); document.addEventListener('pointerdown', menuOut, true); if (!MOBILE) inp.focus(); }, 0);
 }
 
 /* ================= Expéditeurs bloqués → Indésirables ================= */
@@ -1290,7 +1292,7 @@ function mailDoc(m, allowImg){
   else body = `<div style="white-space:pre-wrap;font-family:inherit">${linkify(m.text || '')}</div>`;
   const z = (+SET.mailZoom || 100) / 100, flat = SET.mailbg === 'theme', inv = dark ? mailInv() : '';
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="${csp}"><base target="_blank">${styles}
-<style>html{zoom:${z};-webkit-text-size-adjust:100%;text-size-adjust:100%}body{margin:0;padding:${flat ? '6px 2px 18px' : '22px 26px'};font:14px/1.6 ${uiFont()},Inter,"Segoe UI",Arial,sans-serif;color:${dark ? '#000' : '#1d1d1f'};background:${dark ? '#fff' : 'transparent'};word-wrap:break-word;overflow-wrap:anywhere;overflow-x:auto}
+<style>html{zoom:${z};-webkit-text-size-adjust:100%;text-size-adjust:100%}body{margin:0;padding:${flat ? '6px 2px 18px' : '22px 26px'};font:${MOBILE && !TABLET ? 16 : 14}px/1.6 ${uiFont()},Inter,"Segoe UI",Arial,sans-serif;color:${dark ? '#000' : '#1d1d1f'};background:${dark ? '#fff' : 'transparent'};word-wrap:break-word;overflow-wrap:anywhere;overflow-x:auto}
 img{max-width:100%;height:auto}pre{white-space:pre-wrap}a{color:#1a73e8}blockquote{margin:8px 0;padding-left:12px;border-left:3px solid #d0d4dc;color:#555}table{max-width:100%}
 ${dark ? `html{filter:${inv}}img,video,picture,[style*="background-image"]{filter:invert(1) hue-rotate(180deg)}` : ''}</style></head><body>${body}</body></html>`;
 }
@@ -2054,7 +2056,8 @@ async function openSettings(tab = 'look'){
   const LN = new Set(['Français','English','Español','Deutsch','Italiano','Português','العربية']);
   const seg = (key, opts) => `<div class="seg" data-key="${key}">${opts.map(([v, l]) => `<button data-v="${v}" class="${String(SET[key]) === v ? 'on' : ''}"${LN.has(l) ? ' data-notr' : ''}>${l}</button>`).join('')}</div>`;
   const pseg = (key, opts) => `<div class="seg" data-pkey="${key}">${opts.map(([v, l]) => `<button data-v="${v}" class="${String(!!prefs[key]) === v ? 'on' : ''}">${l}</button>`).join('')}</div>`;
-  const R = (lbl, inner, note) => `<div class="setrow"><span class="lbl">${lbl}</span>${inner}${note ? `<div class="note">${note}</div>` : ''}</div>`;
+  const PHONE_SKIP = ['Actions au survol', 'Libellés des boutons', 'Largeur de lecture', 'Fenêtre de rédaction', 'Disposition', 'Barre des dossiers', 'Taille de l’interface', 'Densité', 'Raccourcis clavier'];
+  const R = (lbl, inner, note) => MOBILE && !TABLET && PHONE_SKIP.includes(lbl) ? '' : `<div class="setrow"><span class="lbl">${lbl}</span>${inner}${note ? `<div class="note">${note}</div>` : ''}</div>`;
   const yn = [['on','Oui'],['off','Non']], pyn = [['true','Oui'],['false','Non']];
   const TABS = {
     look: ['Apparence', () =>
@@ -2093,7 +2096,7 @@ async function openSettings(tab = 'look'){
     accounts: ['Comptes', () =>
       `<div class="alist">${ST.accounts.map(a => `<div class="ai">${avatar({ name: a.name || a.email, address: a.email }).replace('class="av ', `style="background:${accColor(a)};color:#fff" class="av col `)}<div class="t" data-notr><b>${esc(accLabel(a))}</b><small>${esc(a.email)} · ${esc((ST.providers[a.provider] || {}).label || a.imap.host)}</small></div><button class="btn ghost" data-edit="${a.id}">${ic('edit')}Modifier</button></div>`).join('')}</div>
        <button class="btn primary" data-addacc style="margin-top:6px">${ic('plus')}Ajouter un compte</button>
-       <div class="note">Les mots de passe sont chiffrés par Windows sur cet ordinateur et ne sont jamais envoyés ailleurs qu’à ton fournisseur.</div>`],
+       <div class="note">${MOBILE ? 'Les mots de passe sont chiffrés sur ce téléphone et ne sont jamais envoyés ailleurs qu’à ton fournisseur.' : 'Les mots de passe sont chiffrés par Windows sur cet ordinateur et ne sont jamais envoyés ailleurs qu’à ton fournisseur.'}</div>`],
     blocked: ['Bloqués', () =>
       R('Expéditeurs bloqués', `<div style="display:flex;gap:8px"><input class="field" data-newblock placeholder="Adresse ou @domaine" spellcheck="false"><button class="btn primary" data-addblock>Ajouter</button></div><div data-blist style="margin-top:12px"></div>`, 'Les messages des expéditeurs bloqués vont directement dans Indésirables, sans notification. Pour bloquer tout un domaine, écris @domaine.fr.')],
     notif: ['Notifications', () =>
@@ -2104,7 +2107,7 @@ async function openSettings(tab = 'look'){
       R('Lancer Hamama au démarrage de Windows', pseg('startup', pyn)) +
       R('Application mail par défaut', `<button class="btn ghost" data-defmail>${ic('mail')}Définir Hamama pour les liens « mailto: »</button>`, 'Windows ouvre ses Paramètres : choisis Hamama pour « MAILTO ».'))],
     lang: ['Langue', () =>
-      R('Langue de l’application', `<div class="seg" data-langs style="flex-direction:column">${[['auto','Automatique (langue de Windows)'], ...LANGS].map(([v, l]) => `<button data-lang="${v}" class="${(SET.lang || 'auto') === v ? 'on' : ''}" style="text-align:left;padding:0 14px;height:38px"${v === 'auto' ? '' : ' data-notr'}>${l}</button>`).join('')}</div>`, 'Hamama redémarre son interface pour appliquer la langue.')],
+      R('Langue de l’application', `<div class="seg" data-langs style="flex-direction:column">${[['auto', MOBILE ? 'Automatique (langue du téléphone)' : 'Automatique (langue de Windows)'], ...LANGS].map(([v, l]) => `<button data-lang="${v}" class="${(SET.lang || 'auto') === v ? 'on' : ''}" style="text-align:left;padding:0 14px;height:38px"${v === 'auto' ? '' : ' data-notr'}>${l}</button>`).join('')}</div>`, 'Hamama redémarre son interface pour appliquer la langue.')],
     keys: ['Raccourcis', () =>
       R('Raccourcis clavier', seg('keys', [['on','Activés'],['off','Désactivés']])) + `<div class="keyl" style="margin-top:14px">${KEYS.map(([k, l]) => `<div><span>${l}</span><span>${k.split(' ').map(x => `<kbd class="k">${x}</kbd>`).join(' ')}</span></div>`).join('')}</div>`],
     about: ['À propos', () =>
