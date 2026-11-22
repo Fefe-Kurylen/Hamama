@@ -7,6 +7,8 @@
   var C = window.Capacitor;
   if (!C || !C.isNativePlatform || !C.isNativePlatform()) return;
   var P = C.Plugins, plat = C.getPlatform(), NJ = P.Nodejs;
+  // iPhone : pas de barre « ˄ ˅ ✓ » au-dessus du clavier (elle mangeait de la place dans la rédaction)
+  try { if (plat === 'ios' && P.Keyboard) P.Keyboard.setAccessoryBarVisible({ isVisible: false }).catch(function () {}); } catch (e) {}
 
   var b64 = function (u8) { var s = ''; for (var i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s); };
   var enc = function (v) {

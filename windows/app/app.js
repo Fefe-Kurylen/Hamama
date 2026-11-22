@@ -145,6 +145,13 @@ const I18N = {
 "Cci":["Bcc","Cco","Bcc","Ccn","Bcc","نسخة مخفية"],
 "Adresse invalide (pas d’accents dans une adresse mail) : {0}":["Invalid address (no accents allowed in an email address): {0}","Dirección no válida (sin acentos en una dirección de correo): {0}","Ungültige Adresse (keine Akzente in einer E-Mail-Adresse): {0}","Indirizzo non valido (niente accenti in un indirizzo email): {0}","Endereço inválido (sem acentos num endereço de e-mail): {0}","عنوان غير صالح (لا أحرف معلَّمة في عنوان البريد): {0}"],
 "Écrire":["Compose","Redactar","Verfassen","Scrivi","Escrever","إنشاء"],
+"Boîtes":["Mailboxes","Buzones","Postfächer","Caselle","Caixas","صناديق البريد"],
+"Réception":["Inbox","Recibidos","Eingang","In arrivo","Entrada","الوارد"],
+"Mis à jour à l’instant":["Updated just now","Actualizado ahora","Gerade aktualisiert","Aggiornato ora","Atualizado agora","تم التحديث للتو"],
+"Mis à jour à {0}":["Updated at {0}","Actualizado a las {0}","Aktualisiert um {0}","Aggiornato alle {0}","Atualizado às {0}","تم التحديث في {0}"],
+"Mise à jour…":["Updating…","Actualizando…","Aktualisierung…","Aggiornamento…","Atualizando…","جارٍ التحديث…"],
+"Afficher le message d’origine":["Show original message","Mostrar mensaje original","Ursprüngliche Nachricht anzeigen","Mostra messaggio originale","Mostrar mensagem original","عرض الرسالة الأصلية"],
+"Nouveau":["New","Nuevo","Neu","Nuovo","Novo","جديد"],
 "Retour aux boîtes":["Back to mailboxes","Volver a los buzones","Zurück zu den Postfächern","Torna alle caselle","Voltar às caixas","العودة إلى الصناديق"],
 "Cc / Cci":["Cc / Bcc","Cc / Cco","Cc / Bcc","Cc / Ccn","Cc / Bcc","نسخة / مخفية"],
 "Réduire":["Minimize","Minimizar","Minimieren","Riduci","Minimizar","تصغير"],
@@ -564,6 +571,7 @@ const ICON = {
   'square-check':'<rect x="3" y="3" width="18" height="18" rx="4"/><path d="m8 12 3 3 5-6"/>',
   chev:'<path d="m6 9 6 6 6-6"/>',
   left:'<path d="m15 18-6-6 6-6"/>',
+  right:'<path d="m9 18 6-6-6-6"/>',
   dots:'<circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/>',
   image:'<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/>',
   shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="m9 12 2 2 4-4"/>',
@@ -818,23 +826,33 @@ setInterval(() => { if (!contactsDirty) return; contactsDirty = false; const arr
 
 /* ================= Barre latérale : dossiers ================= */
 function unseenTotal(){ let n = 0; for (const a of ST.accounts){ const f = (ST.folders[a.id] || []).find(x => x.role === 'inbox'); if (f) n += f.unseen; } return n; }
+function syncText(){ const t = ST.syncAt; if (!t) return 'Mise à jour…'; return Date.now() - t < 60000 ? 'Mis à jour à l’instant' : T('Mis à jour à {0}', new Date(t).toLocaleTimeString(LOC, { hour:'2-digit', minute:'2-digit' })); }
+setInterval(() => { const e = document.getElementById('bxSync'); if (e) e.textContent = syncText(); }, 30000);
 function renderSide(){
   const vk = viewKey(), el = $('#folders');
-  let h = '';
+  const PH = MOBILE && !TABLET;   // téléphone : boîtes en cartes, comme Mail d'Apple
+  const CH = PH ? `<span class="chv">${ic('right')}</span>` : '';
+  let h = PH ? `<div class="bxhead"><div class="bxt"><b>Boîtes</b><small id="bxSync">${syncText()}</small></div><button class="bxbtn" data-bxset title="Personnaliser Hamama">${ic('settings')}</button></div>` : '';
+  let topInbox = null;   // téléphone avec un seul compte : sa Réception dans la carte du haut
   if (ST.accounts.length > 1 && SET.unified === 'on'){
     const n = unseenTotal();
-    h += `<button class="fold uni${vk === 'uni' ? ' on' : ''}${n ? ' unread' : ''}" data-uni="1">${ic('layers')}<span class="t">Toutes les boîtes</span>${n ? `<span class="n">${n}</span>` : ''}</button>`;
+    h += `${PH ? '<div class="bxcard">' : ''}<button class="fold uni${vk === 'uni' ? ' on' : ''}${n ? ' unread' : ''}" data-uni="1">${ic(PH ? 'inbox' : 'layers')}<span class="t">${PH ? 'Réception' : 'Toutes les boîtes'}</span>${n ? `<span class="n">${n}</span>` : ''}${CH}</button>${PH ? '</div>' : ''}`;
+  } else if (PH && ST.accounts.length === 1){
+    const a = ST.accounts[0], f = (ST.folders[a.id] || []).find(x => x.role === 'inbox');
+    if (f){ topInbox = f.path; const n = SET.counts === 'none' ? 0 : f.unseen;
+      h += `<div class="bxcard"><button class="fold${vk === a.id + '|' + f.path ? ' on' : ''}${f.unseen ? ' unread' : ''}" data-acc="${a.id}" data-box="${esc(f.path)}">${ic('inbox')}<span class="t">Réception</span>${n ? `<span class="n">${n}</span>` : ''}${CH}</button></div>`; }
   }
   for (const a of ST.accounts){
     const fl = ST.folders[a.id] || [];
     h += `<div class="acct${collapsed.has(a.id) ? ' closed' : ''}" data-acc="${a.id}"><div class="ah" data-ah="${a.id}"><span class="dot" style="background:${accColor(a)}"></span><span class="nm" data-notr>${esc(accLabel(a))}</span>${ic('chev')}</div>`;
     if (ST.accErr[a.id]) h += `<div class="err" data-fix="${a.id}">${esc(ST.accErr[a.id]).slice(0, 120)}</div>`;
-    h += '<div class="fs">';
+    h += `<div class="fs${PH ? ' bxcard' : ''}">`;
     if (!fl.length && !ST.accErr[a.id]) h += '<div class="skel" style="height:30px;margin:4px 6px"></div><div class="skel" style="height:30px;margin:4px 6px"></div>';
     for (const f of fl){
+      if (topInbox && f.path === topInbox && a === ST.accounts[0]) continue;
       const n = SET.counts === 'none' ? 0 : SET.counts === 'total' && !['inbox','junk'].includes(f.role) ? f.total : f.unseen;
       const unread = f.unseen && !['trash','sent','junk','drafts'].includes(f.role);   // Indésirables, Corbeille… jamais en gras
-      h += `<button class="fold${vk === a.id + '|' + f.path ? ' on' : ''}${unread ? ' unread' : ''}" data-acc="${a.id}" data-box="${esc(f.path)}" style="padding-left:${10 + f.depth * 16}px">${ic(ROLE_IC[f.role] || 'folder')}<span class="t"${f.role ? '' : ' data-notr'}>${esc(f.name)}</span>${n && (f.role !== 'trash' && f.role !== 'sent' || SET.counts === 'total') ? `<span class="n">${n}</span>` : ''}</button>`;
+      h += `<button class="fold${vk === a.id + '|' + f.path ? ' on' : ''}${unread ? ' unread' : ''}" data-acc="${a.id}" data-box="${esc(f.path)}" style="${PH ? '--dp:' + f.depth : 'padding-left:' + (10 + f.depth * 16) + 'px'}">${ic(ROLE_IC[f.role] || 'folder')}<span class="t"${f.role ? '' : ' data-notr'}>${esc(f.name)}</span>${n && (f.role !== 'trash' && f.role !== 'sent' || SET.counts === 'total') ? `<span class="n">${n}</span>` : ''}${CH}</button>`;
     }
     h += '</div></div>';
   }
@@ -844,6 +862,7 @@ function renderSide(){
   if (N) N.badge(n).catch(() => {});
 }
 $('#folders').addEventListener('click', e => {
+  if (e.target.closest('[data-bxset]')) return document.getElementById('setBtn').click();
   const u = e.target.closest('[data-uni]'); if (u){ setDrawer(false); setBoxes(false); return openView({ uni: true }); }
   const f = e.target.closest('.fold[data-box]'); if (f){ setDrawer(false); setBoxes(false); return openView({ acc: f.dataset.acc, box: f.dataset.box }); }
   const ah = e.target.closest('[data-ah]');
@@ -885,7 +904,7 @@ $('#folders').addEventListener('drop', e => {
 });
 
 async function loadFolders(id){
-  try { ST.folders[id] = await N.mail.folders(id); delete ST.accErr[id]; }
+  try { ST.folders[id] = await N.mail.folders(id); delete ST.accErr[id]; ST.syncAt = Date.now(); }
   catch (e) { ST.accErr[id] = cleanErr(e); }
   renderSide();
 }
@@ -1271,7 +1290,7 @@ function mailDoc(m, allowImg){
   else body = `<div style="white-space:pre-wrap;font-family:inherit">${linkify(m.text || '')}</div>`;
   const z = (+SET.mailZoom || 100) / 100, flat = SET.mailbg === 'theme', inv = dark ? mailInv() : '';
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="${csp}"><base target="_blank">${styles}
-<style>html{zoom:${z}}body{margin:0;padding:${flat ? '6px 2px 18px' : '22px 26px'};font:14px/1.6 ${uiFont()},Inter,"Segoe UI",Arial,sans-serif;color:${dark ? '#000' : '#1d1d1f'};background:${dark ? '#fff' : 'transparent'};word-wrap:break-word;overflow-wrap:anywhere;overflow-x:auto}
+<style>html{zoom:${z};-webkit-text-size-adjust:100%;text-size-adjust:100%}body{margin:0;padding:${flat ? '6px 2px 18px' : '22px 26px'};font:14px/1.6 ${uiFont()},Inter,"Segoe UI",Arial,sans-serif;color:${dark ? '#000' : '#1d1d1f'};background:${dark ? '#fff' : 'transparent'};word-wrap:break-word;overflow-wrap:anywhere;overflow-x:auto}
 img{max-width:100%;height:auto}pre{white-space:pre-wrap}a{color:#1a73e8}blockquote{margin:8px 0;padding-left:12px;border-left:3px solid #d0d4dc;color:#555}table{max-width:100%}
 ${dark ? `html{filter:${inv}}img,video,picture,[style*="background-image"]{filter:invert(1) hue-rotate(180deg)}` : ''}</style></head><body>${body}</body></html>`;
 }
@@ -1365,7 +1384,22 @@ function renderView(m){
     f.srcdoc = mailDoc(m, allowImg);
     f.onload = () => {
       const d = f.contentDocument; if (!d) return;
-      const fit = () => { f.style.height = Math.max(120, d.documentElement.scrollHeight) + 'px'; };
+      let kFit = 1;
+      const fit = () => {
+        const b = d.body; if (!b) return;
+        if (isSmall()){
+          // mail plus large que l'écran (lettres d'information de 600 px…) : réduit pour tout voir, sans défilement de côté
+          const z = (+SET.mailZoom || 100) / 100, W = f.clientWidth / z;
+          if (kFit === 1){ b.style.width = ''; }
+          let sw = parseFloat(b.style.width) || 0;
+          if (kFit === 1){ sw = b.clientWidth; const all = b.getElementsByTagName('*'); for (let i = 0; i < all.length && i < 4000; i++){ const r = all[i].getBoundingClientRect().right; if (r > sw) sw = r; } sw = Math.ceil(sw); }
+          const k = sw > W + 2 ? Math.max(.35, W / sw) : 1;
+          if (k !== kFit){ kFit = k; if (k < 1){ b.style.width = sw + 'px'; b.style.transformOrigin = '0 0'; b.style.transform = `scale(${k})`; d.documentElement.style.overflow = 'hidden'; } else { b.style.width = ''; b.style.transform = ''; } }
+          f.style.height = Math.max(120, Math.ceil(b.offsetHeight * kFit * z) + 4) + 'px';
+          return;
+        }
+        f.style.height = Math.max(120, d.documentElement.scrollHeight) + 'px';
+      };
       fit(); try { new ResizeObserver(fit).observe(d.body); } catch {}
       d.querySelectorAll('img').forEach(im => im.addEventListener('load', fit));
       d.addEventListener('keydown', e => onKey(e));
@@ -1686,11 +1720,35 @@ async function openComposer(o = {}){
     else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k' && e.target === ed){ e.preventDefault(); edCmd('link'); }
     else if (e.key === 'Escape' && !e.defaultPrevented && !document.querySelector('.ac')){ e.preventDefault(); closeComposer(CMP.dirty ? 'save' : 'discard'); }
   });
+  // téléphone (comme Mail d'Apple) : Fermer à gauche, Envoyer en haut à droite, citation repliée, fenêtre calée sur la zone visible au-dessus du clavier
+  if (isSmall()){
+    const hd = el.querySelector('.chead'), x = hd.querySelector('[data-c=close]');
+    hd.prepend(x); hd.append($('#cDel'), $('#cSend')); el.classList.add('phone');
+    if (CMP.kind === 'new') $('#cTitle').textContent = 'Nouveau';
+    if (ed.querySelector(':scope > blockquote[type=cite]')){
+      ed.classList.add('qfold');
+      ed.insertAdjacentHTML('afterend', `<button class="qmore" type="button">${ic('dots')}<span>Afficher le message d’origine</span></button>`);
+      el.querySelector('.qmore').onclick = e => { ed.classList.remove('qfold'); e.currentTarget.remove(); };
+    }
+    fitComposer();
+  }
   // focus
   if (!CMP.to.length) el.querySelector('[data-f=to] input').focus();
   else if (!$('#cSubj').value) $('#cSubj').focus();
   else { ed.focus(); const r = document.createRange(); r.setStart(ed, 0); r.collapse(true); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+  if (isSmall()) setTimeout(() => { scrollTo(0, 0); const b = el.querySelector('.cbody'); if (b) b.scrollTop = 0; }, 60);
 }
+/* Téléphone : la fenêtre de rédaction suit la partie visible de l'écran (clavier ouvert ou non),
+   sinon iOS fait remonter toute la page et le haut du message passe sous l'heure */
+function fitComposer(){
+  const el = document.getElementById('composer'), vv = window.visualViewport;
+  if (!el || !el.classList.contains('phone') || !vv) return;
+  const kb = vv.height < (screen.height || innerHeight) * .78;
+  el.style.top = vv.offsetTop + 'px'; el.style.height = vv.height + 'px'; el.style.bottom = 'auto';
+  el.classList.toggle('kb', kb);
+  if (scrollY) scrollTo(0, 0);
+}
+if (window.visualViewport){ visualViewport.addEventListener('resize', fitComposer); visualViewport.addEventListener('scroll', fitComposer); }
 function dirty(){
   if (!CMP) return; CMP.dirty = true; $('#cSt').textContent = '';
   clearTimeout(saveLocalT); saveLocalT = setTimeout(saveLocal, 1500);

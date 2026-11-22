@@ -742,6 +742,75 @@ html[data-unreadb=off] .it.unread .fr,html[data-unreadb=off] .it.unread .sb .s,h
 :is(.mobile,.narrow) .hmid .srch{flex:1;max-width:none;width:auto}
 .mobile #toasts{bottom:calc(94px + var(--sab))}
 .mobile.reading #toasts{bottom:calc(80px + var(--sab))}
+
+/* ===== Téléphone : boîtes en cartes, façon Mail d'Apple, couleurs Hamama (23/11) ===== */
+.mobile.boxes header{height:0;min-height:0;padding:0;border:0;overflow:visible;background:none;z-index:41}
+.mobile.boxes header > :not(.hmid),.mobile.boxes header .srch{display:none!important}
+.mobile.boxes #side{top:0!important;padding:var(--sat) 0 0}
+.mobile.boxes #side .fl{padding:0 16px 12px}
+.mobile .bxhead{display:none}
+.mobile.boxes .bxhead{display:flex;align-items:center;position:sticky;top:0;z-index:2;background:var(--bg);margin:0 -16px 10px;padding:10px 16px 8px;min-height:62px}
+.mobile .bxt{flex:1;display:flex;flex-direction:column;align-items:center;line-height:1.2;padding-left:48px}
+.mobile .bxt b{font-size:18px;font-weight:700;letter-spacing:-.01em}
+.mobile .bxt small{font-size:12.5px;color:var(--muted);margin-top:2px}
+.mobile .bxbtn{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:rgba(128,128,128,.16);color:var(--text);--is:23px}
+.mobile .bxbtn:active{background:rgba(128,128,128,.26)}
+.mobile.boxes .bxcard{background:rgba(128,128,128,.11);border-radius:26px;padding:4px 0;margin-bottom:22px;overflow:hidden}
+[data-tone=light].mobile.boxes .bxcard,[data-tone=light] .mobile.boxes .bxcard{background:rgba(255,255,255,.75)}
+.mobile.boxes .bxcard .fold{position:relative;height:58px;border-radius:0;padding:0 16px 0 calc(18px + var(--dp,0) * 22px);gap:16px;font-size:17.5px;--is:25px;background:none}
+.mobile.boxes .bxcard .fold svg{color:var(--accent);stroke-width:1.8}
+.mobile.boxes .bxcard .fold + .fold::before{content:"";position:absolute;top:0;right:16px;left:calc(59px + var(--dp,0) * 22px);height:1px;background:var(--line2)}
+.mobile.boxes .bxcard .fold:active{background:rgba(128,128,128,.12)}
+.mobile.boxes .bxcard .fold.on{background:rgba(var(--accent-rgb),.10)}
+.mobile.boxes .bxcard .fold .n{font-size:16px;font-weight:500;color:var(--muted);background:none;padding:0}
+.mobile.boxes .bxcard .fold.unread .n{color:var(--text);font-weight:700}
+.mobile.boxes .bxcard .chv{display:grid;place-items:center;margin-right:-4px;--is:19px}
+.mobile.boxes .bxcard .chv svg{color:var(--muted)!important;opacity:.7}
+.chv{display:none}
+.mobile.boxes #side .acct{margin:0}
+.mobile.boxes #side .acct > .ah{font-size:24px;font-weight:800;letter-spacing:-.01em;padding:4px 8px 12px;color:var(--text);text-transform:none;gap:10px}
+.mobile.boxes #side .acct > .ah .dot{display:none}
+.mobile.boxes #side .acct > .ah svg{width:22px;height:22px;margin-left:auto;opacity:.85}
+.mobile.boxes #side .sfoot{padding:10px 16px calc(22px + var(--sab));background:none}
+.mobile.boxes #side .sfoot .btn{width:auto;flex:0 0 auto;padding:0 22px;margin-right:auto}
+.mobile.boxes #side .sfoot .btn{height:52px;border-radius:26px;background:rgba(128,128,128,.11);font-size:16px;color:var(--text);--is:20px}
+
+/* ===== Téléphone : rédaction et lecture lisibles (23/11) ===== */
+html.mobile,html.mobile body{overflow:hidden;overscroll-behavior:none}
+.mobile #composer.phone{inset:auto 0 auto 0;top:0;height:100%;padding-top:0;padding-bottom:0;display:flex;flex-direction:column}
+.mobile #composer.phone .chead{padding:calc(6px + var(--sat)) 10px 8px;gap:4px;--ib:46px;--is:24px;border-bottom:1px solid var(--line)}
+.mobile #composer.phone.kb .chead{padding-top:8px}
+.mobile #composer.phone .chead b{flex:1;text-align:center;font-size:17px;font-weight:700;order:1}
+.mobile #composer.phone .chead [data-c=close]{order:0}
+.mobile #composer.phone .chead #cDel{order:2;color:var(--muted)}
+.mobile #composer.phone .chead #cSend{order:3;height:42px;padding:0 16px;border-radius:21px;font-size:15.5px;gap:7px;--is:19px}
+.mobile #composer.phone .cfoot{display:none}
+.mobile #composer.phone .cbody{overflow-y:auto;-webkit-overflow-scrolling:touch}
+.mobile #composer.phone .cf{min-height:52px;font-size:16px;padding:0 16px}
+.mobile #composer.phone .cf label{font-size:15px}
+.mobile #composer.phone .cf input,.mobile #composer.phone .toks input{font-size:16px}
+.mobile #composer.phone .etools{overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none;--ib:42px;--is:21px;padding:6px 10px}
+.mobile #composer.phone .etools::-webkit-scrollbar{display:none}
+.mobile #composer.phone .etools > *{flex:none}
+.mobile #composer.phone #ed{flex:none;overflow:visible;min-height:38vh;padding:16px;font-size:17px!important;line-height:1.5}
+.mobile #ed *{max-width:100%!important;box-sizing:border-box}
+.mobile #ed table{width:100%!important;table-layout:auto}
+.mobile #ed td,.mobile #ed th{width:auto!important}
+.mobile #ed img{height:auto!important}
+.mobile #ed blockquote{margin:10px 0;padding-left:12px}
+#ed.qfold > blockquote[type=cite],#ed.qfold > div:has(+ blockquote[type=cite]){display:none}
+.qmore{display:flex;align-items:center;gap:10px;margin:0 16px 24px;padding:10px 16px;border-radius:999px;background:rgba(128,128,128,.14);color:var(--muted);font-size:15px;align-self:flex-start;--is:20px}
+/* lecture : en-tête de l'expéditeur compact, adresse lisible */
+:is(.mobile,.narrow) .vin{padding:4px 16px 24px}
+:is(.mobile,.narrow) .vin .who .wn .addr{display:block;font-size:13px;word-break:break-all;margin:2px 0 0}
+:is(.mobile,.narrow) .vin .who .wn{flex-wrap:wrap}
+:is(.mobile,.narrow) .vin .who .wt{font-size:13.5px;margin-top:4px}
+:is(.mobile,.narrow) .vin .who .wd{font-size:13px}
+:is(.mobile,.narrow) .vbot{padding-bottom:max(8px, calc(var(--sab) - 10px))}
+
+.mobile #composer.phone #eFont,.mobile #composer.phone #eSize,.mobile #composer.phone .etools .sep:first-of-type{display:none}
+.mobile #composer.phone .chead b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+:is(.mobile,.narrow) .vin .qreply{display:none}
 </style>
 </head>
 <body>
