@@ -6,7 +6,7 @@ const ok = (c, m) => { console.log((c ? '✅ ' : '❌ ') + m); if (!c) process.e
 const exe = require(path.join(__dirname, '..', 'windows', 'node_modules', 'electron'));
 (async () => {
   const data = fs.mkdtempSync(path.join(os.tmpdir(), 'hamama-i18n-'));
-  const app = await _electron.launch({ executablePath: exe, args: ['--no-sandbox', '--lang=fr-FR', path.join(__dirname, '..', 'windows')], env: { ...process.env, HAMAMA_DATA: data } });
+  const app = await _electron.launch({ executablePath: exe, args: ['--no-sandbox', '--lang=fr-FR', path.join(__dirname, '..', 'windows')], env: { ...process.env, HAMAMA_DATA: data, HAMAMA_DEBUG: '1' } });
   let win = await app.firstWindow();
   const errs = []; const hook = w => { w.on('pageerror', e => errs.push(e.message)); }; hook(win);
   await win.setViewportSize({ width: 1440, height: 900 }).catch(() => {});
@@ -46,7 +46,7 @@ const exe = require(path.join(__dirname, '..', 'windows', 'node_modules', 'elect
     for (const t of ['look','list','read','write','accounts','blocked','notif','lang','keys','about']){ await win.click(`[data-tab=${t}]`); await win.waitForTimeout(120); l1.push(...await leftovers()); }
     await win.click('[data-tab=look]'); await win.screenshot({ path: path.join(SHOTS, `21-reglages-${code}.png`) });
     await win.keyboard.press('Escape');
-    await win.keyboard.press('n'); await win.waitForSelector('#composer'); await win.waitForTimeout(200); l1.push(...await leftovers());
+    await win.evaluate(() => { if (window.__hamama) window.__hamama.SET.compWin = 'float'; }); await win.keyboard.press('n'); await win.waitForSelector('#composer'); await win.waitForTimeout(200); l1.push(...await leftovers());
     await win.screenshot({ path: path.join(SHOTS, `22-redaction-${code}.png`) });
     await win.click('#composer [data-c=close]'); await win.waitForTimeout(300);
     await win.click('#list .it >> nth=2', { button: 'right' }); await win.waitForTimeout(200); l1.push(...await leftovers()); await win.keyboard.press('Escape'); await win.mouse.click(5, 400);
