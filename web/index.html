@@ -865,6 +865,40 @@ html.mobile,html.mobile body{overflow:hidden;overscroll-behavior:none}
 .mobile .seg.wrap{flex-wrap:wrap;gap:6px;background:none;padding:0}
 .mobile .seg.wrap button{flex:1 1 30%;border-radius:12px;background:rgba(128,128,128,.12)}
 .mobile .seg.wrap button.on{background:rgba(var(--accent-rgb),.2);color:var(--text)}
+
+/* ===== iPhone (23/11 matin) : texte un peu plus gras partout, contenu plus près du bord gauche ===== */
+.mobile:not([data-weight=fin]) body{font-weight:500}
+.mobile:not([data-weight=fin]) .it .fr{font-weight:650}
+.mobile:not([data-weight=fin]) .it.unread .fr{font-weight:800}
+.mobile:not([data-weight=fin]) .it .sb .s{font-weight:550}
+.mobile:not([data-weight=fin]) .it.unread .sb .s{font-weight:700}
+.mobile:not([data-weight=fin]) .it .pv,.mobile:not([data-weight=fin]) .it .dt{font-weight:500}
+.mobile:not([data-weight=fin]) .lhead h2,.mobile:not([data-weight=fin]) .vin h1{font-weight:800}
+.mobile:not([data-weight=fin]) .fold .t,.mobile:not([data-weight=fin]) .menu button,.mobile:not([data-weight=fin]) .vin .who,.mobile:not([data-weight=fin]) .chips button,.mobile:not([data-weight=fin]) .setrow .lbl{font-weight:600}
+.mobile:not([data-weight=fin]) .fold.unread .t{font-weight:750}
+.mobile:not([data-weight=fin]) .grp{font-weight:700}
+.mobile:not([data-weight=fin]) .srch input{font-weight:500}
+/* alignement à gauche : marges réduites */
+.mobile .lhead{padding-left:12px;padding-right:10px}
+.mobile .chips{padding-left:12px}
+.mobile #list{padding-left:4px;padding-right:6px}
+.mobile .it{padding-left:10px;gap:12px}
+.mobile .grp{padding-left:8px}
+.mobile :is(.mobile,.narrow) header,.mobile header{padding-left:4px}
+.mobile.boxes #side .fl{padding-left:8px;padding-right:10px}
+.mobile.boxes .bxcard .fold{padding-left:calc(12px + var(--dp,0) * 22px);gap:14px}
+.mobile.boxes .bxcard .fold + .fold::before{left:calc(53px + var(--dp,0) * 22px)}
+.mobile.boxes #side .acct > .ah{padding-left:4px}
+.mobile.boxes .bxt{align-items:flex-start;padding-left:4px}
+.mobile.boxes .bxt b{font-size:26px;font-weight:800}
+.mobile.boxes .bxhead{padding-left:12px;padding-right:12px}
+.mobile.boxes #side .sfoot{padding-left:8px}
+.mobile :is(.mobile,.narrow) .vin,.mobile .vin{padding-left:12px;padding-right:12px}
+.mobile .vtop{padding-left:4px}
+.mobile #composer.phone .cf{padding-left:12px}
+.mobile #composer.phone #ed{padding-left:12px;padding-right:12px}
+.mobile #composer.phone .etools{padding-left:8px}
+.mobile .card.set{padding-left:12px;padding-right:12px}
 </style>
 </head>
 <body>
