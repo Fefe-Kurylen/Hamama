@@ -1747,6 +1747,11 @@ async function openComposer(o = {}){
       el.querySelector('.qmore').onclick = e => { ed.classList.remove('qfold'); e.currentTarget.remove(); };
     }
     fitComposer();
+  } else if (ed.querySelector(':scope > blockquote[type=cite]')){
+    // ordinateur aussi : message d'origine replié sous « Afficher le message d'origine »
+    ed.classList.add('qfold');
+    ed.insertAdjacentHTML('afterend', `<button class="qmore" type="button">${ic('dots')}<span>Afficher le message d’origine</span></button>`);
+    el.querySelector('.qmore').onclick = e => { ed.classList.remove('qfold'); e.currentTarget.remove(); };
   }
   // focus
   if (!CMP.to.length) el.querySelector('[data-f=to] input').focus();

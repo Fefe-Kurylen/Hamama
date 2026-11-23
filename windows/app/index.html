@@ -916,6 +916,32 @@ html.mobile,html.mobile body{overflow:hidden;overscroll-behavior:none}
 .mobile.boxes #side .acct > .ah{font-size:21px;padding-bottom:8px}
 .mobile.boxes .bxhead{min-height:52px;margin-bottom:4px;padding-top:6px;padding-bottom:4px}
 .mobile.boxes .bxt b{font-size:24px}
+
+/* ===== Windows (23/11) : mêmes réglages que le téléphone — texte plus gras, icônes plus nettes, dossiers en carte, plus compact ===== */
+html:not(.mobile):not([data-weight=fin]) body{font-weight:500}
+html:not(.mobile):not([data-weight=fin]) .it .fr{font-weight:650}
+html:not(.mobile):not([data-weight=fin]) .it.unread .fr{font-weight:800}
+html:not(.mobile):not([data-weight=fin]) .it .sb .s{font-weight:550}
+html:not(.mobile):not([data-weight=fin]) .it.unread .sb .s{font-weight:700}
+html:not(.mobile):not([data-weight=fin]) .lhead h2,html:not(.mobile):not([data-weight=fin]) .vin h1{font-weight:800}
+html:not(.mobile):not([data-weight=fin]) .fold .t,html:not(.mobile):not([data-weight=fin]) .menu button,html:not(.mobile):not([data-weight=fin]) .chips button,html:not(.mobile):not([data-weight=fin]) .setrow .lbl{font-weight:600}
+html:not(.mobile):not([data-weight=fin]) .fold.unread .t{font-weight:750}
+html:not(.mobile):not([data-weight=fin]) .vin .who .wn > span:first-child{font-weight:700}
+html:not(.mobile) .ibtn svg,html:not(.mobile) .fold svg,html:not(.mobile) .menu svg,html:not(.mobile) .qa svg,html:not(.mobile) #compose svg,html:not(.mobile) .etools svg,html:not(.mobile) .chead svg{stroke-width:2.15}
+html:not(.mobile) header{--is:21px}
+html:not(.mobile) .vbar{--is:21px}
+/* dossiers : nom du compte en titre, dossiers dans une carte arrondie, icônes couleur d'accent */
+html:not(.mobile) #side .acct > .ah{font-size:15px;font-weight:750;color:var(--text);text-transform:none;letter-spacing:0;padding:8px 8px 6px}
+html:not(.mobile) #side .acct > .ah .dot{display:none}
+html:not(.mobile) #side .fs{background:rgba(128,128,128,.09);border-radius:14px;padding:4px;margin:0 4px 10px}
+html:not(.mobile) #side .fold{height:32px;font-size:13.5px}
+html:not(.mobile) #side .fold svg{color:var(--accent)}
+html:not(.mobile) #side .fold.on{background:rgba(var(--accent-rgb),.14)}
+html:not(.mobile) #side .fold.on svg{color:var(--accent)}
+/* liste un peu plus compacte et plus près du bord */
+html:not(.mobile) .it{padding-top:7px;padding-bottom:7px}
+html:not(.mobile) .lhead{padding-left:14px}
+html:not(.mobile) .chips{padding-left:14px}
 </style>
 </head>
 <body>
