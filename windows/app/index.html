@@ -948,6 +948,20 @@ html:not(.mobile) .chips{padding-left:14px}
 .mobile.boxes #side .fl{padding-bottom:calc(96px + var(--sab))}
 .mobile.boxes .bxcard.bxadd .fold svg{color:var(--accent)}
 .mobile .fl,.mobile #list,.mobile #vscroll,.mobile .cbody,.mobile .card,.mobile .menu,.mobile .fpick{overscroll-behavior:contain}
+
+/* ===== Windows : fenêtre de rédaction séparée (23/11) ===== */
+html.cwin header,html.cwin #app,html.cwin #welcome,html.cwin #drawerBack{display:none!important}
+html.cwin #composer.cwfull{position:fixed!important;inset:0!important;width:auto!important;height:auto!important;max-width:none;max-height:none;border-radius:0!important;border:0!important;box-shadow:none!important;transform:none!important;animation:none}
+html.cwin #composer .chead{-webkit-app-region:drag;height:52px;padding-right:150px;cursor:default}
+html.cwin #composer .chead button,html.cwin #composer .chead select{-webkit-app-region:no-drag}
+html.cwin #composer .chead [data-c=min],html.cwin #composer .chead [data-c=max],html.cwin #composer .chead [data-c=close]{display:none}
+html.cwin #composer .rz,html.cwin #composer [data-rz]{display:none}
+/* colonnes : s'adaptent quand la fenêtre est réduite */
+html:not(.mobile) #side{width:clamp(150px, var(--sidew), 24vw)}
+@media (min-width:901px){ html:not(.mobile) [data-layout=trois] #listCol,html:not(.mobile)[data-layout=trois] #listCol{width:clamp(250px, var(--listw), 38vw)} html:not(.mobile)[data-layout=trois] #viewCol{min-width:300px} }
+html:not(.mobile) .chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+html:not(.mobile) .chips::-webkit-scrollbar{display:none}
+html:not(.mobile) .vbar{overflow:hidden}
 </style>
 </head>
 <body>

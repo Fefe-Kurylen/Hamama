@@ -1,6 +1,6 @@
 {
   "name": "hamama",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "Hamama — application mail",
   "main": "main.js",
   "scripts": {

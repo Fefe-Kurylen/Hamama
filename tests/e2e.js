@@ -49,7 +49,26 @@ const ok = (c, m) => { console.log((c ? '✅ ' : '❌ ') + m); if (!c) process.e
   // Suivre (étoile) via le clavier
   await win.focus('#list'); await win.keyboard.press('s'); await win.waitForTimeout(600);
   ok(await win.$('#list .it.on .star') !== null, 'raccourci S : message suivi');
-  // Rédaction + envoi
+  // Fenêtre de rédaction séparée (réglage par défaut) : vraie fenêtre Windows indépendante
+  const [cw] = await Promise.all([app.waitForEvent('window'), win.keyboard.press('n')]);
+  await cw.waitForSelector('#composer.cwfull', { timeout: 15000 });
+  ok(await cw.evaluate(() => document.documentElement.classList.contains('cwin') && !!document.querySelector('#cSubj')), 'rédaction dans une fenêtre séparée');
+  await cw.fill('#cSubj', 'Brouillon fenêtre séparée');
+  await cw.screenshot({ path: path.join(SHOTS, '05c-fenetre-separee.png') });
+  const closed = cw.waitForEvent('close', { timeout: 15000 }).then(() => true).catch(() => false);
+  await cw.evaluate(() => window.close());
+  ok(await closed, 'fermeture de la fenêtre séparée (brouillon enregistré)');
+  await win.evaluate(() => { window.__hamama.SET.undoSend = '0'; });
+  const [cw2] = await Promise.all([app.waitForEvent('window'), win.keyboard.press('n')]);
+  await cw2.waitForSelector('#composer.cwfull', { timeout: 15000 });
+  await cw2.fill('#composer [data-f=to] input', 'felix@test.local'); await cw2.keyboard.press('Enter');
+  await cw2.fill('#cSubj', 'Envoyé depuis la fenêtre séparée'); await cw2.click('#ed'); await cw2.keyboard.type('Test.');
+  await cw2.keyboard.press('Control+Enter').catch(() => {});
+  await win.waitForSelector('.toast:has-text("Message envoyé")', { timeout: 20000 });
+  ok(true, 'envoi depuis la fenêtre séparée (décompte et envoi gérés par la fenêtre principale)');
+  await win.waitForTimeout(1500);
+  await win.evaluate(() => { window.__hamama.SET.compWin = 'float'; window.__hamama.SET.undoSend = '10'; });
+  // Rédaction + envoi (fenêtre intégrée)
   await win.keyboard.press('n');
   await win.waitForSelector('#composer');
   // Déplacer la fenêtre « Nouveau message » par sa barre de titre
@@ -185,6 +204,13 @@ const ok = (c, m) => { console.log((c ? '✅ ' : '❌ ') + m); if (!c) process.e
   // Menu contextuel
   await win.click('#list .it:has-text("Stripe")', { button: 'right' }); await win.waitForTimeout(250);
   await win.screenshot({ path: path.join(SHOTS, '13-menu.png') }); await win.keyboard.press('Escape'); await win.mouse.click(5, 300);
+  // Fenêtre réduite : les colonnes s'adaptent (pas de lecture écrasée)
+  await win.setViewportSize({ width: 1000, height: 680 });
+  await win.evaluate(() => document.querySelector('.vtop [data-v=back], .backBtn') && document.documentElement.classList.contains('reading') && 0); await win.keyboard.press('Escape'); await win.waitForTimeout(700);
+  const cols = await win.evaluate(() => ['#side', '#listCol', '#viewCol'].map(q => Math.round(document.querySelector(q).getBoundingClientRect().width)));
+  const dbg = await win.evaluate(() => [document.documentElement.dataset.layout, document.documentElement.className, getComputedStyle(document.querySelector('#listCol')).display, getComputedStyle(document.querySelector('#listCol')).width]);
+  ok(cols[2] >= 290 && cols[1] >= 240 && cols[0] + cols[1] + cols[2] <= 1002, `fenêtre réduite à 1000 px : colonnes ${cols.join(' / ')} px ${dbg.join(' ')}`);
+  await win.screenshot({ path: path.join(SHOTS, '23-fenetre-reduite.png') });
   ok(errs.length === 0, 'aucune erreur JavaScript' + (errs.length ? ' : ' + errs.join(' / ') : ''));
   await app.close();
 })().catch(e => { console.error('ERREUR', e); process.exit(1); });

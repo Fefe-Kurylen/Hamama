@@ -948,6 +948,20 @@ html:not(.mobile) .chips{padding-left:14px}
 .mobile.boxes #side .fl{padding-bottom:calc(96px + var(--sab))}
 .mobile.boxes .bxcard.bxadd .fold svg{color:var(--accent)}
 .mobile .fl,.mobile #list,.mobile #vscroll,.mobile .cbody,.mobile .card,.mobile .menu,.mobile .fpick{overscroll-behavior:contain}
+
+/* ===== Windows : fenêtre de rédaction séparée (23/11) ===== */
+html.cwin header,html.cwin #app,html.cwin #welcome,html.cwin #drawerBack{display:none!important}
+html.cwin #composer.cwfull{position:fixed!important;inset:0!important;width:auto!important;height:auto!important;max-width:none;max-height:none;border-radius:0!important;border:0!important;box-shadow:none!important;transform:none!important;animation:none}
+html.cwin #composer .chead{-webkit-app-region:drag;height:52px;padding-right:150px;cursor:default}
+html.cwin #composer .chead button,html.cwin #composer .chead select{-webkit-app-region:no-drag}
+html.cwin #composer .chead [data-c=min],html.cwin #composer .chead [data-c=max],html.cwin #composer .chead [data-c=close]{display:none}
+html.cwin #composer .rz,html.cwin #composer [data-rz]{display:none}
+/* colonnes : s'adaptent quand la fenêtre est réduite */
+html:not(.mobile) #side{width:clamp(150px, var(--sidew), 24vw)}
+@media (min-width:901px){ html:not(.mobile) [data-layout=trois] #listCol,html:not(.mobile)[data-layout=trois] #listCol{width:clamp(250px, var(--listw), 38vw)} html:not(.mobile)[data-layout=trois] #viewCol{min-width:300px} }
+html:not(.mobile) .chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+html:not(.mobile) .chips::-webkit-scrollbar{display:none}
+html:not(.mobile) .vbar{overflow:hidden}
 </style>
 </head>
 <body>
@@ -1167,6 +1181,8 @@ const I18N = {
 "Glisser un message vers la droite":["Swipe a message right","Deslizar un mensaje a la derecha","Nachricht nach rechts wischen","Scorri un messaggio a destra","Deslizar uma mensagem para a direita","سحب الرسالة إلى اليمين"],
 "Rien":["Nothing","Nada","Nichts","Niente","Nada","لا شيء"],
 "Non lu":["Unread","No leído","Ungelesen","Non letto","Não lido","غير مقروء"],
+"Fenêtre séparée":["Separate window","Ventana aparte","Eigenes Fenster","Finestra separata","Janela separada","نافذة منفصلة"],
+"Dans Hamama":["Inside Hamama","Dentro de Hamama","In Hamama","Dentro Hamama","Dentro do Hamama","داخل Hamama"],
 "Retour aux boîtes":["Back to mailboxes","Volver a los buzones","Zurück zu den Postfächern","Torna alle caselle","Voltar às caixas","العودة إلى الصناديق"],
 "Cc / Cci":["Cc / Bcc","Cc / Cco","Cc / Bcc","Cc / Ccn","Cc / Bcc","نسخة / مخفية"],
 "Réduire":["Minimize","Minimizar","Minimieren","Riduci","Minimizar","تصغير"],
@@ -1759,10 +1775,12 @@ const DEF_SET = {
   theme:'graphite', accent:'#c8703f', layout:'trois', density:'confort', zoom:'m', radius:'doux', side:'shown',
   preview:'1', avatars:'on', groups:'on', unified:'on', qa:['star','archive','reply','trash'], after:'next',
   uifont:'Inter', weight:'normal', unreadBold:'on', markRead:'delay', images:'ask', mailbg:'theme', spell:'auto', mailZoom:'100', labels:'off', readw:'normal',
-  font:'Inter', fsize:'14', undoSend:'10', swipeL:'trash', swipeR:'move', lang:'auto', compWin:'float', noSubjWarn:'on', keys:'on', counts:'unread'
+  font:'Inter', fsize:'14', undoSend:'10', swipeL:'trash', swipeR:'move', lang:'auto', compWin:'window', noSubjWarn:'on', keys:'on', counts:'unread'
 };
 let SET = { ...DEF_SET, ...J('hamama-settings', {}) };
 if (!SET.qa2){ SET.qa = ['star','archive','reply','trash']; SET.qa2 = 1; }   // 18/11 : favoris, archiver, répondre, poubelle
+const IS_CW = location.hash === '#compose';   // cette page est une fenêtre de rédaction séparée (Windows)
+if (!SET.cw1){ if (SET.compWin === 'float') SET.compWin = 'window'; SET.cw1 = 1; }   // 23/11 : rédaction dans sa propre fenêtre par défaut
 if (!SET.us10){ if (SET.undoSend === '5') SET.undoSend = '10'; SET.us10 = 1; }   // 21/11 : délai d’annulation 10 s par défaut
 if (!SET.mb2){ SET.mailbg = 'theme'; SET.mb2 = 1; }   // 18/11 : messages affichés sur le fond de l’appli (comme Mailbird)
 const ZOOMS = { s:.9, m:1, l:1.1, xl:1.25 };
@@ -2656,6 +2674,10 @@ function composerDrag(el){
 
 async function openComposer(o = {}){
   if (!ST.accounts.length) return openAddAccount();
+  if (!IS_CW && !MOBILE && N && N.composeWin && SET.compWin === 'window'){
+    const acc = o.acc || (ST.view && ST.view.acc) || (ST.open && ST.open.split('|')[0]) || ST.accounts[0].id;
+    try { await N.composeWin.open({ ...o, acc }); return; } catch (e) { console.warn('fenêtre de rédaction', e); }
+  }
   if (CMP && CMP.dirty){
     const el = $('#composer'); el.classList.remove('min');
     if (!await confirmBox('Un message est déjà en cours', 'Enregistrer le brouillon actuel et en commencer un nouveau ?', 'Enregistrer et continuer')) return;
@@ -2714,7 +2736,7 @@ async function openComposer(o = {}){
   el.querySelector('[data-c=max]').onclick = () => { el.classList.toggle('max'); el.classList.remove('min'); };
   el.querySelector('[data-c=close]').onclick = () => closeComposer(CMP.dirty ? 'save' : 'discard');
   el.querySelector('.chead').ondblclick = e => { if (!e.target.closest('button')) el.classList.toggle('min'); };
-  composerDrag(el);
+  if (IS_CW){ el.classList.add('cwfull'); N.composeWin.title(T($('#cTitle').textContent) + ' — Hamama').catch(() => {}); } else composerDrag(el);
   $('#cDel').onclick = async () => { if (!CMP.dirty || await confirmBox('Supprimer ce brouillon ?', 'Le message en cours sera perdu.', 'Supprimer', true)) closeComposer('discard'); };
   $('#cAttach').onclick = async () => { try { const fs = await N.pickFiles(); fs.forEach(f => CMP.atts.push({ name: f.name, size: f.size, data: f.data })); renderAtts(); dirty(); } catch (e) { errToast(e); } };
   $('#cSend').onclick = () => sendNow();
@@ -2882,6 +2904,10 @@ async function sendNow(){
   const acc = CMP.acc, msg = buildMessage(), snap = snapshot();
   [...msg.to, ...msg.cc, ...msg.bcc].forEach(a => learn(a, 3));
   closeComposer('sent');
+  if (IS_CW){ try { await N.composeWin.send({ acc, msg, snap }); } catch (e) { toast('Échec : ' + cleanErr(e)); return; } N.composeWin.done(); return; }
+  queueSend(acc, msg, snap);
+}
+function queueSend(acc, msg, snap){
   const delay = (+SET.undoSend || 0) * 1000;
   let cancelled = false;
   const go = async () => {
@@ -2918,6 +2944,7 @@ async function closeComposer(mode, silent){
   if (mode === 'discard' && CMP.draftUid && CMP.draftBox){ const a = CMP.acc; N.mail.destroy(a, CMP.draftBox, [CMP.draftUid]).then(() => refreshFoldersSoon(a, 300)).catch(() => {}); }
   store.del('hamama-compose');
   el.remove(); CMP = null;
+  if (IS_CW && mode !== 'sent') N.composeWin.done();
 }
 
 /* ================= Comptes ================= */
@@ -3122,7 +3149,7 @@ async function openSettings(tab = 'look'){
       R('Taille du texte', seg('fsize', [['13','13'],['14','14'],['16','16'],['18','18']])) +
       (MOBILE ? '' : R('Correcteur orthographique', `<select class="field" data-sel="spell">${[['auto','Automatique (langue de l’appli)'],['fr','Français'],['en','English'],['es','Español'],['de','Deutsch'],['it','Italiano'],['pt','Português'],['off','Désactivé']].map(([v, l]) => `<option value="${v}"${SET.spell === v ? ' selected' : ''}${['auto','off'].includes(v) ? '' : ' data-notr'}>${l}</option>`).join('')}</select>`)) +
       R('Délai pour annuler l’envoi', seg('undoSend', [['0','Aucun'],['5','5 s'],['10','10 s'],['20','20 s']])) +
-      R('Fenêtre de rédaction', seg('compWin', [['float','Flottante'],['max','Grande']])) +
+      R('Fenêtre de rédaction', seg('compWin', [['window','Fenêtre séparée'],['float','Dans Hamama'],['max','Grande']])) +
       R('Avertir si l’objet est vide', seg('noSubjWarn', yn))],
     accounts: ['Comptes', () =>
       `<div class="alist">${ST.accounts.map(a => `<div class="ai">${avatar({ name: a.name || a.email, address: a.email }).replace('class="av ', `style="background:${accColor(a)};color:#fff" class="av col `)}<div class="t" data-notr><b>${esc(accLabel(a))}</b><small>${esc(a.email)} · ${esc((ST.providers[a.provider] || {}).label || a.imap.host)}</small></div><button class="btn ghost" data-edit="${a.id}">${ic('edit')}Modifier</button></div>`).join('')}</div>
@@ -3331,7 +3358,11 @@ async function refreshAll(){
 }
 
 /* ================= Événements de l’application ================= */
-if (N){
+if (N && IS_CW){
+  N.on('compose-close', async () => { if (CMP) await closeComposer(CMP.dirty ? 'save' : 'discard'); else N.composeWin.done(); });
+}
+if (N && !IS_CW){
+  N.on('compose-send', ({ acc, msg, snap }) => queueSend(acc, msg, snap));
   N.on('new-mail', ({ acc, items }) => {
     items = (items || []).filter(i => !(i.from && i.from[0] && isBlockedAddr(i.from[0].address)));
     refreshFoldersSoon(acc, 300);
@@ -3350,13 +3381,20 @@ if (N){
     if (itemOf(key)) openMsg(key);
   });
 }
-setInterval(() => { if (ST.accounts.length) loadAllFolders(); }, 3 * 60000);
+setInterval(() => { if (ST.accounts.length && !IS_CW) loadAllFolders(); }, 3 * 60000);
 setInterval(() => { if (ST.view && !ST.search && !document.hidden) refreshList(); }, 5 * 60000);
 window.addEventListener('focus', () => { if (ST.view && !ST.search && Date.now() - (window._lastF || 0) > 60000){ window._lastF = Date.now(); refreshList(); } });
 
 /* ================= Démarrage ================= */
 async function start(){
   if (!N){ document.body.innerHTML = '<div style="padding:40px;font:16px Inter,sans-serif;color:#e8eaf0">Hamama fonctionne dans son application Windows ou Mac.</div>'; return; }
+  if (IS_CW){   // fenêtre de rédaction séparée : seulement le message
+    document.documentElement.classList.add('cwin');
+    try { const r = await N.acc.list(); ST.accounts = r.accounts || []; ST.providers = r.providers || {}; ST.oauth = r.oauth || {}; } catch {}
+    const o = await N.composeWin.init() || {};
+    await openComposer({ ...o, atts: restoreAtts(o.atts) });
+    return;
+  }
   showEmptyView();
   try { ST.blocked = await N.block.list(); } catch {}
   await reloadAccounts();

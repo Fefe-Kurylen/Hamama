@@ -108,6 +108,51 @@ function createWindow() {
   win.on('focus', () => { if (win) win.flashFrame(false); });
 }
 
+/* ---------------- Fenêtres de rédaction séparées (23/11) ----------------
+   Chaque message s'écrit dans sa propre fenêtre Windows, déplaçable et redimensionnable,
+   indépendante de la fenêtre principale (plus de conflit d'affichage). */
+const composeWins = new Map();   // id du webContents → { opts, win, canClose }
+function openComposeWindow(opts) {
+  const b = PREF.cbounds || {}, n = composeWins.size;
+  const w = new BrowserWindow({
+    width: b.w || 900, height: b.h || 780, minWidth: 520, minHeight: 420,
+    ...(b.x != null && n === 0 ? { x: b.x, y: b.y } : {}),
+    backgroundColor: '#262624', title: 'Hamama', autoHideMenuBar: true, show: false,
+    icon: path.join(__dirname, 'app', process.platform === 'win32' ? 'icon.ico' : 'icon.png'),
+    titleBarStyle: isMac ? 'hiddenInset' : 'hidden',
+    ...(isMac ? { trafficLightPosition: { x: 16, y: 19 } } : { titleBarOverlay: { color: '#262624', symbolColor: '#f2f1ec', height: 52 } }),
+    webPreferences: { preload: path.join(__dirname, 'preload.js'), contextIsolation: true, sandbox: true, spellcheck: true, webviewTag: false }
+  });
+  if (n > 0) { const [x, y] = w.getPosition(); w.setPosition(x + 28 * n, y + 28 * n); }   // en cascade si plusieurs
+  const id = w.webContents.id;
+  composeWins.set(id, { opts: opts || {}, win: w, canClose: false });
+  w.loadFile(path.join(__dirname, 'app', 'index.html'), { hash: 'compose', ...(process.env.HAMAMA_DEBUG ? { query: { debug: '1' } } : {}) });
+  w.once('ready-to-show', () => w.show());
+  const home = require('url').pathToFileURL(path.join(__dirname, 'app', 'index.html')).href;
+  w.webContents.setWindowOpenHandler(({ url }) => { if (/^https?:/i.test(url)) shell.openExternal(url); return { action: 'deny' }; });
+  w.webContents.on('will-navigate', (e, url) => { if (url.split('#')[0].split('?')[0] !== home) e.preventDefault(); });
+  w.webContents.on('context-menu', (e, p) => {
+    const t = [];
+    for (const sg of (p.dictionarySuggestions || []).slice(0, 5)) t.push({ label: sg, click: () => w.webContents.replaceMisspelling(sg) });
+    if (p.misspelledWord) t.push({ label: L('dict'), click: () => w.webContents.session.addWordToSpellCheckerDictionary(p.misspelledWord) }, { type: 'separator' });
+    if (p.isEditable) t.push({ role: 'cut', label: L('cut') }, { role: 'copy', label: L('copy') }, { role: 'paste', label: L('paste') }, { role: 'selectAll', label: L('all') });
+    else if (p.selectionText) t.push({ role: 'copy', label: L('copy') });
+    if (t.length) Menu.buildFromTemplate(t).popup({ window: w });
+  });
+  let tb = null;
+  const keep = () => { clearTimeout(tb); tb = setTimeout(() => { if (w.isDestroyed() || w.isMaximized() || w.isMinimized()) return; const r = w.getBounds(); PREF.cbounds = { x: r.x, y: r.y, w: r.width, h: r.height }; try { fs.writeFileSync(prefFile(), JSON.stringify(PREF)); } catch {} }, 400); };
+  w.on('resize', keep); w.on('move', keep);
+  // fermeture par la croix de Windows : la page enregistre d'abord le brouillon, puis confirme
+  w.on('close', e => { const c = composeWins.get(id); if (c && !c.canClose && !quitting) { e.preventDefault(); w.webContents.send('compose-close'); setTimeout(() => { if (!w.isDestroyed()) { c.canClose = true; w.close(); } }, 6000); } });
+  w.on('closed', () => composeWins.delete(id));
+  return true;
+}
+ipcMain.handle('compose:open', (e, o) => { if (!fromApp(e)) throw new Error('refusé'); return openComposeWindow(o); });
+ipcMain.handle('compose:init', e => { const c = composeWins.get(e.sender.id); return c ? c.opts : null; });
+ipcMain.handle('compose:send', (e, payload) => { if (!composeWins.has(e.sender.id)) throw new Error('refusé'); if (win) { win.webContents.send('compose-send', payload); } return true; });
+ipcMain.handle('compose:done', e => { const c = composeWins.get(e.sender.id); if (c) { c.canClose = true; c.win.close(); } return true; });
+ipcMain.handle('compose:title', (e, t) => { const c = composeWins.get(e.sender.id); if (c && typeof t === 'string') c.win.setTitle(t.slice(0, 120)); return true; });
+
 function setupTray() {
   if (!PREF.tray) { if (tray) { tray.destroy(); tray = null; } return; }
   if (tray) return;
@@ -123,7 +168,7 @@ function setupTray() {
 }
 
 /* ---------------- IPC ---------------- */
-const fromApp = e => { try { return !!win && e.sender === win.webContents && String(e.senderFrame && e.senderFrame.url || '').startsWith('file:'); } catch { return false; } };
+const fromApp = e => { try { return ((!!win && e.sender === win.webContents) || composeWins.has(e.sender.id)) && String(e.senderFrame && e.senderFrame.url || '').startsWith('file:'); } catch { return false; } };
 const H = (ch, fn) => ipcMain.handle(ch, async (e, ...a) => {
   if (!fromApp(e)) throw new Error('refusé');
   try { return await fn(...a); } catch (err) { throw new Error(String(err && err.message || err)); }

@@ -16,7 +16,8 @@ contextBridge.exposeInMainWorld('native', {
   defaultMail: I('default-mail'),
   print: I('print'),
   version: I('app-version'),
-  on: (ch, cb) => { if (['new-mail', 'mailto', 'open-key'].includes(ch)) ipcRenderer.on(ch, (e, d) => cb(d)); },
+  on: (ch, cb) => { if (['new-mail', 'mailto', 'open-key', 'compose-send', 'compose-close'].includes(ch)) ipcRenderer.on(ch, (e, d) => cb(d)); },
+  composeWin: { open: I('compose:open'), init: I('compose:init'), send: I('compose:send'), done: I('compose:done'), title: I('compose:title') },
   setTitleBar: o => ipcRenderer.send('titlebar', o),
   ready: () => ipcRenderer.send('ready'),
   platform: process.platform
