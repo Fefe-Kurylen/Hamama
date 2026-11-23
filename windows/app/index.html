@@ -942,6 +942,12 @@ html:not(.mobile) #side .fold.on svg{color:var(--accent)}
 html:not(.mobile) .it{padding-top:7px;padding-bottom:7px}
 html:not(.mobile) .lhead{padding-left:14px}
 html:not(.mobile) .chips{padding-left:14px}
+
+/* iPhone : « Ajouter un compte » dans la liste (plus sous le bouton Écrire), rien ne flotte quand on fait défiler */
+.mobile.boxes #side .sfoot{display:none!important}
+.mobile.boxes #side .fl{padding-bottom:calc(96px + var(--sab))}
+.mobile.boxes .bxcard.bxadd .fold svg{color:var(--accent)}
+.mobile .fl,.mobile #list,.mobile #vscroll,.mobile .cbody,.mobile .card,.mobile .menu,.mobile .fpick{overscroll-behavior:contain}
 </style>
 </head>
 <body>

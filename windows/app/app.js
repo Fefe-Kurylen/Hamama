@@ -858,6 +858,7 @@ function renderSide(){
     }
     h += '</div></div>';
   }
+  if (PH) h += `<div class="bxcard bxadd"><button class="fold" data-addacc>${ic('plus')}<span class="t">Ajouter un compte</span></button></div>`;
   el.innerHTML = h;
   const n = unseenTotal();
   document.title = n ? `Hamama (${n})` : 'Hamama';
@@ -865,6 +866,7 @@ function renderSide(){
 }
 $('#folders').addEventListener('click', e => {
   if (e.target.closest('[data-bxset]')) return document.getElementById('setBtn').click();
+  if (e.target.closest('[data-addacc]')) return document.getElementById('addAccBtn').click();
   const u = e.target.closest('[data-uni]'); if (u){ setDrawer(false); setBoxes(false); return openView({ uni: true }); }
   const f = e.target.closest('.fold[data-box]'); if (f){ setDrawer(false); setBoxes(false); return openView({ acc: f.dataset.acc, box: f.dataset.box }); }
   const ah = e.target.closest('[data-ah]');

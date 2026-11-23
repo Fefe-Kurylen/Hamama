@@ -942,6 +942,12 @@ html:not(.mobile) #side .fold.on svg{color:var(--accent)}
 html:not(.mobile) .it{padding-top:7px;padding-bottom:7px}
 html:not(.mobile) .lhead{padding-left:14px}
 html:not(.mobile) .chips{padding-left:14px}
+
+/* iPhone : « Ajouter un compte » dans la liste (plus sous le bouton Écrire), rien ne flotte quand on fait défiler */
+.mobile.boxes #side .sfoot{display:none!important}
+.mobile.boxes #side .fl{padding-bottom:calc(96px + var(--sab))}
+.mobile.boxes .bxcard.bxadd .fold svg{color:var(--accent)}
+.mobile .fl,.mobile #list,.mobile #vscroll,.mobile .cbody,.mobile .card,.mobile .menu,.mobile .fpick{overscroll-behavior:contain}
 </style>
 </head>
 <body>
@@ -1861,6 +1867,7 @@ function renderSide(){
     }
     h += '</div></div>';
   }
+  if (PH) h += `<div class="bxcard bxadd"><button class="fold" data-addacc>${ic('plus')}<span class="t">Ajouter un compte</span></button></div>`;
   el.innerHTML = h;
   const n = unseenTotal();
   document.title = n ? `Hamama (${n})` : 'Hamama';
@@ -1868,6 +1875,7 @@ function renderSide(){
 }
 $('#folders').addEventListener('click', e => {
   if (e.target.closest('[data-bxset]')) return document.getElementById('setBtn').click();
+  if (e.target.closest('[data-addacc]')) return document.getElementById('addAccBtn').click();
   const u = e.target.closest('[data-uni]'); if (u){ setDrawer(false); setBoxes(false); return openView({ uni: true }); }
   const f = e.target.closest('.fold[data-box]'); if (f){ setDrawer(false); setBoxes(false); return openView({ acc: f.dataset.acc, box: f.dataset.box }); }
   const ah = e.target.closest('[data-ah]');

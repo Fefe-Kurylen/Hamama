@@ -4,7 +4,7 @@
   "webDir": "www",
   "backgroundColor": "#262624",
   "android": { "allowMixedContent": false },
-  "ios": { "contentInset": "never", "backgroundColor": "#262624" },
+  "ios": { "contentInset": "never", "backgroundColor": "#262624", "scrollEnabled": false },
   "plugins": {
     "Nodejs": { "nodeDir": "nodejs", "startMode": "auto" },
     "SystemBars": { "insetsHandling": "css", "initialViewportFitValueHint": "cover", "style": "DARK" },
