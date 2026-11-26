@@ -1038,8 +1038,8 @@ html:not(.mobile) .card.set .tabs.v button.on{background:var(--accent);color:#ff
 
 /* ===== iPhone (26/11 nuit) : liste des mails comme Mail d'Apple ===== */
 .mobile #list .it{padding:12px 6px 12px 10px!important;gap:12px;align-items:flex-start}
-.mobile #list .it.unread::before{left:22.5px;top:16px;margin-top:0;width:10px;height:10px;background:var(--accent)}
-.mobile #list .it .av{width:35px;height:35px;font-size:13px;margin-top:0;align-self:center}
+.mobile #list .it.unread::before{left:22.5px;top:max(50%, 62px);margin-top:-5px;width:10px;height:10px;background:var(--accent)}
+.mobile #list .it .av{width:35px;height:35px;font-size:13px;margin-top:1px;align-self:flex-start}
 .mobile #list .it .fr{font-size:17px;font-weight:700}
 .mobile #list .it:not(.unread) .fr{font-weight:650}
 .mobile #list .it .dt{font-size:15px;color:var(--muted);font-weight:500}
@@ -1055,6 +1055,8 @@ html:not(.mobile) .card.set .tabs.v button.on{background:var(--accent);color:#ff
 .ptr.spin i{animation:ptrspin .8s linear infinite;opacity:1}
 @keyframes ptrspin{to{transform:rotate(360deg)}}
 
+/* Téléphone (26/11) : trait léger entre l'expéditeur et le message */
+:is(.mobile,.narrow) .vin .who{padding-bottom:16px;margin-bottom:16px;border-bottom:1px solid var(--line2)}
 /* Téléphone (26/11) : aucun glissement gauche / droite */
 #ltitle{white-space:nowrap;overflow:hidden;min-width:0}
 .mobile #side .fl,.mobile #list,.mobile .menu,.mobile .fpick{overflow-x:hidden!important;touch-action:pan-y}
@@ -1964,8 +1966,10 @@ setInterval(() => { if (!contactsDirty) return; contactsDirty = false; const arr
 
 /* ================= Barre latérale : dossiers ================= */
 function unseenTotal(){ let n = 0; for (const a of ST.accounts){ const f = (ST.folders[a.id] || []).find(x => x.role === 'inbox'); if (f) n += f.unseen; } return n; }
-function fitTitle(){ const el = $('#ltitle'); if (!el) return; el.style.fontSize = ''; requestAnimationFrame(() => { el.style.fontSize = ''; let fs = parseFloat(getComputedStyle(el).fontSize) || 24; let n = 0; while (el.scrollWidth > el.clientWidth + 1 && fs > 13 && n++ < 40){ fs -= 1; el.style.fontSize = fs + 'px'; } }); }
+function fitTitle(){ const el = $('#ltitle'); if (!el) return; requestAnimationFrame(() => { el.style.removeProperty('font-size'); if (!el.clientWidth) return; let fs = parseFloat(getComputedStyle(el).fontSize) || 24; let n = 0; while (el.scrollWidth > el.clientWidth + 1 && fs > 13 && n++ < 60){ fs -= 1; el.style.setProperty('font-size', fs + 'px', 'important'); } }); }
   addEventListener('resize', () => fitTitle());
+  { let lw = -1; const ro = new ResizeObserver(es => { const w = Math.round(es[0].contentRect.width); if (w && w !== lw){ lw = w; fitTitle(); } }); requestAnimationFrame(() => { const t = $('#ltitle'); if (t) ro.observe(t.parentElement); }); }
+  if (document.fonts) document.fonts.ready.then(() => fitTitle());
   function syncText(){ const t = ST.syncAt; if (!t) return 'Mise à jour…'; return Date.now() - t < 60000 ? 'Mis à jour à l’instant' : T('Mis à jour à {0}', new Date(t).toLocaleTimeString(LOC, { hour:'2-digit', minute:'2-digit' })); }
 setInterval(() => { const e = document.getElementById('bxSync'); if (e) e.textContent = syncText(); }, 30000);
 function renderSide(){

@@ -1038,8 +1038,8 @@ html:not(.mobile) .card.set .tabs.v button.on{background:var(--accent);color:#ff
 
 /* ===== iPhone (26/11 nuit) : liste des mails comme Mail d'Apple ===== */
 .mobile #list .it{padding:12px 6px 12px 10px!important;gap:12px;align-items:flex-start}
-.mobile #list .it.unread::before{left:22.5px;top:16px;margin-top:0;width:10px;height:10px;background:var(--accent)}
-.mobile #list .it .av{width:35px;height:35px;font-size:13px;margin-top:0;align-self:center}
+.mobile #list .it.unread::before{left:22.5px;top:max(50%, 62px);margin-top:-5px;width:10px;height:10px;background:var(--accent)}
+.mobile #list .it .av{width:35px;height:35px;font-size:13px;margin-top:1px;align-self:flex-start}
 .mobile #list .it .fr{font-size:17px;font-weight:700}
 .mobile #list .it:not(.unread) .fr{font-weight:650}
 .mobile #list .it .dt{font-size:15px;color:var(--muted);font-weight:500}
@@ -1055,6 +1055,8 @@ html:not(.mobile) .card.set .tabs.v button.on{background:var(--accent);color:#ff
 .ptr.spin i{animation:ptrspin .8s linear infinite;opacity:1}
 @keyframes ptrspin{to{transform:rotate(360deg)}}
 
+/* Téléphone (26/11) : trait léger entre l'expéditeur et le message */
+:is(.mobile,.narrow) .vin .who{padding-bottom:16px;margin-bottom:16px;border-bottom:1px solid var(--line2)}
 /* Téléphone (26/11) : aucun glissement gauche / droite */
 #ltitle{white-space:nowrap;overflow:hidden;min-width:0}
 .mobile #side .fl,.mobile #list,.mobile .menu,.mobile .fpick{overflow-x:hidden!important;touch-action:pan-y}

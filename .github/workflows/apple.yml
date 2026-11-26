@@ -1,4 +1,4 @@
-# Apple build — déclenché le 26/11 21h20 (point au-dessus de l’avatar, titre ajusté, pas de glissement latéral)
+# Apple build — 26/11 21h35 (titre de boîte ajusté, rond au-dessus du point, trait sous l’expéditeur)
 # Publication iPhone / iPad sur un Mac de GitHub : signature automatique (clé App Store Connect)
 # puis envoi sur App Store Connect (TestFlight → App Store). Les mises à jour passent par l'App Store.
 # Secrets du dépôt (mêmes valeurs que pour Pyramid PDF) : ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_P8, APPLE_TEAM_ID

@@ -841,8 +841,10 @@ setInterval(() => { if (!contactsDirty) return; contactsDirty = false; const arr
 
 /* ================= Barre latérale : dossiers ================= */
 function unseenTotal(){ let n = 0; for (const a of ST.accounts){ const f = (ST.folders[a.id] || []).find(x => x.role === 'inbox'); if (f) n += f.unseen; } return n; }
-function fitTitle(){ const el = $('#ltitle'); if (!el) return; el.style.fontSize = ''; requestAnimationFrame(() => { el.style.fontSize = ''; let fs = parseFloat(getComputedStyle(el).fontSize) || 24; let n = 0; while (el.scrollWidth > el.clientWidth + 1 && fs > 13 && n++ < 40){ fs -= 1; el.style.fontSize = fs + 'px'; } }); }
+function fitTitle(){ const el = $('#ltitle'); if (!el) return; requestAnimationFrame(() => { el.style.removeProperty('font-size'); if (!el.clientWidth) return; let fs = parseFloat(getComputedStyle(el).fontSize) || 24; let n = 0; while (el.scrollWidth > el.clientWidth + 1 && fs > 13 && n++ < 60){ fs -= 1; el.style.setProperty('font-size', fs + 'px', 'important'); } }); }
   addEventListener('resize', () => fitTitle());
+  { let lw = -1; const ro = new ResizeObserver(es => { const w = Math.round(es[0].contentRect.width); if (w && w !== lw){ lw = w; fitTitle(); } }); requestAnimationFrame(() => { const t = $('#ltitle'); if (t) ro.observe(t.parentElement); }); }
+  if (document.fonts) document.fonts.ready.then(() => fitTitle());
   function syncText(){ const t = ST.syncAt; if (!t) return 'Mise à jour…'; return Date.now() - t < 60000 ? 'Mis à jour à l’instant' : T('Mis à jour à {0}', new Date(t).toLocaleTimeString(LOC, { hour:'2-digit', minute:'2-digit' })); }
 setInterval(() => { const e = document.getElementById('bxSync'); if (e) e.textContent = syncText(); }, 30000);
 function renderSide(){
