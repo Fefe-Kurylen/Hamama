@@ -966,7 +966,7 @@ html:not(.mobile) .vbar{overflow:hidden}
 /* ===== Téléphone (26/11) : affichage plus aéré et plus clair — séparations, groupes, menus façon iPhone ===== */
 /* liste : un fin séparateur entre chaque mail, aligné sur le texte */
 .mobile #list .it{border-radius:0;position:relative}
-.mobile #list .it::after{content:"";position:absolute;left:78px;right:4px;bottom:0;height:1px;background:var(--line2);opacity:.7;pointer-events:none}
+.mobile #list .it::after{content:"";position:absolute;left:57px;right:4px;bottom:0;height:1px;background:var(--line2);opacity:.7;pointer-events:none}
 .mobile #list .it:active{background:rgba(128,128,128,.10)}
 .mobile .grp{border-bottom:0;padding-top:16px;padding-bottom:6px;letter-spacing:.08em;font-size:11.5px}
 /* menus du bas : poignée, groupes séparés par une bande, une ligne fine entre chaque choix */
@@ -1037,9 +1037,9 @@ html:not(.mobile) .card.set .setrow > .lbl{font-size:11.5px;text-transform:upper
 html:not(.mobile) .card.set .tabs.v button.on{background:var(--accent);color:#fff}
 
 /* ===== iPhone (26/11 nuit) : liste des mails comme Mail d'Apple ===== */
-.mobile #list .it{padding:12px 6px 12px 26px!important;gap:12px;align-items:flex-start}
-.mobile #list .it.unread::before{left:8px;top:26px;margin-top:0;width:10px;height:10px;background:var(--accent)}
-.mobile #list .it .av{width:44px;height:44px;font-size:16px;margin-top:2px}
+.mobile #list .it{padding:12px 6px 12px 10px!important;gap:12px;align-items:flex-start}
+.mobile #list .it.unread::before{left:22.5px;top:16px;margin-top:0;width:10px;height:10px;background:var(--accent)}
+.mobile #list .it .av{width:35px;height:35px;font-size:13px;margin-top:0;align-self:center}
 .mobile #list .it .fr{font-size:17px;font-weight:700}
 .mobile #list .it:not(.unread) .fr{font-weight:650}
 .mobile #list .it .dt{font-size:15px;color:var(--muted);font-weight:500}
@@ -1054,6 +1054,14 @@ html:not(.mobile) .card.set .tabs.v button.on{background:var(--accent);color:#ff
 .ptr.ready i{opacity:1}
 .ptr.spin i{animation:ptrspin .8s linear infinite;opacity:1}
 @keyframes ptrspin{to{transform:rotate(360deg)}}
+
+/* Téléphone (26/11) : aucun glissement gauche / droite */
+#ltitle{white-space:nowrap;overflow:hidden;min-width:0}
+.mobile #side .fl,.mobile #list,.mobile .menu,.mobile .fpick{overflow-x:hidden!important;touch-action:pan-y}
+.mobile #vscroll,.mobile .cbody,.mobile .card{overflow-x:hidden!important}
+.mobile.boxes .bxhead{margin-left:-8px!important;margin-right:-10px!important;padding-left:8px!important;padding-right:10px!important}
+.mobile #side,.mobile #listCol,.mobile #viewCol,.mobile main{max-width:100vw;overflow-x:hidden}
+.mobile .ptr{max-width:100%;overflow:hidden}
 </style>
 </head>
 <body>

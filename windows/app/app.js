@@ -841,7 +841,9 @@ setInterval(() => { if (!contactsDirty) return; contactsDirty = false; const arr
 
 /* ================= Barre latérale : dossiers ================= */
 function unseenTotal(){ let n = 0; for (const a of ST.accounts){ const f = (ST.folders[a.id] || []).find(x => x.role === 'inbox'); if (f) n += f.unseen; } return n; }
-function syncText(){ const t = ST.syncAt; if (!t) return 'Mise à jour…'; return Date.now() - t < 60000 ? 'Mis à jour à l’instant' : T('Mis à jour à {0}', new Date(t).toLocaleTimeString(LOC, { hour:'2-digit', minute:'2-digit' })); }
+function fitTitle(){ const el = $('#ltitle'); if (!el) return; el.style.fontSize = ''; requestAnimationFrame(() => { el.style.fontSize = ''; let fs = parseFloat(getComputedStyle(el).fontSize) || 24; let n = 0; while (el.scrollWidth > el.clientWidth + 1 && fs > 13 && n++ < 40){ fs -= 1; el.style.fontSize = fs + 'px'; } }); }
+  addEventListener('resize', () => fitTitle());
+  function syncText(){ const t = ST.syncAt; if (!t) return 'Mise à jour…'; return Date.now() - t < 60000 ? 'Mis à jour à l’instant' : T('Mis à jour à {0}', new Date(t).toLocaleTimeString(LOC, { hour:'2-digit', minute:'2-digit' })); }
 setInterval(() => { const e = document.getElementById('bxSync'); if (e) e.textContent = syncText(); }, 30000);
 function renderSide(){
   const vk = viewKey(), el = $('#folders');
@@ -970,7 +972,7 @@ async function openView(v, { keepOpen = false } = {}){
   ST.view = v; ST.search = null; $('#q').value = ''; ST.sel.clear(); ST.more = false; ST.ulimit = 40;
   if (!keepOpen){ ST.open = null; ST.msg = null; showEmptyView(); document.documentElement.classList.remove('reading'); }
   store.set('hamama-view', JSON.stringify(v));
-  renderSide(); $('#ltitle').textContent = viewTitle();
+  renderSide(); $('#ltitle').textContent = viewTitle(); fitTitle();
   ST.items = [];
   if (!v.uni){ try { const c = await N.mail.cached(v.acc, v.box); if (c.items && viewKey() === v.acc + '|' + v.box) ST.items = c.items; } catch {} }
   renderList(!ST.items.length);
@@ -1035,6 +1037,7 @@ function itemHTML(i){
 function renderList(skeleton){
   const el = $('#list'), items = visible();
   $('#ltitle').innerHTML = esc(viewTitle()) + (ST.search ? ` <small>${items.length}</small>` : '');
+  fitTitle();
   { const ls = $('#lsub'); if (ls){ const v = ST.view || {}; const acc = v.uni ? T('Tous les comptes') : accLabel(ST.accounts.find(a => a.id === v.acc) || ST.accounts[0] || {}); ls.textContent = (acc ? acc + ' · ' : '') + syncText(); } }
   document.querySelectorAll('#chips button').forEach(b => b.classList.toggle('on', b.dataset.f === ST.filter));
   $('#allReadBtn').classList.toggle('hidden', !!ST.search);
