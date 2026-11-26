@@ -160,6 +160,10 @@ const I18N = {
 "Non lu":["Unread","No leído","Ungelesen","Non letto","Não lido","غير مقروء"],
 "Fenêtre séparée":["Separate window","Ventana aparte","Eigenes Fenster","Finestra separata","Janela separada","نافذة منفصلة"],
 "Dans Hamama":["Inside Hamama","Dentro de Hamama","In Hamama","Dentro Hamama","Dentro do Hamama","داخل Hamama"],
+"Sélectionner":["Select","Seleccionar","Auswählen","Seleziona","Selecionar","تحديد"],
+"Filtrer":["Filter","Filtrar","Filtern","Filtra","Filtrar","تصفية"],
+"Tous les comptes":["All accounts","Todas las cuentas","Alle Konten","Tutti gli account","Todas as contas","كل الحسابات"],
+"Réglages":["Settings","Ajustes","Einstellungen","Impostazioni","Definições","الإعدادات"],
 "Retour aux boîtes":["Back to mailboxes","Volver a los buzones","Zurück zu den Postfächern","Torna alle caselle","Voltar às caixas","العودة إلى الصناديق"],
 "Cc / Cci":["Cc / Bcc","Cc / Cco","Cc / Bcc","Cc / Ccn","Cc / Bcc","نسخة / مخفية"],
 "Réduire":["Minimize","Minimizar","Minimieren","Riduci","Minimizar","تصغير"],
@@ -580,6 +584,7 @@ const ICON = {
   chev:'<path d="m6 9 6 6 6-6"/>',
   left:'<path d="m15 18-6-6 6-6"/>',
   right:'<path d="m9 18 6-6-6-6"/>',
+  filter:'<path d="M4 7h16M7 12h10M10 17h4"/>',
   dots:'<circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/>',
   image:'<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/>',
   shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="m9 12 2 2 4-4"/>',
@@ -842,7 +847,7 @@ function renderSide(){
   const vk = viewKey(), el = $('#folders');
   const PH = MOBILE && !TABLET;   // téléphone : boîtes en cartes, comme Mail d'Apple
   const CH = PH ? `<span class="chv">${ic('right')}</span>` : '';
-  let h = PH ? `<div class="bxhead"><div class="bxt"><b>Boîtes</b><small id="bxSync">${syncText()}</small></div><button class="bxbtn" data-bxset title="Personnaliser Hamama">${ic('settings')}</button></div>` : '';
+  let h = PH ? `<div class="bxhead"><div class="bxt"><b>Boîtes</b><small id="bxSync">${syncText()}</small></div><button class="bxbtn mpill" data-bxset title="Personnaliser Hamama">Réglages</button></div>` : '';
   let topInbox = null;   // téléphone avec un seul compte : sa Réception dans la carte du haut
   if (ST.accounts.length > 1 && SET.unified === 'on'){
     const n = unseenTotal();
@@ -1030,6 +1035,7 @@ function itemHTML(i){
 function renderList(skeleton){
   const el = $('#list'), items = visible();
   $('#ltitle').innerHTML = esc(viewTitle()) + (ST.search ? ` <small>${items.length}</small>` : '');
+  if (MOBILE){ const ls = $('#lsub'); if (ls){ const v = ST.view || {}; const acc = v.uni ? T('Tous les comptes') : accLabel(ST.accounts.find(a => a.id === v.acc) || ST.accounts[0] || {}); ls.textContent = (acc ? acc + ' · ' : '') + syncText(); } }
   document.querySelectorAll('#chips button').forEach(b => b.classList.toggle('on', b.dataset.f === ST.filter));
   $('#allReadBtn').classList.toggle('hidden', !!ST.search);
   if (skeleton){ el.innerHTML = '<div class="skel"></div>'.repeat(8); return; }
@@ -1057,6 +1063,24 @@ function renderBulk(){
 function updateItemEl(i){ const el = $(`#list .it[data-k="${CSS.escape(i.key)}"]`); if (el) el.outerHTML = itemHTML(i); }
 
 $('#chips').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; ST.filter = b.dataset.f; renderList(); });
+/* iPhone (26/11) : comme Mail d'Apple — en haut Retour + « Sélectionner », en bas Filtre + Recherche + Écrire */
+if (MOBILE && !TABLET){
+  const top = document.createElement('div'); top.id = 'mtop';
+  top.innerHTML = `<button class="mround" id="mBack" title="Retour aux boîtes">${ic('left')}</button><span class="spacer"></span><button class="mpill" id="mSel">Sélectionner</button>`;
+  $('#listCol').prepend(top);
+  $('#mBack').onclick = () => setBoxes(true);
+  $('#mSel').onclick = () => { $('#selModeBtn').click(); setTimeout(() => { $('#mSel').textContent = T(ST.selMode ? 'Terminé' : 'Sélectionner'); }, 30); };
+  const bar = document.createElement('div'); bar.id = 'mbar';
+  bar.innerHTML = `<button class="mround" id="mFilter" title="Filtrer">${ic('filter')}</button>`;
+  const sr = document.querySelector('header .srch'); if (sr) bar.append(sr);
+  bar.append($('#compose'));
+  document.body.append(bar);
+  $('#mFilter').onclick = e => {
+    const r = e.currentTarget.getBoundingClientRect(), cur = ST.filter || 'all';
+    const F = [['all','Tous','all'],['unread','Non lus','mail'],['flagged','Suivis','star'],['att','Pièces jointes','clip']];
+    menu(F.map(([f, l, i]) => ({ label: l + (cur === f ? '  ✓' : ''), ic: i, fn: () => { ST.filter = f; document.querySelectorAll('#chips button').forEach(b => b.classList.toggle('on', b.dataset.f === f)); $('#mFilter').classList.toggle('on', f !== 'all'); renderList(); } })), r.left, r.top);
+  };
+}
 $('#list').addEventListener('click', e => {
   if (e.target.closest('#moreBtn')) return loadMore();
   const it = e.target.closest('.it'); if (!it) return;
