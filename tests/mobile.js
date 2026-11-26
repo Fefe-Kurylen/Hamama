@@ -79,7 +79,7 @@ const check = (c, m) => { if (c) { ok++; console.log('✅', m); } else { ko++; c
   await page.screenshot({ path: path.join(__dirname, 'shots', 'mob-3-liste.png') });
 
   // --- bouton Retour → liste des boîtes, puis on y retourne ---
-  await page.tap('#mBack');
+  await page.tap('#sideBtn');
   await page.waitForTimeout(400);
   check(await page.evaluate(() => document.documentElement.classList.contains('boxes')), 'bouton Retour → liste des boîtes');
   await page.screenshot({ path: path.join(__dirname, 'shots', 'mob-4-dossiers.png') });

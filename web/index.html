@@ -1002,40 +1002,18 @@ html:not(.mobile) .vbar{overflow:hidden}
 /* boîtes : titre de section un peu plus détaché */
 .mobile.boxes #side .acct{margin-top:6px}
 
-/* ===== iPhone (26/11 soir) : disposition comme Mail d'Apple ===== */
-.mobile header{display:none!important}
-.mobile main{top:0!important}
-#mtop,#mbar{display:none}
-.mobile #mtop{display:flex;align-items:center;gap:8px;padding:calc(6px + var(--sat)) 12px 4px;flex:none}
-.mobile .mround{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:rgba(128,128,128,.18);color:var(--text);--is:24px;flex:none;-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
-.mobile .mround.on{background:rgba(var(--accent-rgb),.3)}
-.mobile .mpill{height:46px;padding:0 20px;border-radius:23px;background:rgba(128,128,128,.18);color:var(--text);font-size:17px;font-weight:650;flex:none}
-.mobile .mround:active,.mobile .mpill:active{background:rgba(128,128,128,.3)}
-/* titre de la boîte en très grand + compte et état en dessous */
-.mobile .lhead{display:block;padding:2px 16px 10px;border-bottom:1px solid var(--line2);margin:0 4px}
-.mobile .lhead h2{font-size:36px!important;font-weight:800;letter-spacing:-.025em;line-height:1.1}
-.mobile #lsub{font-size:15px;color:var(--muted);font-weight:500;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mobile .lhead .ibtn,.mobile #chips{display:none!important}
-/* lignes : chevron après l'heure, aperçu sur 2 lignes */
-.mobile .it .dt::after{content:"";display:inline-block;width:8px;height:8px;border-right:2px solid var(--muted);border-top:2px solid var(--muted);transform:rotate(45deg);margin:0 2px 1px 8px;opacity:.7}
+/* ===== iPhone (26/11 soir) : style Mail d'Apple, commandes Hamama conservées ===== */
+#lsub{display:none}
+.mobile #lsub{display:block;font-size:14.5px;color:var(--muted);font-weight:500;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%}
+.mobile .lhead{flex-wrap:wrap;align-items:center;padding:6px 12px 10px;border-bottom:1px solid var(--line2);margin:0 4px 4px}
+.mobile .lhead h2{font-size:34px!important;font-weight:800;letter-spacing:-.025em;line-height:1.12}
+.mobile .lhead #lsub{order:3;flex-basis:100%}
+.mobile .it .dt::after{content:"";display:inline-block;width:7px;height:7px;border-right:2px solid var(--muted);border-top:2px solid var(--muted);transform:rotate(45deg);margin:0 2px 1px 8px;opacity:.7}
 .mobile .it .pv{-webkit-line-clamp:2;display:-webkit-box;-webkit-box-orient:vertical;white-space:normal;overflow:hidden}
-.mobile #list{padding-bottom:calc(110px + var(--sab))}
-/* barre du bas flottante : filtre, recherche, écrire */
-.mobile #mbar{display:flex;align-items:center;gap:10px;position:fixed;left:14px;right:14px;bottom:calc(10px + var(--sab));z-index:45}
-.mobile.boxes #mbar .srch,.mobile.boxes #mFilter,.mobile.reading #mbar,.mobile .noacc #mbar{display:none!important}
-.mobile.boxes #mbar{justify-content:flex-end}
-.mobile #mbar .srch{flex:1;height:52px!important;border-radius:26px;margin:0;max-width:none;background:rgba(52,52,50,.96);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);box-shadow:0 6px 20px rgba(0,0,0,.35)}
-[data-tone=light].mobile #mbar .srch{background:rgba(238,237,232,.97)}
-.mobile #mbar .mround{width:52px;height:52px;box-shadow:0 6px 20px rgba(0,0,0,.35);background:rgba(52,52,50,.96)}
-[data-tone=light].mobile #mbar .mround{background:rgba(238,237,232,.97)}
-.mobile #mbar #compose{position:static!important;width:52px!important;height:52px!important;padding:0!important;border-radius:50%!important;justify-content:center;background:rgba(52,52,50,.96)!important;color:var(--text);box-shadow:0 6px 20px rgba(0,0,0,.35)!important;--is:25px}
-[data-tone=light].mobile #mbar #compose{background:rgba(238,237,232,.97)!important}
-.mobile #mbar #compose span{display:none!important}
-/* boîtes : titre centré + « Mis à jour » dessous, « Réglages » en pilule à droite */
 .mobile.boxes .bxhead{display:grid;grid-template-columns:1fr auto 1fr;align-items:center}
 .mobile.boxes .bxt{grid-column:2;align-items:center;padding-left:0}
 .mobile.boxes .bxt b{font-size:19px;font-weight:750}
-.mobile.boxes .bxhead .bxbtn{grid-column:3;justify-self:end;width:auto;height:44px;border-radius:22px;padding:0 18px;font-size:16.5px;font-weight:650}
+.mobile.boxes .bxhead .bxbtn{grid-column:3;justify-self:end}
 .mobile.boxes #side .acct > .ah{font-size:24px;font-weight:800;padding:10px 12px 10px}
 .mobile .menu button.red span{color:#e5534b}
 </style>
@@ -1946,7 +1924,7 @@ function renderSide(){
   const vk = viewKey(), el = $('#folders');
   const PH = MOBILE && !TABLET;   // téléphone : boîtes en cartes, comme Mail d'Apple
   const CH = PH ? `<span class="chv">${ic('right')}</span>` : '';
-  let h = PH ? `<div class="bxhead"><div class="bxt"><b>Boîtes</b><small id="bxSync">${syncText()}</small></div><button class="bxbtn mpill" data-bxset title="Personnaliser Hamama">Réglages</button></div>` : '';
+  let h = PH ? `<div class="bxhead"><div class="bxt"><b>Boîtes</b><small id="bxSync">${syncText()}</small></div><button class="bxbtn" data-bxset title="Personnaliser Hamama">${ic('settings')}</button></div>` : '';
   let topInbox = null;   // téléphone avec un seul compte : sa Réception dans la carte du haut
   if (ST.accounts.length > 1 && SET.unified === 'on'){
     const n = unseenTotal();
@@ -2162,24 +2140,6 @@ function renderBulk(){
 function updateItemEl(i){ const el = $(`#list .it[data-k="${CSS.escape(i.key)}"]`); if (el) el.outerHTML = itemHTML(i); }
 
 $('#chips').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; ST.filter = b.dataset.f; renderList(); });
-/* iPhone (26/11) : comme Mail d'Apple — en haut Retour + « Sélectionner », en bas Filtre + Recherche + Écrire */
-if (MOBILE && !TABLET){
-  const top = document.createElement('div'); top.id = 'mtop';
-  top.innerHTML = `<button class="mround" id="mBack" title="Retour aux boîtes">${ic('left')}</button><span class="spacer"></span><button class="mpill" id="mSel">Sélectionner</button>`;
-  $('#listCol').prepend(top);
-  $('#mBack').onclick = () => setBoxes(true);
-  $('#mSel').onclick = () => { $('#selModeBtn').click(); setTimeout(() => { $('#mSel').textContent = T(ST.selMode ? 'Terminé' : 'Sélectionner'); }, 30); };
-  const bar = document.createElement('div'); bar.id = 'mbar';
-  bar.innerHTML = `<button class="mround" id="mFilter" title="Filtrer">${ic('filter')}</button>`;
-  const sr = document.querySelector('header .srch'); if (sr) bar.append(sr);
-  bar.append($('#compose'));
-  document.body.append(bar);
-  $('#mFilter').onclick = e => {
-    const r = e.currentTarget.getBoundingClientRect(), cur = ST.filter || 'all';
-    const F = [['all','Tous','all'],['unread','Non lus','mail'],['flagged','Suivis','star'],['att','Pièces jointes','clip']];
-    menu(F.map(([f, l, i]) => ({ label: l + (cur === f ? '  ✓' : ''), ic: i, fn: () => { ST.filter = f; document.querySelectorAll('#chips button').forEach(b => b.classList.toggle('on', b.dataset.f === f)); $('#mFilter').classList.toggle('on', f !== 'all'); renderList(); } })), r.left, r.top);
-  };
-}
 $('#list').addEventListener('click', e => {
   if (e.target.closest('#moreBtn')) return loadMore();
   const it = e.target.closest('.it'); if (!it) return;

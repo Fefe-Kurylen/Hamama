@@ -847,7 +847,7 @@ function renderSide(){
   const vk = viewKey(), el = $('#folders');
   const PH = MOBILE && !TABLET;   // téléphone : boîtes en cartes, comme Mail d'Apple
   const CH = PH ? `<span class="chv">${ic('right')}</span>` : '';
-  let h = PH ? `<div class="bxhead"><div class="bxt"><b>Boîtes</b><small id="bxSync">${syncText()}</small></div><button class="bxbtn mpill" data-bxset title="Personnaliser Hamama">Réglages</button></div>` : '';
+  let h = PH ? `<div class="bxhead"><div class="bxt"><b>Boîtes</b><small id="bxSync">${syncText()}</small></div><button class="bxbtn" data-bxset title="Personnaliser Hamama">${ic('settings')}</button></div>` : '';
   let topInbox = null;   // téléphone avec un seul compte : sa Réception dans la carte du haut
   if (ST.accounts.length > 1 && SET.unified === 'on'){
     const n = unseenTotal();
@@ -1063,24 +1063,6 @@ function renderBulk(){
 function updateItemEl(i){ const el = $(`#list .it[data-k="${CSS.escape(i.key)}"]`); if (el) el.outerHTML = itemHTML(i); }
 
 $('#chips').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; ST.filter = b.dataset.f; renderList(); });
-/* iPhone (26/11) : comme Mail d'Apple — en haut Retour + « Sélectionner », en bas Filtre + Recherche + Écrire */
-if (MOBILE && !TABLET){
-  const top = document.createElement('div'); top.id = 'mtop';
-  top.innerHTML = `<button class="mround" id="mBack" title="Retour aux boîtes">${ic('left')}</button><span class="spacer"></span><button class="mpill" id="mSel">Sélectionner</button>`;
-  $('#listCol').prepend(top);
-  $('#mBack').onclick = () => setBoxes(true);
-  $('#mSel').onclick = () => { $('#selModeBtn').click(); setTimeout(() => { $('#mSel').textContent = T(ST.selMode ? 'Terminé' : 'Sélectionner'); }, 30); };
-  const bar = document.createElement('div'); bar.id = 'mbar';
-  bar.innerHTML = `<button class="mround" id="mFilter" title="Filtrer">${ic('filter')}</button>`;
-  const sr = document.querySelector('header .srch'); if (sr) bar.append(sr);
-  bar.append($('#compose'));
-  document.body.append(bar);
-  $('#mFilter').onclick = e => {
-    const r = e.currentTarget.getBoundingClientRect(), cur = ST.filter || 'all';
-    const F = [['all','Tous','all'],['unread','Non lus','mail'],['flagged','Suivis','star'],['att','Pièces jointes','clip']];
-    menu(F.map(([f, l, i]) => ({ label: l + (cur === f ? '  ✓' : ''), ic: i, fn: () => { ST.filter = f; document.querySelectorAll('#chips button').forEach(b => b.classList.toggle('on', b.dataset.f === f)); $('#mFilter').classList.toggle('on', f !== 'all'); renderList(); } })), r.left, r.top);
-  };
-}
 $('#list').addEventListener('click', e => {
   if (e.target.closest('#moreBtn')) return loadMore();
   const it = e.target.closest('.it'); if (!it) return;
