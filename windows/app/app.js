@@ -2339,6 +2339,32 @@ async function refreshAll(){
   const b = $('#refreshBtn'); b.animate([{ transform:'rotate(0)' }, { transform:'rotate(360deg)' }], { duration: 600 });
   await Promise.all([loadAllFolders(), ST.search ? runSearch(ST.search) : refreshList()]);
 }
+/* Téléphone : tirer vers le bas pour actualiser, avec une petite roue qui tourne (liste des mails et boîtes) */
+if (MOBILE){
+  const ptr = (box) => {
+    if (!box) return;
+    const w = document.createElement('div'); w.className = 'ptr'; w.innerHTML = '<i></i>';
+    box.parentElement.insertBefore(w, box);
+    let y0 = null, d = 0, busy = false;
+    box.addEventListener('touchstart', e => { if (busy || box.scrollTop > 0) { y0 = null; return; } y0 = e.touches[0].clientY; d = 0; }, { passive: true });
+    box.addEventListener('touchmove', e => {
+      if (y0 == null) return; d = e.touches[0].clientY - y0;
+      if (d <= 0 || box.scrollTop > 0){ w.style.height = '0px'; return; }
+      const h = Math.min(90, d * .5); w.style.transition = 'none'; w.style.height = h + 'px'; w.classList.toggle('ready', h >= 60);
+      w.firstChild.style.transform = `rotate(${d * 2}deg)`;
+    }, { passive: true });
+    box.addEventListener('touchend', async () => {
+      if (y0 == null) return; y0 = null; w.style.transition = '';
+      if (w.classList.contains('ready')){
+        busy = true; w.classList.add('spin'); w.style.height = '56px';
+        try { await refreshAll(); } catch {}
+        busy = false;
+      }
+      w.classList.remove('spin', 'ready'); w.style.height = '0px';
+    });
+  };
+  ptr($('#list')); ptr($('#folders'));
+}
 
 /* ================= Événements de l’application ================= */
 if (N && IS_CW){

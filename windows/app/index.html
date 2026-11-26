@@ -1047,6 +1047,13 @@ html:not(.mobile) .card.set .tabs.v button.on{background:var(--accent);color:#ff
 .mobile #list .it .sb .s{color:var(--text);font-weight:600}
 .mobile #list .it:not(.unread) .sb .s{font-weight:500;opacity:.92}
 .mobile #list .it .pv{font-size:15px;line-height:1.35;margin-top:2px;color:var(--muted)}
+
+/* tirer pour actualiser */
+.ptr{height:0;overflow:hidden;display:flex;align-items:center;justify-content:center;flex:none;transition:height .2s ease}
+.ptr i{width:24px;height:24px;border-radius:50%;border:2.5px solid rgba(128,128,128,.35);border-top-color:var(--accent);display:block;opacity:.55}
+.ptr.ready i{opacity:1}
+.ptr.spin i{animation:ptrspin .8s linear infinite;opacity:1}
+@keyframes ptrspin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>

@@ -71,6 +71,18 @@ const check = (c, m) => { if (c) { ok++; console.log('✅', m); } else { ko++; c
   await page.locator('#side [data-uni], #side .fold[data-box]').first().tap();
   await page.waitForSelector('#app:not(.hidden) #list .it', { timeout: 30000 });
   await page.waitForTimeout(800);
+  // tirer vers le bas = actualiser (roue qui tourne)
+  const spun = await page.evaluate(async () => {
+    const L = document.getElementById('list'); L.scrollTop = 0;
+    const mk = y => new Touch({ identifier: 1, target: L, clientX: 200, clientY: y });
+    L.dispatchEvent(new TouchEvent('touchstart', { touches: [mk(200)], bubbles: true }));
+    for (let y = 210; y <= 400; y += 20) L.dispatchEvent(new TouchEvent('touchmove', { touches: [mk(y)], bubbles: true }));
+    L.dispatchEvent(new TouchEvent('touchend', { touches: [], bubbles: true }));
+    await new Promise(r => setTimeout(r, 60));
+    return document.querySelector('#listCol .ptr').classList.contains('spin');
+  });
+  check(spun, 'tirer vers le bas → roue qui tourne + actualisation');
+  await page.waitForTimeout(1500);
   const n = await page.locator('#list .it').count();
   if (process.env.OV) console.log(JSON.stringify(await page.evaluate(require('/tmp/ov.js'))));
   check(n >= 9, `liste des messages chargée (${n})`);
