@@ -47,6 +47,21 @@ for f in glob.glob(os.path.join(RES, 'drawable*', 'splash.png')):
 # ---- iPhone ----
 XC = os.path.join(H, 'ios', 'App', 'App', 'Assets.xcassets')
 render(full, 1024).convert('RGB').save(os.path.join(XC, 'AppIcon.appiconset', 'AppIcon-512@2x.png'))
+# Icône pour le mode sombre de l'iPhone (iOS 18+) : colombe sur fond graphite avec une lueur orange
+DARKBG = ('<defs><linearGradient id="dk" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#34332f"/><stop offset="1" stop-color="#161615"/></linearGradient>'
+          '<radialGradient id="gl" cx=".55" cy=".52" r=".55"><stop offset="0" stop-color="#e86a26" stop-opacity=".42"/><stop offset="1" stop-color="#e86a26" stop-opacity="0"/></radialGradient>')
+dark = RECT.sub('', SVG).replace('<defs>', DARKBG, 1).replace('</defs>', '</defs><rect width="1024" height="1024" fill="url(#dk)"/><rect width="1024" height="1024" fill="url(#gl)"/>', 1)
+dark = dark.replace('fill="#5a1a02" opacity=".5"', 'fill="#000" opacity=".55"')
+render(dark, 1024).convert('RGB').save(os.path.join(XC, 'AppIcon.appiconset', 'AppIcon-dark.png'))
+# Icône « teintée » (iOS 18+) : colombe en niveaux de gris sur fond noir, iOS applique la couleur choisie
+tint = RECT.sub('', SVG).replace('</defs>', '</defs><rect width="1024" height="1024" fill="#000"/>', 1).replace('fill="#5a1a02" opacity=".5"', 'fill="#000" opacity="0"')
+render(tint, 1024).convert('L').convert('RGB').save(os.path.join(XC, 'AppIcon.appiconset', 'AppIcon-tinted.png'))
+import json
+json.dump({'images': [
+  {'filename': 'AppIcon-512@2x.png', 'idiom': 'universal', 'platform': 'ios', 'size': '1024x1024'},
+  {'appearances': [{'appearance': 'luminosity', 'value': 'dark'}], 'filename': 'AppIcon-dark.png', 'idiom': 'universal', 'platform': 'ios', 'size': '1024x1024'},
+  {'appearances': [{'appearance': 'luminosity', 'value': 'tinted'}], 'filename': 'AppIcon-tinted.png', 'idiom': 'universal', 'platform': 'ios', 'size': '1024x1024'}],
+  'info': {'author': 'xcode', 'version': 1}}, open(os.path.join(XC, 'AppIcon.appiconset', 'Contents.json'), 'w'), indent=2)
 for f in glob.glob(os.path.join(XC, 'Splash.imageset', '*.png')):
     splash(2732, 2732).save(f)
 print('icônes ok')
