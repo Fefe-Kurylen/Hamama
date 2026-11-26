@@ -1035,7 +1035,7 @@ function itemHTML(i){
 function renderList(skeleton){
   const el = $('#list'), items = visible();
   $('#ltitle').innerHTML = esc(viewTitle()) + (ST.search ? ` <small>${items.length}</small>` : '');
-  if (MOBILE){ const ls = $('#lsub'); if (ls){ const v = ST.view || {}; const acc = v.uni ? T('Tous les comptes') : accLabel(ST.accounts.find(a => a.id === v.acc) || ST.accounts[0] || {}); ls.textContent = (acc ? acc + ' · ' : '') + syncText(); } }
+  { const ls = $('#lsub'); if (ls){ const v = ST.view || {}; const acc = v.uni ? T('Tous les comptes') : accLabel(ST.accounts.find(a => a.id === v.acc) || ST.accounts[0] || {}); ls.textContent = (acc ? acc + ' · ' : '') + syncText(); } }
   document.querySelectorAll('#chips button').forEach(b => b.classList.toggle('on', b.dataset.f === ST.filter));
   $('#allReadBtn').classList.toggle('hidden', !!ST.search);
   if (skeleton){ el.innerHTML = '<div class="skel"></div>'.repeat(8); return; }

@@ -1016,6 +1016,26 @@ html:not(.mobile) .vbar{overflow:hidden}
 .mobile.boxes .bxhead .bxbtn{grid-column:3;justify-self:end}
 .mobile.boxes #side .acct > .ah{font-size:24px;font-weight:800;padding:10px 12px 10px}
 .mobile .menu button.red span{color:#e5534b}
+
+/* ===== Windows (26/11) : même style que le téléphone ===== */
+html:not(.mobile) #lsub{display:block;font-size:12.5px;color:var(--muted);font-weight:500;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;order:3;flex-basis:100%}
+html:not(.mobile) .lhead{flex-wrap:wrap;padding-top:12px;padding-bottom:10px;border-bottom:1px solid var(--line2);margin:0 8px 2px}
+html:not(.mobile) .lhead h2{font-size:24px!important;font-weight:800;letter-spacing:-.02em}
+html:not(.mobile) #list .it{position:relative;border-radius:10px}
+html:not(.mobile) #list .it::before{content:"";position:absolute;left:58px;right:8px;bottom:0;height:1px;background:var(--line2);opacity:.6}
+html:not(.mobile) #list .it.on::before,html:not(.mobile) #list .it:hover::before{opacity:0}
+html:not(.mobile) .grp{letter-spacing:.08em;font-size:11px;padding-top:14px}
+/* menus : groupes séparés par une bande, icônes couleur d'accent, blocage en rouge */
+html:not(.mobile) .menu{padding:6px 0;border-radius:16px}
+html:not(.mobile) .menu button{border-radius:0;padding-left:14px;padding-right:14px}
+html:not(.mobile) .menu .msep{height:6px;margin:4px 0;background:rgba(0,0,0,.2)}
+html:not(.mobile)[data-tone=light] .menu .msep{background:rgba(0,0,0,.05)}
+html:not(.mobile) .menu button svg{color:var(--accent)}
+html:not(.mobile) .menu button.red span,html:not(.mobile) .menu button.red svg{color:#e5534b}
+/* réglages : chaque option dans sa carte */
+html:not(.mobile) .card.set .setrow{margin:0 0 10px;padding:12px 14px;background:rgba(128,128,128,.08);border-radius:14px}
+html:not(.mobile) .card.set .setrow > .lbl{font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700;margin-bottom:8px}
+html:not(.mobile) .card.set .tabs.v button.on{background:var(--accent);color:#fff}
 </style>
 </head>
 <body>
